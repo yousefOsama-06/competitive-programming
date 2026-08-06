@@ -4,7 +4,7 @@ struct Dijkstra {
     vector<ll> dist;
     vector<int> parent;
 
-    Dijkstra(int n) : n(n), adj(n + 1), dist(n + 1, inf), parent(n + 1, -1) {}
+    Dijkstra(int n) : n(n), adj(n + 1), dist(n + 1, llinf), parent(n + 1, -1) {}
 
     void add_edge(int u, int v, ll w, bool directed = false) {
         adj[u].push_back({v, w});
@@ -12,7 +12,7 @@ struct Dijkstra {
     }
 
     void solve(int source) {
-        fill(dist.begin(), dist.end(), inf);
+        fill(dist.begin(), dist.end(), llinf);
         fill(parent.begin(), parent.end(), -1);
         priority_queue<pair<ll, int>, vector<pair<ll, int>>, greater<pair<ll, int>>> pq;
         
