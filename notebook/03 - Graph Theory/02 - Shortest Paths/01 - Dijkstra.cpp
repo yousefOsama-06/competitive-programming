@@ -1,22 +1,20 @@
-template<typename T>
 struct Dijkstra {
-    const T INF = numeric_limits<T>::max();
     int n;
-    vector<vector<pair<int, T>>> adj;
-    vector<T> dist;
+    vector<vector<pair<int, ll>>> adj;
+    vector<ll> dist;
     vector<int> parent;
 
-    Dijkstra(int n) : n(n), adj(n + 1), dist(n + 1, INF), parent(n + 1, -1) {}
+    Dijkstra(int n) : n(n), adj(n + 1), dist(n + 1, inf), parent(n + 1, -1) {}
 
-    void add_edge(int u, int v, T w, bool directed = false) {
+    void add_edge(int u, int v, ll w, bool directed = false) {
         adj[u].push_back({v, w});
         if (!directed) adj[v].push_back({u, w});
     }
 
     void solve(int source) {
-        fill(dist.begin(), dist.end(), INF);
+        fill(dist.begin(), dist.end(), inf);
         fill(parent.begin(), parent.end(), -1);
-        priority_queue<pair<T, int>, vector<pair<T, int>>, greater<pair<T, int>>> pq;
+        priority_queue<pair<ll, int>, vector<pair<ll, int>>, greater<pair<ll, int>>> pq;
         
         dist[source] = 0;
         pq.push({0, source});
