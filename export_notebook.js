@@ -36,6 +36,7 @@ let latex = `\\UseRawInputEncoding
 \\usepackage{lmodern}
 \\usepackage{fancyhdr}
 \\usepackage{tocloft}
+\\usepackage[hidelinks]{hyperref}
 
 \\pagestyle{fancy}
 \\fancyhf{}
