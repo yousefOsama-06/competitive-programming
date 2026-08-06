@@ -10,7 +10,7 @@ struct BIT2D {
 
     // n: the limit of the first dimension
     // all update operations you will make
-    BIT2D(int n, vector<array<int, 2>> &todo): n(n + 1), vals(n + 1), bit(n + 1) {
+    BIT2D(int n, vector<array<int, 2>> todo): n(n + 1), vals(n + 1), bit(n + 1) {
         sort(begin(todo), end(todo), [](auto &a, auto &b) { return a[1] < b[1]; });
 
         for (int i = 0; i < n; i++) vals[i].push_back(-oo);
