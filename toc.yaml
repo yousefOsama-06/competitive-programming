@@ -25,6 +25,9 @@ categories:
       - file: "07 - customHashHashTable.cpp"
         title: "customHashHashTable"
         path: "notebook/01 - Miscellaneous/07 - customHashHashTable.cpp"
+      - file: "08 - pragmas.cpp"
+        title: "pragmas"
+        path: "notebook/01 - Miscellaneous/08 - pragmas.cpp"
   - category: "02 - Data Structures (DS)"
     title: "Data Structures (DS)"
     subcategories:
