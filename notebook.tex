@@ -1,0 +1,5222 @@
+\UseRawInputEncoding
+\documentclass[9pt,a4paper,twocolumn]{extarticle}
+\usepackage[left=0.5cm,right=0.5cm,top=0.7cm,bottom=0.7cm]{geometry}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{fancyhdr}
+\usepackage{tocloft}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[C]{\textbf{\sffamily Competitive Programming Notebook}}
+\fancyfoot[C]{\sffamily\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\definecolor{codebg}{HTML}{F8F9FA}
+\definecolor{codeframe}{HTML}{D0D5DD}
+\definecolor{keyword}{HTML}{0033CC}
+\definecolor{comment}{HTML}{008000}
+\definecolor{string}{HTML}{A31515}
+
+\lstset{
+    language=C++,
+    basicstyle=\ttfamily\scriptsize,
+    keywordstyle=\color{keyword}\bfseries,
+    commentstyle=\color{comment}\itshape,
+    stringstyle=\color{string},
+    backgroundcolor=\color{codebg},
+    frame=single,
+    rulecolor=\color{codeframe},
+    breaklines=true,
+    breakatwhitespace=false,
+    tabsize=2,
+    showstringspaces=false,
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    numbersep=4pt,
+    xleftmargin=0.6em,
+    framexleftmargin=0.6em,
+    aboveskip=0.3em,
+    belowskip=0.3em,
+    extendedchars=false,
+}
+
+\titleformat{\section}{\large\bfseries\sffamily}{\thesection}{0.4em}{}
+\titleformat{\subsection}{\normalsize\bfseries\sffamily}{\thesubsection}{0.3em}{}
+\titleformat{\subsubsection}{\small\bfseries\sffamily}{\thesubsubsection}{0.2em}{}
+
+\titlespacing*{\section}{0pt}{0.5em}{0.2em}
+\titlespacing*{\subsection}{0pt}{0.4em}{0.1em}
+\titlespacing*{\subsubsection}{0pt}{0.3em}{0.1em}
+
+\setlength{\columnseprule}{0pt}
+\setlength{\columnsep}{0.6cm}
+
+\begin{document}
+
+\twocolumn[
+  \begin{center}
+    {\Huge \bfseries Competitive Programming Notebook} \par \vspace{0.3em}
+    {\large \today} \par \vspace{1em}
+  \end{center}
+]
+
+\tableofcontents
+\vspace{1em}
+
+\section{Miscellaneous}
+
+\subsection{Template}
+\begin{lstlisting}
+#include <bits/stdc++.h>
+
+using namespace std;
+
+//#define int long long
+#define ll long long
+#define ld long double
+#define fi first
+#define se second
+#define pb push_back
+#define eb emplace_back
+#define all(x) x.begin(), x.end()
+#define rall(x) x.rbegin(), x.rend()
+#define ones(n) __builtin_popcountll(n)
+#define msb(n) (63 - __builtin_clzll(n))
+#define lsb(n) __builtin_ctzll(n)
+
+const int N = 2e5 + 5, M = 1e3 + 5, LOG = 31;
+const int inf = 0x3f3f3f3f;
+const ll llinf = 0x3f3f3f3f3f3f3f3f;
+const int MOD = 1e9 + 7;
+const double eps = 1e-9, PI = acos(-1);
+
+void testCase() {
+}
+
+
+void preCompute() {
+}
+
+int32_t main() {
+#ifdef C_Lion
+    freopen("input.txt", "r", stdin);
+    freopen("output.txt", "w", stdout);
+    freopen("errors.txt", "w", stderr);
+#else
+    //    freopen("input.in", "r", stdin);
+    //    freopen("output.out", "w", stdout);
+#endif
+
+    ios_base::sync_with_stdio(false), cin.tie(nullptr), cout.tie(nullptr);
+    cout << fixed << setprecision(static_cast<int32_t>(-log10(eps)));
+    preCompute();
+
+    int tc = 1;
+    cin >> tc;
+    for (int TC = 1; TC <= tc; TC++) {
+        // cout << "Case #" << TC << ": ";
+        testCase();
+    }
+}
+
+/*
+
+
+
+
+*/
+\end{lstlisting}
+
+\subsection{fastIO}
+\begin{lstlisting}
+const int MOD = 1e9 + 7;
+const int BUF_SZ = 1 << 15;
+
+inline namespace Input {
+    char buf[BUF_SZ];
+    int pos;
+    int len;
+    char next_char() {
+        if (pos == len) {
+            pos = 0;
+            len = (int)fread(buf, 1, BUF_SZ, stdin);
+            if (!len) { return EOF; }
+        }
+        return buf[pos++];
+    }
+
+    int read_int() {
+        int x;
+        char ch;
+        int sgn = 1;
+        while (!isdigit(ch = next_char())) {
+            if (ch == '-') { sgn *= -1; }
+        }
+        x = ch - '0';
+        while (isdigit(ch = next_char())) { x = x * 10 + (ch - '0'); }
+        return x * sgn;
+    }
+}  // namespace Input
+inline namespace Output {
+    char buf[BUF_SZ];
+    int pos;
+
+    void flush_out() {
+        fwrite(buf, 1, pos, stdout);
+        pos = 0;
+    }
+
+    void write_char(char c) {
+        if (pos == BUF_SZ) { flush_out(); }
+        buf[pos++] = c;
+    }
+
+    void write_int(int x) {
+        static char num_buf[100];
+        if (x < 0) {
+            write_char('-');
+            x *= -1;
+        }
+        int len = 0;
+        for (; x >= 10; x /= 10) { num_buf[len++] = (char)('0' + (x % 10)); }
+        write_char((char)('0' + x));
+        while (len) { write_char(num_buf[--len]); }
+        write_char('\n');
+    }
+
+    // auto-flush output when program exits
+    void init_output() { assert(atexit(flush_out) == 0); }
+}  // namespace Output
+\end{lstlisting}
+
+\subsection{grid}
+\begin{lstlisting}
+int dx[] = {0, 0, -1, 1, -1, -1, 1, 1};
+int dy[] = {-1, 1, 0, 0, -1, 1, -1, 1};
+char di[] = {'L', 'R', 'U', 'D'};
+\end{lstlisting}
+
+\subsection{random}
+\begin{lstlisting}
+mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
+template <typename T>
+T random(T l, T r) {
+    return uniform_int_distribution(l, r)(rng);
+}
+
+vector<int> random(int n) {
+    vector<int> v(n);
+    // shuffle 1
+    shuffle(v.begin(), v.end(), rng);
+    // shuffle 2
+    for (int i = 1; i < n; i++)
+        swap(v[i], v[uniform_int_distribution<int>(0, i)(rng)]);
+    return v;
+}
+\end{lstlisting}
+
+\subsection{coordinateCompression}
+\begin{lstlisting}
+struct Compress {
+    map<int, int> m;
+    vector<int> undo;
+
+    Compress(vector<int>& v, int base = 0) {
+        m.clear();
+        set<int> s;
+        for (int x : v) {
+            s.insert(x);
+        }
+        undo.resize(s.size() + base);
+        int i = base;
+        for (int x : s) {
+            undo[i] = x;
+            m[x] = i++;
+        }
+        for (int& x : v)
+            x = m[x];
+    }
+};
+\end{lstlisting}
+
+\subsection{grayCode}
+\begin{lstlisting}
+vector<int> grayCode(int n) {
+    vector<int> vec = {0};
+    vector<bool> used(1 << n, false);
+    used[0] = true;
+    while (vec.size() < (1 << n)) {
+        int bit = 0;
+        while (used[vec.back() ^ (1 << bit)])
+            bit++;
+        vec.push_back(vec.back() ^ (1 << bit));
+        used[vec.back() ^ (1 << bit)] = true;
+    }
+    return vec;
+}
+\end{lstlisting}
+
+\subsection{customHashHashTable}
+\begin{lstlisting}
+#include <ext/pb_ds/assoc_container.hpp>
+using namespace __gnu_pbds;
+//gp_hash_table<int, int> table;
+const int RANDOM = chrono::high_resolution_clock::now().time_since_epoch().count();
+struct chash {
+    int operator()(int x) const { return x ^ RANDOM; }
+};
+// gp_hash_table<int, int, chash> table;
+\end{lstlisting}
+
+\section{Data Structures (DS)}
+
+\subsection{Segment Tree}
+
+\subsubsection{SegmentTree}
+\begin{lstlisting}
+struct SEG {
+    ll sum = 0;
+    SEG() {
+    }
+    SEG(ll x){
+        sum = x;
+    }
+};
+struct segTree {
+    vector<SEG> seg;
+    int sz = 1,n;
+    segTree(int nn){
+        n = nn;
+        while (sz < nn)
+            sz *= 2;
+        seg.assign(2 * sz , SEG());
+    }
+    
+    SEG merge(SEG seg1, SEG seg2) {
+        SEG ret;
+        ret.sum = seg1.sum + seg2.sum;
+        return ret;
+    }
+    
+    void build(vector<int> &v,int x, int lx, int rx) {
+        if (lx == rx) {
+            seg[x] = SEG(v[lx]);
+            return;
+        }
+        int mid = (lx + rx) / 2;
+        int lf = 2 * x + 1, rt = 2 * x + 2;
+
+        build(v,lf, lx, mid);
+        build(v,rt, mid + 1, rx);
+        seg[x] = merge(seg[lf], seg[rt]);
+    }
+    void build(vector<int> &v){
+        build(v,0, 0, n-1);
+    }
+
+    void update(int i, ll val, int x, int lx, int rx) {
+        if (lx == rx) {
+            seg[x] = SEG(val);
+            return;
+        }
+        int mid = (lx + rx) / 2,lf = 2*x+1,rt= 2*x+2;
+        if(i <= mid)
+            update(i, val, lf, lx, mid);
+        else
+            update(i, val, rt, mid + 1, rx);
+        seg[x] = merge(seg[lf] , seg[rt]);
+    }
+
+    void update(int i, ll val) {
+        update(i, val, 0, 0, n-1);
+    }
+    
+    SEG query(int l, int r, int x, int lx, int rx) {
+        if (l <= lx && r >= rx)
+            return seg[x];
+        if (l > rx || r < lx)
+            return SEG();
+
+        int mid = (lx + rx) / 2,lf = 2 * x + 1,rt = 2*x+2;
+
+        return merge(query(l, r, lf, lx, mid) , query(l, r, rt, mid + 1, rx));
+    }
+
+    SEG query(int l, int r) {
+        return query(l, r, 0, 0, n-1);
+    }
+};
+\end{lstlisting}
+
+\subsubsection{LazySegmentTree}
+\begin{lstlisting}
+struct SEG {
+    ll sum = 0, lz = 0;
+
+    SEG() {
+    }
+
+    SEG(ll x) {
+        sum = x;
+    }
+};
+
+struct segTree {
+    vector<SEG> seg;
+    int sz = 1, n;
+    ll NO_OP = 0;
+
+    segTree(int nn) {
+        n = nn;
+        while (sz < nn)
+            sz *= 2;
+        seg.assign(2 * sz, SEG());
+    }
+
+    SEG merge(SEG seg1, SEG seg2) {
+        SEG ret;
+        ret.sum = seg1.sum + seg2.sum;
+        return ret;
+    }
+
+    void build(vector<int> &v, int x, int lx, int rx) {
+        if (lx == rx) {
+            seg[x] = SEG(v[lx]);
+            return;
+        }
+        int mid = (lx + rx) / 2;
+        int lf = 2 * x + 1, rt = 2 * x + 2;
+
+        build(v, lf, lx, mid);
+        build(v, rt, mid + 1, rx);
+        seg[x] = merge(seg[lf], seg[rt]);
+    }
+
+    void build(vector<int> &v) {
+        build(v, 0, 0, n - 1);
+    }
+
+    void push(int x, int lx, int rx) {
+        if (seg[x].lz != NO_OP) {
+            seg[x].sum += seg[x].lz * (rx - lx + 1);
+            int lf = 2 * x + 1, rt = 2 * x + 2;
+            if (lx != rx) {
+                seg[lf].lz += seg[x].lz;
+                seg[rt].lz += seg[x].lz;
+            }
+            seg[x].lz = NO_OP;
+        }
+    }
+
+    void update(int l, int r, ll val, int x, int lx, int rx) {
+        push(x, lx, rx);
+        if (l > rx || r < lx)
+            return;
+        if (l <= lx && r >= rx) {
+            seg[x].lz += val;
+            push(x, lx, rx);
+            return;
+        }
+        int mid = (lx + rx) / 2, lf = 2 * x + 1, rt = 2 * x + 2;
+        update(l, r, val, lf, lx, mid);
+        update(l, r, val, rt, mid + 1, rx);
+        seg[x] = merge(seg[lf], seg[rt]);
+    }
+
+    void update(int l, int r, ll val) {
+        update(l, r, val, 0, 0, sz - 1);
+    }
+
+    SEG query(int l, int r, int x, int lx, int rx) {
+        push(x, lx, rx);
+        if (l <= lx && r >= rx)
+            return seg[x];
+        if (l > rx || r < lx)
+            return SEG();
+
+        int mid = (lx + rx) / 2, lf = 2 * x + 1, rt = 2 * x + 2;
+
+        return merge(query(l, r, lf, lx, mid), query(l, r, rt, mid + 1, rx));
+    }
+
+    SEG query(int l, int r) {
+        return query(l, r, 0, 0, sz - 1);
+    }
+};
+\end{lstlisting}
+
+\subsubsection{PersistentSegmentTree}
+\begin{lstlisting}
+struct Node {
+    Node *l, *r;
+    ll val = 0;
+
+    Node(int val) : l(NULL), r(NULL), val(val) {
+    }
+
+    Node() : l(NULL), r(NULL) {
+    }
+
+    Node(Node* l, Node* r) : l(l), r(r) {
+        if (l != NULL) val += l->val;
+        if (r != NULL) val += r->val;
+    }
+
+    void addChild() {
+        l = new Node();
+        r = new Node();
+    }
+};
+
+struct PST {
+    int n;
+
+    PST(int n) : n(n + 1) {
+    }
+
+    Node merge(Node x, Node y) {
+        Node ret;
+        ret.val = x.val + y.val;
+        return ret;
+    }
+
+    Node* update(Node* v, int i, int val, int lx, int rx) {
+        if (lx == rx) return new Node(v->val + val);
+        int mid = (lx + rx) / 2;
+        if (!v->l) v->addChild();
+        if (i <= mid) return new Node(update(v->l, i, val, lx, mid), v->r);
+        return new Node(v->l, update(v->r, i, val, mid + 1, rx));
+    }
+
+    Node* update(Node* v, int i, int val) { return update(v, i, val, 0, n - 1); }
+
+    Node query(Node* v, int l, int r, int lx, int rx) {
+        if (l > rx || r < lx) return {};
+        if (l <= lx && r >= rx) return *v;
+        if (!v->l) v->addChild();
+        int mid = (lx + rx) / 2;
+        return merge(query(v->l, l, r, lx, mid), query(v->r, l, r, mid + 1, rx));
+    }
+
+    Node query(Node* v, int l, int r) { return query(v, l, r, 0, n - 1); }
+
+    int getKth(Node* a, Node* b, int k, int lx, int rx) {
+        if (lx == rx) return lx;
+        if (!a->l) a->addChild();
+        if (!b->l) b->addChild();
+        int rem = b->l->val - a->l->val;
+        int mid = (lx + rx) / 2;
+        if (rem >= k) return getKth(a->l, b->l, k, lx, mid);
+        return getKth(a->r, b->r, k - rem, mid + 1, rx);
+    }
+
+    int getKth(Node* a, Node* b, int k) { return getKth(a, b, k, 0, n - 1); }
+};
+\end{lstlisting}
+
+\subsubsection{PersistentSegTreeVector}
+\begin{lstlisting}
+struct Node {
+    Node *l, *r;
+    int val = 0;
+
+    Node(int val): l(NULL), r(NULL), val(val) {}
+    Node(): l(NULL), r(NULL) {}
+    Node(Node *l, Node *r): l(l), r(r) {
+        if (l != NULL) val += l->val;
+        if (r != NULL) val += r->val;
+    }
+
+    void addChild() {
+        l = new Node();
+        r = new Node();
+    }
+};
+
+struct PST {
+    int n;
+    PST(int n): n(n + 1) {}
+
+    Node merge(Node x, Node y) {
+        Node ret;
+        ret.val = x.val + y.val;
+        return ret;
+    }
+
+    Node *set(Node *v, int i, int val, int lx, int rx) {
+        if (lx == rx) return new Node(val);
+        int mid = (lx + rx) / 2;
+        if(!v->l) v->addChild();
+        if (i <= mid) return new Node(set(v->l, i, val, lx, mid), v->r);
+        return new Node(v->l, set(v->r, i, val, mid + 1, rx));
+    }
+
+    Node *set(Node *v, int i, int val) { return set(v, i, val, 0, n - 1); }
+
+    // [l, r] r is included
+    Node query(Node *v, int l, int r, int lx, int rx) {
+        if (l > rx || r < lx) return {};
+        if (l <= lx && r >= rx) return *v;
+        if(!v->l) v->addChild();
+        int mid = (lx + rx) / 2;
+        return merge(query(v->l, l, r, lx, mid), query(v->r, l, r, mid + 1, rx));
+    }
+
+    Node query(Node *v, int l, int r) { return query(v, l, r, 0, n - 1); }
+
+    int getKth(Node *a, Node *b, int k, int lx, int rx) {
+        if (lx == rx) return lx;
+        if(!a->l) a->addChild();
+        if(!b->l) b->addChild();
+        int rem = b->l->val - a->l->val;
+        int mid = (lx + rx) / 2;
+        if (rem >= k) return getKth(a->l, b->l, k, lx, mid);
+        return getKth(a->r, b->r, k - rem, mid + 1, rx);
+    }
+
+    int getKth(Node *a, Node *b, int k) { return getKth(a, b, k, 0, n - 1); }
+};
+\end{lstlisting}
+
+\subsubsection{SegmentTreeBeats}
+\begin{lstlisting}
+struct Node {
+    int mn;
+    int mnCnt;
+    int secondMn;
+
+    int mx;
+    int mxCnt;
+    int secondMx;
+
+    int sum;
+
+    int lazyAdd;
+    int lazyEqual;
+    bool isLazyEqual;
+
+    Node() {
+        mx = -inf;
+        secondMx = -inf;
+        mxCnt = 0;
+
+        mn = inf;
+        secondMn = inf;
+        mnCnt = 0;
+
+        sum = 0;
+
+        lazyAdd = 0;
+        lazyEqual = 0;
+        isLazyEqual = 0;
+    };
+
+    Node(int x) {
+        mx = x;
+        secondMx = -inf;
+        mxCnt = 1;
+
+        mn = x;
+        secondMn = inf;
+        mnCnt = 1;
+
+        sum = x;
+
+        lazyAdd = 0;
+        lazyEqual = 0;
+        isLazyEqual = 0;
+    }
+};
+
+struct SegTree {
+    int tree_size;
+    vector<Node> seg_data;
+
+    SegTree(int n) {
+        tree_size = 1;
+        while (tree_size < n) tree_size *= 2;
+        seg_data.resize(2 * tree_size, Node());
+    }
+
+    Node merge(Node& lf, Node& ri) {
+        Node ans = Node();
+
+        ans.sum = lf.sum + ri.sum;
+
+        ans.mx = max(lf.mx, ri.mx);
+        ans.secondMx = max(lf.secondMx, ri.secondMx);
+        ans.mxCnt = 0;
+        if (lf.mx == ans.mx) ans.mxCnt += lf.mxCnt;
+        else ans.secondMx = max(ans.secondMx, lf.mx);
+        if (ri.mx == ans.mx) ans.mxCnt += ri.mxCnt;
+        else ans.secondMx = max(ans.secondMx, ri.mx);
+
+        ans.mn = min(lf.mn, ri.mn);
+        ans.secondMn = min(lf.secondMn, ri.secondMn);
+        ans.mnCnt = 0;
+        if (lf.mn == ans.mn) ans.mnCnt += lf.mnCnt;
+        else ans.secondMn = min(ans.secondMn, lf.mn);
+        if (ri.mn == ans.mn) ans.mnCnt += ri.mnCnt;
+        else ans.secondMn = min(ans.secondMn, ri.mn);
+
+        return ans;
+    }
+
+    void init(vector<int>& nums, int ni, int lx, int rx) {
+        if (rx - lx == 1) {
+            if (lx < nums.size())
+                seg_data[ni] = Node(nums[lx]);
+            return;
+        }
+
+        int mid = lx + (rx - lx) / 2;
+        init(nums, 2 * ni + 1, lx, mid);
+        init(nums, 2 * ni + 2, mid, rx);
+
+        seg_data[ni] = merge(seg_data[2 * ni + 1], seg_data[2 * ni + 2]);
+    }
+
+    void init(vector<int>& nums) {
+        init(nums, 0, 0, tree_size);
+    }
+
+    void doPushEq(int ni, int lx, int rx, int x) {
+        seg_data[ni].mn = seg_data[ni].mx = seg_data[ni].lazyEqual = x;
+        seg_data[ni].isLazyEqual = 1;
+        seg_data[ni].mnCnt = seg_data[ni].mxCnt = rx - lx;
+        seg_data[ni].secondMx = -inf;
+        seg_data[ni].secondMn = inf;
+
+        seg_data[ni].sum = x * (rx - lx);
+        seg_data[ni].lazyAdd = 0;
+    }
+
+    void doPushMinEq(int ni, int lx, int rx, int x) {
+        if (seg_data[ni].mn >= x) doPushEq(ni, lx, rx, x);
+        else if (seg_data[ni].mx > x) {
+            if (seg_data[ni].secondMn == seg_data[ni].mx)
+                seg_data[ni].secondMn = x;
+            seg_data[ni].sum -= (seg_data[ni].mx - x) * seg_data[ni].mxCnt;
+            seg_data[ni].mx = x;
+        }
+    }
+
+    void doPushMaxEq(int ni, int lx, int rx, int x) {
+        if (seg_data[ni].mx <= x) doPushEq(ni, lx, rx, x);
+        else if (seg_data[ni].mn < x) {
+            if (seg_data[ni].secondMx == seg_data[ni].mn)
+                seg_data[ni].secondMx = x;
+
+            seg_data[ni].sum += (x - seg_data[ni].mn) * seg_data[ni].mnCnt;
+            seg_data[ni].mn = x;
+        }
+    }
+
+    void doPushSum(int ni, int lx, int rx, int x) {
+        if (seg_data[ni].mn == seg_data[ni].mx)
+            doPushEq(ni, lx, rx, seg_data[ni].mn + x);
+        else {
+            seg_data[ni].mx += x;
+            if (seg_data[ni].secondMx != -inf)
+                seg_data[ni].secondMx += x;
+
+            seg_data[ni].mn += x;
+            if (seg_data[ni].secondMn != inf)
+                seg_data[ni].secondMn += x;
+
+            seg_data[ni].sum += (rx - lx) * x;
+            seg_data[ni].lazyAdd += x;
+        }
+    }
+
+    void propagete(int ni, int lx, int rx) {
+        if (rx - lx == 1) return;
+
+        int mid = lx + (rx - lx) / 2;
+        if (seg_data[ni].isLazyEqual) {
+            doPushEq(2 * ni + 1, lx, mid, seg_data[ni].lazyEqual);
+            doPushEq(2 * ni + 2, mid, rx, seg_data[ni].lazyEqual);
+            seg_data[ni].lazyEqual = seg_data[ni].isLazyEqual = 0;
+        }
+        else {
+            doPushSum(2 * ni + 1, lx, mid, seg_data[ni].lazyAdd);
+            doPushSum(2 * ni + 2, mid, rx, seg_data[ni].lazyAdd);
+            seg_data[ni].lazyAdd = 0;
+
+            doPushMinEq(2 * ni + 1, lx, mid, seg_data[ni].mx);
+            doPushMinEq(2 * ni + 2, mid, rx, seg_data[ni].mx);
+
+            doPushMaxEq(2 * ni + 1, lx, mid, seg_data[ni].mn);
+            doPushMaxEq(2 * ni + 2, mid, rx, seg_data[ni].mn);
+        }
+    }
+
+    void minimize(int l, int r, int x, int ni, int lx, int rx) {
+        if (rx <= l || lx >= r || seg_data[ni].mx <= x)
+            return;
+        if (lx >= l && rx <= r && seg_data[ni].secondMx < x) {
+            doPushMinEq(ni, lx, rx, x);
+            return;
+        }
+
+        propagete(ni, lx, rx);
+
+        int mid = lx + (rx - lx) / 2;
+        minimize(l, r, x, 2 * ni + 1, lx, mid);
+        minimize(l, r, x, 2 * ni + 2, mid, rx);
+
+        seg_data[ni] = merge(seg_data[2 * ni + 1], seg_data[2 * ni + 2]);
+    }
+
+    void minimize(int l, int r, int x) {
+        minimize(l, r, x, 0, 0, tree_size);
+    }
+
+    void maximize(int l, int r, int x, int ni, int lx, int rx) {
+        if (rx <= l || lx >= r || seg_data[ni].mn >= x)
+            return;
+        if (lx >= l && rx <= r && seg_data[ni].secondMn > x) {
+            doPushMaxEq(ni, lx, rx, x);
+            return;
+        }
+
+        propagete(ni, lx, rx);
+
+        int mid = lx + (rx - lx) / 2;
+        maximize(l, r, x, 2 * ni + 1, lx, mid);
+        maximize(l, r, x, 2 * ni + 2, mid, rx);
+
+        seg_data[ni] = merge(seg_data[2 * ni + 1], seg_data[2 * ni + 2]);
+    }
+
+    void maximize(int l, int r, int x) {
+        maximize(l, r, x, 0, 0, tree_size);
+    }
+
+    void add(int l, int r, int x, int ni, int lx, int rx) {
+        if (rx <= l || lx >= r)
+            return;
+        if (lx >= l && rx <= r) {
+            doPushSum(ni, lx, rx, x);
+            return;
+        }
+
+        propagete(ni, lx, rx);
+
+        int mid = lx + (rx - lx) / 2;
+        add(l, r, x, 2 * ni + 1, lx, mid);
+        add(l, r, x, 2 * ni + 2, mid, rx);
+
+        seg_data[ni] = merge(seg_data[2 * ni + 1], seg_data[2 * ni + 2]);
+    }
+
+    void add(int l, int r, int x) {
+        add(l, r, x, 0, 0, tree_size);
+    }
+
+    void set(int l, int r, int x, int ni, int lx, int rx) {
+        if (rx <= l || lx >= r)
+            return;
+        if (lx >= l && rx <= r) {
+            doPushEq(ni, lx, rx, x);
+            return;
+        }
+
+        propagete(ni, lx, rx);
+
+        int mid = lx + (rx - lx) / 2;
+        set(l, r, x, 2 * ni + 1, lx, mid);
+        set(l, r, x, 2 * ni + 2, mid, rx);
+
+        seg_data[ni] = merge(seg_data[2 * ni + 1], seg_data[2 * ni + 2]);
+    }
+
+    void set(int l, int r, int x) {
+        set(l, r, x, 0, 0, tree_size);
+    }
+
+    Node get_range(int l, int r, int ni, int lx, int rx) {
+        propagete(ni, lx, rx);
+
+        if (lx >= l && rx <= r)
+            return seg_data[ni];
+        if (rx <= l || lx >= r)
+            return Node();
+
+        int mid = (lx + rx) / 2;
+
+        Node lf = get_range(l, r, 2 * ni + 1, lx, mid);
+        Node ri = get_range(l, r, 2 * ni + 2, mid, rx);
+        return merge(lf, ri);
+    }
+
+    int get_sum(int l, int r) {
+        return get_range(l, r, 0, 0, tree_size).sum;
+    }
+
+    int get_mx(int l, int r) {
+        return get_range(l, r, 0, 0, tree_size).mx;
+    }
+
+    int get_mn(int l, int r) {
+        return get_range(l, r, 0, 0, tree_size).mn;
+    }
+};
+\end{lstlisting}
+
+\subsection{Binary Indexed Tree (BIT)}
+
+\subsubsection{FenwickTree}
+\begin{lstlisting}
+template<typename T>
+class FenwickTree {
+public:
+    vector<T> tree;
+    int n;
+
+    // Default constructor
+    FenwickTree() : n(0) {}
+
+    // Constructor with size
+    FenwickTree(int n) {
+        init(n);
+    }
+
+    void init(int n) {
+        this->n = n;
+        // 1-based indexing needs size n + 1. Padding by 2 is safe.
+        tree.assign(n + 2, 0); 
+    }
+
+    void update(int x, T val) {
+        x++; // Convert 0-based to 1-based
+        for (; x <= n; x += x & -x) {
+            tree[x] += val;
+        }
+    }
+
+    void assign(int x, T val) {
+        update(x, val - getRange(x, x));
+    }
+
+    T getPrefix(int x) {
+        x++; // Convert 0-based to 1-based
+        if (x <= 0) return 0;
+        T ret = 0;
+        for (; x; x -= x & -x) {
+            ret += tree[x];
+        }
+        return ret;
+    }
+
+    T getRange(int l, int r) {
+        if (l > r) return 0;
+        return getPrefix(r) - getPrefix(l - 1);
+    }
+
+    // Returns the 0-based index of the first prefix sum >= x
+    int lowerBound(T x) {
+        int pos = 0;
+        // sz > 0 is enough; don't break early if x == 0 to handle 0-value elements properly
+        for (int sz = (1 << __lg(n)); sz > 0; sz >>= 1) {
+            if (pos + sz <= n && tree[pos + sz] < x) {
+                x -= tree[pos + sz];
+                pos += sz;
+            }
+        }
+        return pos; // pos is the 0-based index (since 1-based would be pos + 1)
+    }
+};
+\end{lstlisting}
+
+\subsubsection{FenwickTree2D}
+\begin{lstlisting}
+template<typename T>
+class FenwickTree2D {
+public:
+    vector<vector<T>> tree;
+    int n, m;
+
+    // Default constructor
+    FenwickTree2D() : n(0), m(0) {}
+
+    // Constructor with dimensions
+    FenwickTree2D(int n, int m) {
+        init(n, m);
+    }
+
+    void init(int n, int m) {
+        this->n = n;
+        this->m = m;
+        // 1-based indexing needs sizes n + 1 and m + 1. Padding by 2 is safe.
+        tree.assign(n + 2, vector<T>(m + 2, 0)); 
+    }
+
+    // Point update: Adds 'val' to the cell (x, y)
+    void update(int x, int y, T val) {
+        x++; y++; // Convert 0-based to 1-based
+        for (int i = x; i <= n; i += i & -i) {
+            for (int j = y; j <= m; j += j & -j) {
+                tree[i][j] += val;
+            }
+        }
+    }
+
+    // Point assignment: Sets the cell (x, y) to 'val'
+    void assign(int x, int y, T val) {
+        update(x, y, val - getRange(x, y, x, y));
+    }
+
+    // 2D Prefix sum: Returns the sum of the subgrid from (0, 0) to (x, y)
+    T getPrefix(int x, int y) {
+        x++; y++; // Convert 0-based to 1-based
+        if (x <= 0 || y <= 0) return 0;
+        
+        // Clamp to maximum dimensions if queries exceed bounds
+        x = min(x, n);
+        y = min(y, m);
+        
+        T ret = 0;
+        for (int i = x; i > 0; i -= i & -i) {
+            for (int j = y; j > 0; j -= j & -j) {
+                ret += tree[i][j];
+            }
+        }
+        return ret;
+    }
+
+    // 2D Range sum: Returns the sum of the subgrid from top-left (x1, y1) to bottom-right (x2, y2)
+    T getRange(int x1, int y1, int x2, int y2) {
+        if (x1 > x2 || y1 > y2) return 0;
+        
+        // Inclusion-Exclusion Principle
+        return getPrefix(x2, y2) 
+             - getPrefix(x1 - 1, y2) 
+             - getPrefix(x2, y1 - 1) 
+             + getPrefix(x1 - 1, y1 - 1);
+    }
+};
+\end{lstlisting}
+
+\subsubsection{Offline2DFenwickTree}
+\begin{lstlisting}
+template <typename T>
+struct BIT2D {
+    int n;
+    vector<vector<int>> vals;
+    vector<vector<T>> bit;
+
+    int ind(const vector<int> &v, int x) {
+        return upper_bound(begin(v), end(v), x) - begin(v) - 1;
+    }
+
+    // n: the limit of the first dimension
+    // all update operations you will make
+    BIT2D(int n, vector<array<int, 2>> todo): n(n + 1), vals(n + 1), bit(n + 1) {
+        sort(begin(todo), end(todo), [](auto &a, auto &b) { return a[1] < b[1]; });
+
+        for (int i = 0; i < n; i++) vals[i].push_back(-oo);
+        for (auto [r, c] : todo)
+            for (; r < n; r |= r + 1)
+                if (vals[r].back() != c) vals[r].push_back(c);
+
+        for (int i = 0; i < n; i++) bit[i].resize(vals[i].size());
+    }
+
+    void add(int r, int c, T val) {
+        for (; r < n; r |= r + 1) {
+            int i = ind(vals[r], c);
+            for (; i < bit[r].size(); i |= i + 1) bit[r][i] += val;
+        }
+    }
+
+    T query(int r, int c) {
+        T ans = 0;
+        for (; r >= 0; r = (r & r + 1) - 1) {
+            int i = ind(vals[r], c);
+            for (; i >= 0; i = (i & i + 1) - 1) ans += bit[r][i];
+        }
+        return ans;
+    }
+
+    T query(int r1, int c1, int r2, int c2) {
+        return query(r2, c2) - query(r2, c1 - 1) - query(r1 - 1, c2) + query(r1 - 1, c1 - 1);
+    }
+
+    void reset() {
+        for(auto &v: bit) for(auto &i: v) i = 0;
+    }
+};
+\end{lstlisting}
+
+\subsection{Sparse Table}
+
+\subsubsection{SparseTable}
+\begin{lstlisting}
+#define sz(aa) (int)aa.size()
+
+template <class T>
+struct sparseTable {
+    vector<vector<T>> jmp;
+
+    void build(const vector<T>& V) {
+        jmp.assign(1, V);
+        for (int pw = 1, k = 1; pw * 2 <= sz(V); pw *= 2, ++k) {
+            jmp.emplace_back(sz(V) - pw * 2 + 1);
+            for (int j = 0; j < sz(jmp[k]); ++j) {
+                jmp[k][j] = max(jmp[k - 1][j], jmp[k - 1][j + pw]);
+            }
+        }
+    }
+
+    T query(int l, int r) {
+        assert(l <= r);
+        int dep = 31 - __builtin_clz(r - l + 1);
+        return max(jmp[dep][l], jmp[dep][r - (1 << dep) + 1]);
+    }
+};
+\end{lstlisting}
+
+\subsubsection{SparseTable2D}
+\begin{lstlisting}
+#define sz(aa) (int)aa.size()
+
+template <class T>
+struct sparseTable2D {
+    int n, m;
+    // jmp[kr][kc][i][j] stores the max of a 2^kr by 2^kc rectangle starting at (i, j)
+    vector<vector<vector<vector<T>>>> jmp;
+
+    void build(const vector<vector<T>>& V) {
+        n = sz(V);
+        if (n == 0) return;
+        m = sz(V[0]);
+        if (m == 0) return;
+
+        int log_n = 32 - __builtin_clz(n);
+        int log_m = 32 - __builtin_clz(m);
+
+        jmp.assign(log_n, vector<vector<vector<T>>>(log_m, vector<vector<T>>(n, vector<T>(m))));
+
+        // Base case: 1x1 rectangles (kr = 0, kc = 0)
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < m; ++j) {
+                jmp[0][0][i][j] = V[i][j];
+            }
+        }
+
+        // Build 1D sparse tables for each row (kr = 0, increasing kc)
+        for (int kc = 1; kc < log_m; ++kc) {
+            for (int i = 0; i < n; ++i) {
+                for (int j = 0; j + (1 << kc) <= m; ++j) {
+                    jmp[0][kc][i][j] = max(jmp[0][kc - 1][i][j], 
+                                           jmp[0][kc - 1][i][j + (1 << (kc - 1))]);
+                }
+            }
+        }
+
+        // Build the 2D tables by merging rows (increasing kr, for all kc)
+        for (int kr = 1; kr < log_n; ++kr) {
+            for (int kc = 0; kc < log_m; ++kc) {
+                for (int i = 0; i + (1 << kr) <= n; ++i) {
+                    for (int j = 0; j + (1 << kc) <= m; ++j) {
+                        jmp[kr][kc][i][j] = max(jmp[kr - 1][kc][i][j], 
+                                                jmp[kr - 1][kc][i + (1 << (kr - 1))][j]);
+                    }
+                }
+            }
+        }
+    }
+
+    // Queries the maximum in the subgrid from (r1, c1) to (r2, c2) inclusive
+    T query(int r1, int c1, int r2, int c2) {
+        assert(r1 <= r2 && c1 <= c2);
+        int kr = 31 - __builtin_clz(r2 - r1 + 1);
+        int kc = 31 - __builtin_clz(c2 - c1 + 1);
+
+        // Get the 4 overlapping sub-rectangles
+        T top_left = jmp[kr][kc][r1][c1];
+        T top_right = jmp[kr][kc][r1][c2 - (1 << kc) + 1];
+        T bottom_left = jmp[kr][kc][r2 - (1 << kr) + 1][c1];
+        T bottom_right = jmp[kr][kc][r2 - (1 << kr) + 1][c2 - (1 << kc) + 1];
+
+        return max({top_left, top_right, bottom_left, bottom_right});
+    }
+};
+\end{lstlisting}
+
+\subsubsection{SquareSparseTable}
+\begin{lstlisting}
+#define sz(aa) (int)aa.size()
+
+template <class T>
+struct squareSparseTable {
+    int n, m;
+    // jmp[k][i][j] stores the max of a 2^k by 2^k square starting at (i, j)
+    vector<vector<vector<T>>> jmp;
+
+    void build(const vector<vector<T>>& V) {
+        n = sz(V);
+        if (n == 0) return;
+        m = sz(V[0]);
+        if (m == 0) return;
+
+        // The maximum possible square side length is min(n, m)
+        int max_len = min(n, m);
+        int log_max = 32 - __builtin_clz(max_len);
+
+        // Only 3 dimensions: log(min(N,M)) x N x M
+        jmp.assign(log_max, vector<vector<T>>(n, vector<T>(m)));
+
+        // Base case: 1x1 squares (k = 0)
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < m; ++j) {
+                jmp[0][i][j] = V[i][j];
+            }
+        }
+
+        // Build larger squares by combining 4 smaller squares
+        for (int k = 1; k < log_max; ++k) {
+            int pw = 1 << (k - 1); // Length of the smaller squares (2^(k-1))
+            for (int i = 0; i + (pw * 2) <= n; ++i) {
+                for (int j = 0; j + (pw * 2) <= m; ++j) {
+                    jmp[k][i][j] = max({
+                        jmp[k - 1][i][j],               // Top-Left
+                        jmp[k - 1][i][j + pw],          // Top-Right
+                        jmp[k - 1][i + pw][j],          // Bottom-Left
+                        jmp[k - 1][i + pw][j + pw]      // Bottom-Right
+                    });
+                }
+            }
+        }
+    }
+
+    // Queries the maximum in a square from (r1, c1) to (r2, c2)
+    T query(int r1, int c1, int r2, int c2) {
+        assert(r1 <= r2 && c1 <= c2);
+        assert((r2 - r1) == (c2 - c1)); // Ensure it is actually a square
+
+        int len = r2 - r1 + 1;
+        int k = 31 - __builtin_clz(len);
+        int pw = 1 << k;
+
+        // Overlap four 2^k x 2^k squares to cover the arbitrary S x S square
+        return max({
+            jmp[k][r1][c1],
+            jmp[k][r1][c2 - pw + 1],
+            jmp[k][r2 - pw + 1][c1],
+            jmp[k][r2 - pw + 1][c2 - pw + 1]
+        });
+    }
+};
+\end{lstlisting}
+
+\subsection{Trie}
+
+\subsubsection{StringTrie}
+\begin{lstlisting}
+struct Trie {
+    vector<vector<int>> trie;
+    vector<int> cnt;
+    //    vector<int>leaves;
+    int m, sz;
+
+    int addNode() {
+        trie.emplace_back(m, -1);
+        cnt.emplace_back();
+        // leaves.emplace_back();
+        sz++;
+        return sz - 1;
+    }
+
+    Trie(int m = 26) : m(m), sz(0) {
+        addNode();
+    };
+
+    // insert or remove
+    void insert(string &s, int type = 1) {
+        int cur = 0;
+        for (auto c: s) {
+            if (trie[cur][c - 'a'] == -1)
+                trie[cur][c - 'a'] = addNode();
+            cur = trie[cur][c - 'a'];
+            cnt[cur] += type;
+        }
+        // leaves[cur] += type;
+    }
+
+
+    int query(string &s) {
+        int cur = 0;
+        for (auto c: s) {
+            if (trie[cur][c - 'a'] == -1)
+                return 0;
+            cur = trie[cur][c - 'a'];
+        }
+        return cnt[cur];
+    }
+};
+\end{lstlisting}
+
+\subsubsection{BinaryTrie}
+\begin{lstlisting}
+struct Trie{
+    vector<vector<int>>trie;
+    vector<int>cnt;
+//    vector<int>leaves;
+    int mxBit,sz;
+
+    int addNode(){
+        trie.emplace_back(2,-1);
+        cnt.emplace_back();
+//        leaves.emplace_back();
+        sz++;
+        return sz - 1;
+    }
+
+    Trie(int mx = 60): mxBit(mx),sz(0){
+        addNode();
+    };
+
+    // insert or remove
+    void insert(ll x,int type = 1){
+        int cur = 0;
+        cnt[cur] += type;
+        for (int i = mxBit; i >= 0; --i) {
+            int t = (x >> i)&1;
+            if(trie[cur][t] == -1)
+                trie[cur][t] = addNode();
+            cur = trie[cur][t];
+            cnt[cur] += type;
+        }
+//        leaves[cur] += type;
+    }
+
+    ll maxXor(ll x){
+        // no elements in trie
+        int cur = 0;
+        if(!cnt[cur])return -1e9;
+        for (int i = mxBit; i >= 0; --i) {
+            int t = (x >> i)&1^1;
+            if(trie[cur][t] == -1 || !cnt[trie[cur][t]])t ^= 1;
+            cur = trie[cur][t];
+            if(t)x ^= 1ll << i;
+        }
+        return x;
+    }
+};
+\end{lstlisting}
+
+\subsection{Disjoint Set Union (DSU)}
+
+\subsubsection{DSU}
+\begin{lstlisting}
+struct DSU {
+    vector<int> par, sz;
+    
+    DSU(int n) : par(n), sz(n, 1) { iota(par.begin(), par.end(), 0); }
+
+    int find(int x) {
+        if(x == par[x])return x;
+        return par[x] = find(par[x]);
+    }
+
+    bool same(int x, int y) { return find(x) == find(y); }
+
+    bool join(int x, int y) {
+        x = find(x);
+        y = find(y);
+        if (x == y) return false;
+        if (sz[x] < sz[y])
+            swap(x, y);
+        sz[x] += sz[y];
+        par[y] = x;
+        return true;
+    }
+
+    int size(int x) { return sz[find(x)]; }
+};
+\end{lstlisting}
+
+\subsubsection{DSURollback}
+\begin{lstlisting}
+struct DSURollback {
+    vector<int> par, sz;
+    vector<pair<int, int>> history; // Stores {child_node, old_size_of_parent}
+
+    DSURollback(int n) : par(n), sz(n, 1) { 
+        iota(par.begin(), par.end(), 0); 
+    }
+
+    // Path compression is removed to preserve tree structure for rollbacks
+    int find(int x) {
+        if(x == par[x]) return x;
+        return find(par[x]);
+    }
+
+    bool same(int x, int y) { return find(x) == find(y); }
+
+    bool join(int x, int y) {
+        x = find(x);
+        y = find(y);
+        
+        if (x == y) {
+            // Push dummy state to keep the rollback count 1:1 with join calls
+            history.push_back({-1, -1}); 
+            return false;
+        }
+        
+        if (sz[x] < sz[y]) swap(x, y);
+        
+        // Record the node that becomes the child and the parent's current size
+        history.push_back({y, sz[x]}); 
+        
+        sz[x] += sz[y];
+        par[y] = x;
+        return true;
+    }
+
+    int size(int x) { return sz[find(x)]; }
+
+    // Undoes the last join operation
+    void rollback() {
+        if (history.empty()) return;
+        
+        auto [y, old_sz_x] = history.back();
+        history.pop_back();
+        
+        if (y != -1) {
+            int x = par[y];
+            sz[x] = old_sz_x;
+            par[y] = y; // Restore the child to be its own parent
+        }
+    }
+
+    // Returns the current number of operations performed
+    int get_state() {
+        return history.size();
+    }
+
+    // Rolls back to a specific saved state
+    void rollback_to(int state) {
+        while (history.size() > state) {
+            rollback();
+        }
+    }
+};
+\end{lstlisting}
+
+\subsection{Square Root Decomposition}
+
+\subsubsection{MoAlgorithm}
+\begin{lstlisting}
+class MoArray {
+private:
+    struct Query {
+        int l, r, idx;
+        int bnd; 
+
+        bool operator<(const Query& other) const {
+            if (bnd != other.bnd)
+                return bnd < other.bnd;
+            return (bnd & 1) ? (r < other.r) : (r > other.r);
+        }
+    };
+
+    int n;
+    int block_size;
+    vector<int> a;
+
+    // --- PROBLEM SPECIFIC STATE ---
+    long long ans;
+    vector<int> freq;
+
+    inline void add(int idx) {
+        if (freq[a[idx]] == 0) ans++;
+        freq[a[idx]]++;
+    }
+
+    inline void remove(int idx) {
+        freq[a[idx]]--;
+        if (freq[a[idx]] == 0) ans--;
+    }
+
+    inline long long get_answer() const {
+        return ans;
+    }
+    // ------------------------------
+
+public:
+    MoArray(const vector<int>& arr) : n(arr.size()), a(arr) {
+        int max_val = 0;
+        for (int x : a) {
+            max_val = max(max_val, x);
+        }
+        freq.assign(max_val + 1, 0);
+        ans = 0;
+    }
+
+    vector<long long> solve(const vector<pair<int, int>>& raw_queries) {
+        int q = raw_queries.size();
+        if (q == 0) return {};
+
+        block_size = max(1, (int)(n / sqrt(q)));
+        vector<Query> queries(q);
+        
+        for (int i = 0; i < q; ++i) {
+            queries[i].l = raw_queries[i].first;
+            queries[i].r = raw_queries[i].second;
+            queries[i].idx = i;
+            queries[i].bnd = queries[i].l / block_size;
+        }
+
+        sort(queries.begin(), queries.end());
+
+        vector<long long> answers(q);
+        int cur_l = 0, cur_r = -1;
+
+        for (const Query& qry : queries) {
+            while (cur_l > qry.l) add(--cur_l);
+            while (cur_r < qry.r) add(++cur_r);
+            while (cur_l < qry.l) remove(cur_l++);
+            while (cur_r > qry.r) remove(cur_r--);
+            answers[qry.idx] = get_answer();
+        }
+
+        return answers;
+    }
+};
+\end{lstlisting}
+
+\subsubsection{MoOnSubtrees}
+\begin{lstlisting}
+class MoSubtree {
+private:
+    struct Query {
+        int l, r, idx;
+        int bnd;
+
+        bool operator<(const Query& other) const {
+            if (bnd != other.bnd) return bnd < other.bnd;
+            return (bnd & 1) ? (r < other.r) : (r > other.r);
+        }
+    };
+
+    int n;
+    int block_size;
+    vector<vector<int>> adj;
+    vector<int> in, out, flat, clr;
+
+    // --- PROBLEM SPECIFIC STATE ---
+    int mx_freq;
+    vector<int> freq;
+    vector<long long> sum_freq;
+
+    inline void add(int node_idx) {
+        int c = clr[node_idx];
+        sum_freq[freq[c]] -= c;
+        freq[c]++;
+        sum_freq[freq[c]] += c;
+        if (freq[c] > mx_freq) mx_freq = freq[c];
+    }
+
+    inline void remove(int node_idx) {
+        int c = clr[node_idx];
+        sum_freq[freq[c]] -= c;
+        freq[c]--;
+        sum_freq[freq[c]] += c;
+        while (mx_freq > 0 && sum_freq[mx_freq] == 0) mx_freq--;
+    }
+
+    inline long long get_answer() const {
+        return sum_freq[mx_freq];
+    }
+    // ------------------------------
+
+    void dfs(int u, int p) {
+        in[u] = flat.size();
+        flat.push_back(u);
+        for (int v : adj[u]) {
+            if (v == p) continue;
+            dfs(v, u);
+        }
+        out[u] = flat.size() - 1;
+    }
+
+public:
+    MoSubtree(int n, int max_val, const vector<int>& colors) 
+        : n(n), adj(n + 1), in(n + 1), out(n + 1), clr(colors) {
+        mx_freq = 0;
+        freq.assign(max_val + 1, 0);
+        sum_freq.assign(n + 1, 0);
+    }
+
+    void add_edge(int u, int v) {
+        adj[u].push_back(v);
+        adj[v].push_back(u);
+    }
+
+    vector<long long> solve(int root, const vector<int>& query_nodes) {
+        flat.reserve(n);
+        dfs(root, 0); 
+
+        int q = query_nodes.size();
+        if (q == 0) return {};
+
+        block_size = max(1, (int)(n / sqrt(q)));
+        vector<Query> queries(q);
+        
+        for (int i = 0; i < q; ++i) {
+            int u = query_nodes[i];
+            queries[i].l = in[u];
+            queries[i].r = out[u];
+            queries[i].idx = i;
+            queries[i].bnd = queries[i].l / block_size;
+        }
+
+        sort(queries.begin(), queries.end());
+
+        vector<long long> answers(q);
+        int cur_l = 0, cur_r = -1;
+
+        for (const Query& qry : queries) {
+            while (cur_l > qry.l) add(flat[--cur_l]);
+            while (cur_r < qry.r) add(flat[++cur_r]);
+            while (cur_l < qry.l) remove(flat[cur_l++]);
+            while (cur_r > qry.r) remove(flat[cur_r--]);
+            answers[qry.idx] = get_answer();
+        }
+
+        return answers;
+    }
+};
+\end{lstlisting}
+
+\subsubsection{MoOnPaths}
+\begin{lstlisting}
+class MoTreePath {
+private:
+    int n, LOG, block_size;
+    vector<vector<int>> adj, anc;
+    vector<int> depth, in, out, flat;
+    vector<long long> up, a;
+    vector<bool> exist;
+
+    // --- PROBLEM SPECIFIC STATE ---
+    long long ans;
+    vector<deque<int>> dep; // Tracks nodes by depth
+
+    void add(int idx) {
+        if (!dep[depth[idx]].empty()) {
+            ans += 1ll * a[dep[depth[idx]].back()] * a[idx];
+        }
+        dep[depth[idx]].push_back(idx);
+    }
+
+    void remove(int idx) {
+        if (dep[depth[idx]].size() == 2) {
+            ans -= a[*dep[depth[idx]].begin()] * a[*next(dep[depth[idx]].begin())];
+        }
+        if (dep[depth[idx]].front() == idx) {
+            dep[depth[idx]].pop_front();
+        } else {
+            dep[depth[idx]].pop_back();
+        }
+    }
+
+    void update(int idx) {
+        int node = flat[idx];
+        if (exist[node]) {
+            remove(node);
+        } else {
+            add(node);
+        }
+        exist[node] = !exist[node];
+    }
+
+    inline long long get_answer() const {
+        return ans;
+    }
+    // ------------------------------
+
+    void dfs(int u, int p = -1) {
+        if (p != -1) {
+            anc[u][0] = p;
+            up[u] = a[u] * a[u] + up[p];
+        } else {
+            depth[u] = 0;
+            up[u] = a[u] * a[u];
+        }
+        in[u] = flat.size();
+        flat.push_back(u);
+        
+        for (int v : adj[u]) {
+            if (v == p) continue;
+            depth[v] = depth[u] + 1;
+            dfs(v, u);
+        }
+        
+        out[u] = flat.size();
+        flat.push_back(u); // Push again for Eulerian tour
+    }
+
+    void build_lca() {
+        for (int k = 1; k < LOG; k++) {
+            for (int i = 1; i <= n; i++) {
+                anc[i][k] = anc[anc[i][k - 1]][k - 1];
+            }
+        }
+    }
+
+    int lift(int x, int k) {
+        for (int bit = 0; bit < LOG; bit++) {
+            if ((1 << bit) & k) x = anc[x][bit];
+        }
+        return x;
+    }
+
+    int lca(int u, int v) {
+        if (depth[u] < depth[v]) swap(u, v);
+        u = lift(u, depth[u] - depth[v]);
+        if (u == v) return u;
+        for (int bit = LOG - 1; bit >= 0; bit--) {
+            if (anc[u][bit] != anc[v][bit]) {
+                u = anc[u][bit];
+                v = anc[v][bit];
+            }
+        }
+        return anc[u][0];
+    }
+
+public:
+    struct Query {
+        int l, r, idx, x = -1;
+        int bnd;
+
+        bool operator<(const Query& other) const {
+            if (bnd != other.bnd) return bnd < other.bnd;
+            return (bnd & 1) ? (r < other.r) : (r > other.r);
+        }
+    };
+
+    MoTreePath(int n_nodes, const vector<long long>& node_values) 
+        : n(n_nodes), a(node_values), LOG(log2(n_nodes) + 2) {
+        
+        adj.assign(n + 1, vector<int>());
+        anc.assign(n + 1, vector<int>(LOG, 0));
+        depth.assign(n + 1, 0);
+        in.assign(n + 1, 0);
+        out.assign(n + 1, 0);
+        up.assign(n + 1, 0);
+        exist.assign(n + 1, false);
+        dep.assign(n + 1, deque<int>());
+        ans = 0;
+    }
+
+    void add_edge(int u, int v) {
+        adj[u].push_back(v);
+        adj[v].push_back(u);
+    }
+
+    vector<long long> solve(int root, vector<Query>& queries) {
+        flat.clear();
+        dfs(root);
+        build_lca();
+
+        int q = queries.size();
+        if (q == 0) return {};
+        
+        block_size = max(1, (int)(flat.size() / sqrt(q)));
+        
+        for (auto& qry : queries) {
+            qry.bnd = qry.l / block_size;
+        }
+
+        sort(queries.begin(), queries.end());
+
+        vector<long long> answers(q);
+        int cur_l = 0, cur_r = -1;
+
+        for (const Query& qry : queries) {
+            while (cur_l < qry.l) update(cur_l++);
+            while (cur_r > qry.r) update(cur_r--);
+            while (cur_l > qry.l) update(--cur_l);
+            while (cur_r < qry.r) update(++cur_r);
+
+            answers[qry.idx] = get_answer() + (qry.x != -1 ? up[qry.x] : 0);
+        }
+        return answers;
+    }
+};
+\end{lstlisting}
+
+\subsection{Balanced Binary Search Tree (BBST)}
+
+\subsubsection{Treap}
+\begin{lstlisting}
+mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
+
+template <typename T>
+struct Treap {
+    struct Node {
+        T key, val, sum;
+        T lazy = 0; // 1. Added lazy tag
+        int sz = 1;
+        uint64_t p = rng();
+        Node *l = nullptr, *r = nullptr;
+
+        Node(T k, T v = T()) : key(k), val(v), sum(v) {}
+    }* root = nullptr;
+
+    ~Treap() { destroy(root); }
+
+    void destroy(Node* t) {
+        if (!t) return;
+        destroy(t->l);
+        destroy(t->r);
+        delete t;
+    }
+
+    int sz(Node* t) { return t ? t->sz : 0; }
+    T sub_val(Node* t) { return t ? t->sum : 0; }
+
+    // 2. The Push Function: Propagates pending updates to children
+    void push(Node* t) {
+        if (!t || t->lazy == 0) return;
+
+        if (t->l) {
+            t->l->key += t->lazy; // Shift the key (critical for the DP solution)
+            t->l->val += t->lazy; // Shift the value
+            t->l->sum += t->lazy * sz(t->l); // Update subtree sum
+            t->l->lazy += t->lazy; // Pass the tag down
+        }
+        if (t->r) {
+            t->r->key += t->lazy;
+            t->r->val += t->lazy;
+            t->r->sum += t->lazy * sz(t->r);
+            t->r->lazy += t->lazy;
+        }
+        t->lazy = 0; // Clear the tag on the current node
+    }
+
+    Node* update(Node* t) {
+        if (t) {
+            t->sz = 1 + sz(t->l) + sz(t->r);
+            t->sum = t->val + sub_val(t->l) + sub_val(t->r);
+        }
+        return t;
+    }
+
+    Node* merge(Node* l, Node* r) {
+        push(l); // 3. Push before making routing decisions
+        push(r);
+        if (!l || !r) return l ? l : r;
+        if (l->p > r->p) {
+            l->r = merge(l->r, r);
+            return update(l);
+        }
+        r->l = merge(l, r->l);
+        return update(r);
+    }
+
+    pair<Node*, Node*> split(Node* t, T k) {
+        if (!t) return {nullptr, nullptr};
+        push(t); // 3. Push before evaluating keys for splits
+        if (t->key <= k) {
+            auto [l, r] = split(t->r, k);
+            t->r = l;
+            return {update(t), r};
+        }
+        auto [l, r] = split(t->l, k);
+        t->l = r;
+        return {l, update(t)};
+    }
+
+    // --- Core Operations ---
+
+    // Range Update Method
+    void add_range(T l_val, T r_val, T add_val) {
+        if (l_val > r_val) return;
+
+        auto [left_mid, right] = split(root, r_val);
+        auto [left, mid] = split(left_mid, l_val - 1);
+
+        // Apply the lazy tag to the entire isolated segment
+        if (mid) {
+            mid->key += add_val;
+            mid->val += add_val;
+            mid->sum += add_val * sz(mid);
+            mid->lazy += add_val;
+        }
+
+        root = merge(merge(left, mid), right);
+    }
+
+    bool search(T x) {
+        Node* curr = root;
+        while (curr) {
+            push(curr); // Push during traversal
+            if (curr->key == x) return true;
+            curr = (x < curr->key) ? curr->l : curr->r;
+        }
+        return false;
+    }
+
+    void insert(T x, T val = T()) {
+        auto [l, r] = split(root, x);
+        auto [l2, r2] = split(l, x - 1);
+        if (!r2) {
+            r2 = new Node(x, val);
+        } else {
+            push(r2); // Push before modifying
+            r2->val += val;
+            update(r2);
+        }
+        root = merge(merge(l2, r2), r);
+    }
+
+    void erase(T x) {
+        auto [l, r] = split(root, x);
+        auto [l2, r2] = split(l, x - 1);
+        destroy(r2);
+        root = merge(l2, r);
+    }
+
+    // --- Utility Operations ---
+
+    Node* find_by_order(Node* t, int k) {
+        if (!t) return nullptr;
+        push(t); // Push before accessing children sizes
+        int left_sz = sz(t->l);
+        if (k < left_sz) return find_by_order(t->l, k);
+        if (k == left_sz) return t;
+        return find_by_order(t->r, k - left_sz - 1);
+    }
+    Node* find_by_order(int k) { return find_by_order(root, k); }
+
+    int order_of_key(Node* t, T k) {
+        if (!t) return 0;
+        push(t); // Push before comparing keys
+        if (t->key >= k) return order_of_key(t->l, k);
+        return sz(t->l) + 1 + order_of_key(t->r, k);
+    }
+    int order_of_key(T k) { return order_of_key(root, k); }
+
+    void print(Node* t) {
+        if (!t) return;
+        push(t); // Push before printing to get true values
+        print(t->l);
+        cout << t->key << " ";
+        print(t->r);
+    }
+    void print() {
+        print(root);
+        cout << '\n';
+    }
+};
+\end{lstlisting}
+
+\subsubsection{ImplicitTreap}
+\begin{lstlisting}
+mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
+
+template <typename T>
+struct ImplicitTreap {
+    struct Node {
+        T val, sum;
+        T lazy = 0;       // Lazy tag for range additions
+        bool rev = false; // Lazy tag for range reversals
+        int sz = 1;
+        uint64_t p = rng();
+        Node *l = nullptr, *r = nullptr;
+
+        Node(T v = T()) : val(v), sum(v) {}
+    }* root = nullptr;
+
+    // Default Constructor
+    ImplicitTreap() = default;
+
+    // Vector Constructor - Builds treap in O(N) time
+    ImplicitTreap(const vector<T>& a) {
+        build(a);
+    }
+
+    ~ImplicitTreap() { destroy(root); }
+
+    void destroy(Node* t) {
+        if (!t) return;
+        destroy(t->l);
+        destroy(t->r);
+        delete t;
+    }
+
+    int sz(Node* t) { return t ? t->sz : 0; }
+    T sub_val(Node* t) { return t ? t->sum : 0; }
+
+    // Propagates pending lazy updates to children
+    void push(Node* t) {
+        if (!t) return;
+        
+        // 1. Process pending reversal
+        if (t->rev) {
+            swap(t->l, t->r);
+            if (t->l) t->l->rev ^= true;
+            if (t->r) t->r->rev ^= true;
+            t->rev = false;
+        }
+
+        // 2. Process pending value addition
+        if (t->lazy != 0) {
+            if (t->l) {
+                t->l->val += t->lazy;
+                t->l->sum += t->lazy * sz(t->l);
+                t->l->lazy += t->lazy;
+            }
+            if (t->r) {
+                t->r->val += t->lazy;
+                t->r->sum += t->lazy * sz(t->r);
+                t->r->lazy += t->lazy;
+            }
+            t->lazy = 0; // Clear the tag
+        }
+    }
+
+    Node* update(Node* t) {
+        if (t) {
+            t->sz = 1 + sz(t->l) + sz(t->r);
+            t->sum = t->val + sub_val(t->l) + sub_val(t->r);
+        }
+        return t;
+    }
+
+    // --- O(N) Linear Time Build ---
+    void build(const vector<T>& a) {
+        destroy(root);
+        root = nullptr;
+        if (a.empty()) return;
+
+        vector<Node*> st;
+        for (const T& val : a) {
+            Node* curr = new Node(val);
+            Node* last = nullptr;
+
+            // Maintain max-heap property on random priority 'p'
+            while (!st.empty() && st.back()->p < curr->p) {
+                last = st.back();
+                st.pop_back();
+            }
+
+            curr->l = last;
+            if (!st.empty()) {
+                st.back()->r = curr;
+            }
+            st.push_back(curr);
+        }
+
+        // Post-order pass to compute subtree sizes and sums in O(N)
+        auto recompute = [&](auto& self, Node* t) -> void {
+            if (!t) return;
+            self(self, t->l);
+            self(self, t->r);
+            update(t);
+        };
+
+        root = st.front(); // Bottom of stack is the root
+        recompute(recompute, root);
+    }
+
+    // --- Dynamic Array Operations ---
+
+    Node* merge(Node* l, Node* r) {
+        push(l);
+        push(r); 
+        if (!l || !r) return l ? l : r;
+        if (l->p > r->p) {
+            l->r = merge(l->r, r);
+            return update(l);
+        }
+        r->l = merge(l, r->l);
+        return update(r);
+    }
+
+    pair<Node*, Node*> split(Node* t, int k) {
+        if (!t) return {nullptr, nullptr};
+        push(t);
+        
+        int left_sz = sz(t->l);
+        if (left_sz < k) {
+            auto [l, r] = split(t->r, k - left_sz - 1);
+            t->r = l;
+            return {update(t), r};
+        } else {
+            auto [l, r] = split(t->l, k);
+            t->l = r;
+            return {l, update(t)};
+        }
+    }
+
+    int size() { return sz(root); }
+
+    void insert(int idx, T val) {
+        auto [l, r] = split(root, idx);
+        Node* node = new Node(val);
+        root = merge(merge(l, node), r);
+    }
+
+    void erase(int idx) {
+        if (idx < 0 || idx >= sz(root)) return;
+        auto [left_mid, right] = split(root, idx + 1);
+        auto [left, mid] = split(left_mid, idx);
+        destroy(mid);
+        root = merge(left, right);
+    }
+
+    void reverse_range(int l, int r) {
+        if (l >= r || l < 0 || r >= sz(root)) return;
+
+        auto [left_mid, right] = split(root, r + 1);
+        auto [left, mid] = split(left_mid, l);
+
+        if (mid) mid->rev ^= true;
+
+        root = merge(merge(left, mid), right);
+    }
+
+    void add_range(int l, int r, T add_val) {
+        if (l > r || l < 0 || r >= sz(root)) return;
+        
+        auto [left_mid, right] = split(root, r + 1);
+        auto [left, mid] = split(left_mid, l);
+        
+        if (mid) {
+            mid->val += add_val;
+            mid->sum += add_val * sz(mid);
+            mid->lazy += add_val;
+        }
+        
+        root = merge(merge(left, mid), right);
+    }
+
+    T query_range(int l, int r) {
+        if (l > r || l < 0 || r >= sz(root)) return T();
+
+        auto [left_mid, right] = split(root, r + 1);
+        auto [left, mid] = split(left_mid, l);
+
+        T ans = sub_val(mid);
+
+        root = merge(merge(left, mid), right);
+        return ans;
+    }
+
+    T get(int idx) {
+        return query_range(idx, idx);
+    }
+
+    void print(Node* t) {
+        if (!t) return;
+        push(t);
+        print(t->l);
+        cout << t->val << " ";
+        print(t->r);
+    }
+
+    void print() {
+        print(root);
+        cout << '\n';
+    }
+};
+\end{lstlisting}
+
+\subsection{Policy Based Data Structures}
+
+\subsubsection{OrderedSet}
+\begin{lstlisting}
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+
+using namespace __gnu_pbds;
+template<class t> using ordered_set = tree<t, null_type, less<t>, rb_tree_tag, tree_order_statistics_node_update>;
+\end{lstlisting}
+
+\subsection{Monotonic Data Structures}
+
+\subsubsection{TwoStackQueue}
+\begin{lstlisting}
+struct TwoStackQ {
+    struct Node {
+        ll mx = -llinf, mn = llinf, val;
+
+        Node(): val(0) {
+        }
+
+        Node(ll x): mx(x), mn(x), val(x) {
+        }
+    };
+
+    stack<Node> a, b;
+
+    int size() { return a.size() + b.size(); }
+
+    void mrg(Node& a, Node& b) {
+        a.mn = min(a.mn, b.mn);
+        a.mx = max(a.mx, b.mx);
+    }
+
+    void push(ll val) {
+        auto nd = Node(val);
+        if (!a.empty()) mrg(nd, a.top());
+        a.push(nd);
+    }
+
+    void move() {
+        while (!a.empty()) {
+            auto nd = Node(a.top().val);
+            if (!b.empty()) mrg(nd, b.top());
+            b.push(nd), a.pop();
+        }
+    }
+
+    Node get() {
+        Node res;
+        if (!b.empty()) mrg(res, b.top());
+        if (!a.empty()) mrg(res, a.top());
+        return res;
+    }
+
+    void pop() {
+        if (b.empty()) move();
+        if (!b.empty()) b.pop();
+    }
+};
+\end{lstlisting}
+
+\section{Graph Theory}
+
+\subsection{Graph Traversal}
+
+\subsubsection{TopoSort}
+\begin{lstlisting}
+struct TopoSort {
+    int n;
+    vector<vector<int>> adj;
+    vector<int> in_degree, order;
+
+    TopoSort(int n) : n(n), adj(n + 1), in_degree(n + 1, 0) {}
+
+    void add_edge(int u, int v) {
+        adj[u].push_back(v);
+        in_degree[v]++;
+    }
+
+    bool solve() {
+        queue<int> q;
+        for (int i = 1; i <= n; ++i) {
+            if (in_degree[i] == 0) q.push(i);
+        }
+
+        while (!q.empty()) {
+            int u = q.front();
+            q.pop();
+            order.push_back(u);
+
+            for (int v : adj[u]) {
+                if (--in_degree[v] == 0) {
+                    q.push(v);
+                }
+            }
+        }
+        return order.size() == n; // Returns false if there is a cycle
+    }
+};
+\end{lstlisting}
+
+\subsection{Shortest Paths}
+
+\subsubsection{Dijkstra}
+\begin{lstlisting}
+template<typename T>
+struct Dijkstra {
+    const T INF = numeric_limits<T>::max();
+    int n;
+    vector<vector<pair<int, T>>> adj;
+    vector<T> dist;
+    vector<int> parent;
+
+    Dijkstra(int n) : n(n), adj(n + 1), dist(n + 1, INF), parent(n + 1, -1) {}
+
+    void add_edge(int u, int v, T w, bool directed = false) {
+        adj[u].push_back({v, w});
+        if (!directed) adj[v].push_back({u, w});
+    }
+
+    void solve(int source) {
+        fill(dist.begin(), dist.end(), INF);
+        fill(parent.begin(), parent.end(), -1);
+        priority_queue<pair<T, int>, vector<pair<T, int>>, greater<pair<T, int>>> pq;
+        
+        dist[source] = 0;
+        pq.push({0, source});
+
+        while (!pq.empty()) {
+            auto [d, u] = pq.top();
+            pq.pop();
+
+            if (d > dist[u]) continue;
+
+            for (auto& [v, w] : adj[u]) {
+                if (dist[u] + w < dist[v]) {
+                    dist[v] = dist[u] + w;
+                    parent[v] = u;
+                    pq.push({dist[v], v});
+                }
+            }
+        }
+    }
+};
+\end{lstlisting}
+
+\subsubsection{FloydWarshall}
+\begin{lstlisting}
+template<typename T>
+struct FloydWarshall {
+    const T INF = numeric_limits<T>::max() / 2; // Prevent overflow on addition
+    int n;
+    vector<vector<T>> dist;
+
+    FloydWarshall(int n) : n(n), dist(n + 1, vector<T>(n + 1, INF)) {
+        for (int i = 0; i <= n; ++i) dist[i][i] = 0;
+    }
+
+    void add_edge(int u, int v, T w, bool directed = false) {
+        dist[u][v] = min(dist[u][v], w);
+        if (!directed) dist[v][u] = min(dist[v][u], w);
+    }
+
+    void solve() {
+        for (int k = 1; k <= n; ++k) {
+            for (int i = 1; i <= n; ++i) {
+                for (int j = 1; j <= n; ++j) {
+                    if (dist[i][k] < INF && dist[k][j] < INF) {
+                        dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j]);
+                    }
+                }
+            }
+        }
+    }
+};
+\end{lstlisting}
+
+\subsection{Graph Connectivity}
+
+\subsubsection{BridgesAndCutEdges}
+\begin{lstlisting}
+int n;
+vector<int> adj[N];
+
+bool vis[N];
+int in[N], low[N];
+int timer;
+
+set<pair<int, int>> bridges;
+
+void dfs(int u, int p = 0) {
+    vis[u] = true;
+    in[u] = low[u] = timer++;
+    for (int v: adj[u]) {
+        if (v == p) continue;
+        if (vis[v]) {
+            low[u] = min(low[u], in[v]);
+        } else {
+            dfs(v, u);
+            low[u] = min(low[u], low[v]);
+            if (low[v] > in[u]) {
+                /// (u, v) is a Bridge
+                bridges.insert({u, v});
+                bridges.insert({v, u});
+            }
+        }
+    }
+}
+
+void find_bridges() {
+    timer = 0;
+    fill(vis, vis + n + 1, false);
+    for (int i = 1; i <= n; ++i) {
+        if (!vis[i])
+            dfs(i);
+    }
+}
+\end{lstlisting}
+
+\subsubsection{ArticulationPoints}
+\begin{lstlisting}
+int n;
+vector<int> adj[N];
+
+bool vis[N];
+int in[N], low[N];
+int timer;
+
+bool cutPoint[N];
+
+void dfs(int u, int p = -1) {
+    vis[u] = true;
+    in[u] = low[u] = timer++;
+    int children = 0;
+    for (int v: adj[u]) {
+        if (v == p) continue;
+        if (vis[v]) {
+            low[u] = min(low[u], in[v]);
+        } else {
+            dfs(v, u);
+            low[u] = min(low[u], low[v]);
+            if (low[v] >= in[u] && p != -1) {
+                /// u is a Cut Point
+                cutPoint[u] = true;
+            }
+            children++;
+        }
+    }
+    if (p == -1 && children > 1) {
+        /// u is a Cut Point
+        cutPoint[u] = true;
+    }
+}
+
+bool connected = true;
+
+void find_cut_points() {
+    timer = 0;
+    fill(vis, vis + n + 1, false);
+    for (int i = 1; i <= n; ++i) {
+        if (!vis[i]) {
+            if (i != 1)
+                connected = false;
+            dfs(i);
+        }
+    }
+}
+\end{lstlisting}
+
+\subsubsection{SCC\_Tarjan}
+\begin{lstlisting}
+// assuming nodes are zero based
+struct SCC {
+    vector<vector<int>> adj, adjRev, comps;
+    vector<pair<int, int>> edges;
+    vector<int> revOut, compOf;
+    vector<bool> vis;
+    int N;
+
+    void init(int n) {
+        N = n;
+        adj.resize(n);
+        adjRev.resize(n);
+        vis.resize(n);
+        compOf.resize(n);
+    }
+
+    void addEdge(int u, int v) {
+        edges.pb(make_pair(u, v));
+        adj[u].pb(v);
+        adjRev[v].pb(u);
+    }
+
+    void dfs1(int u) {
+        vis[u] = true;
+        for (auto v: adj[u])
+            if (!vis[v])
+                dfs1(v);
+        revOut.pb(u);
+    }
+
+    void dfs2(int u) {
+        vis[u] = true;
+        comps.back().pb(u);
+        compOf[u] = comps.size() - 1;
+        for (auto v: adjRev[u])
+            if (!vis[v])dfs2(v);
+    }
+
+    void gen() {
+        fill(all(vis), false);
+        for (int i = 0; i < N; ++i) {
+            if (!vis[i])
+                dfs1(i);
+        }
+        reverse(all(revOut));
+        fill(all(vis), false);
+        for (auto node: revOut) {
+            if (vis[node])continue;
+            comps.pb({});
+            dfs2(node);
+        }
+    }
+
+    vector<vector<int>> generateCondensedGraph() {
+        vector<vector<int>> adjCon(comps.size());
+        for (auto edge: edges)
+            if (compOf[edge.st] != compOf[edge.nd])
+                adjCon[compOf[edge.st]].pb(compOf[edge.nd]);
+        return adjCon;
+    }
+};
+\end{lstlisting}
+
+\subsection{Satisfiability}
+
+\subsubsection{2SAT}
+\begin{lstlisting}
+struct TwoSat {
+    int N;
+    vector<pair<int, int>> edges;
+
+    TwoSat(int _N = 0) {
+        init(_N);
+    }
+
+    void init(int _N = 0) {
+        N = _N;
+    }
+
+    int addVar() { return N++; }
+
+    // x or y, edges will be refined in the end
+    void either(int x, int y) {
+        x = max(2 * x, -1 - 2 * x);
+        y = max(2 * y, -1 - 2 * y);
+        edges.pb({x, y});
+    }
+
+    void implies(int x, int y) {
+        either(~x, y);
+    }
+
+    void must(int x) {
+        either(x, x);
+    }
+
+    void XOR(int x, int y) {
+        either(x, y);
+        either(~x, ~y);
+    }
+
+    vector<bool> solve(int _N = -1) {
+        if (_N != -1) N = _N;
+        SCC scc;
+        scc.init(2 * N);
+        for (auto e: edges) {
+            scc.addEdge(e.st ^ 1, e.nd);
+            scc.addEdge(e.nd ^ 1, e.st);
+        }
+        scc.gen();
+        for (int i = 0; i < 2 * N; ++i) {
+            if (scc.compOf[i] == scc.compOf[i ^ 1])return {};
+        }
+        vector<vector<int>> comps = scc.comps;
+        reverse(all(comps));
+        vector<int> compOf(2 * N);
+        for (int i = 0; i < comps.size(); ++i) {
+            for (auto e: comps[i])
+                compOf[e] = i;
+        }
+        vector<int> tmp(comps.size());
+        for (int i = 0; i < comps.size(); ++i) {
+            if (!tmp[i]) {
+                tmp[i] = 1;
+                for (auto e: comps[i])
+                    tmp[compOf[e ^ 1]] = -1;
+            }
+        }
+        vector<bool> ans(N);
+        for (int i = 0; i < N; ++i)
+            ans[i] = tmp[compOf[2 * i]] == 1;
+        return ans;
+    }
+
+    void atMostOne(const vector<int> &li) {
+        if (li.size() <= 1) return;
+        int last = ~li[1];
+        for (int i = 2; i < li.size(); i++) {
+            int next = addVar();
+            implies(li[i], last);
+            either(last, next);
+            implies(li[i], next);
+            last = ~next;
+        }
+        implies(li[0], last);
+    }
+};
+\end{lstlisting}
+
+\subsection{Eulerian Path}
+
+\subsubsection{EulerianPath}
+\begin{lstlisting}
+struct EulerianPath {
+    int n;
+    vector<vector<pair<int, int>>> adj; // {neighbor, edge_index}
+    vector<bool> used_edge;
+    vector<int> in_deg, out_deg;
+    vector<int> path;
+
+    EulerianPath(int n, int m) : n(n), adj(n + 1), used_edge(m, false), in_deg(n + 1, 0), out_deg(n + 1, 0) {}
+
+    void add_edge(int u, int v, int edge_idx, bool directed = true) {
+        adj[u].push_back({v, edge_idx});
+        out_deg[u]++; in_deg[v]++;
+        if (!directed) {
+            adj[v].push_back({u, edge_idx});
+            out_deg[v]++; in_deg[u]++;
+        }
+    }
+
+    bool solve(int start_node) {
+        vector<int> ptr(n + 1, 0);
+        stack<int> st;
+        st.push(start_node);
+
+        while (!st.empty()) {
+            int u = st.top();
+            if (ptr[u] < adj[u].size()) {
+                auto [v, id] = adj[u][ptr[u]++];
+                if (!used_edge[id]) {
+                    used_edge[id] = true;
+                    st.push(v);
+                }
+            } else {
+                path.push_back(u);
+                st.pop();
+            }
+        }
+        reverse(path.begin(), path.end());
+        
+        // Check if all edges were visited
+        for (bool used : used_edge) {
+            if (!used) return false; 
+        }
+        return true;
+    }
+};
+\end{lstlisting}
+
+\subsection{Flow and Min Cut}
+
+\subsubsection{DinicMaxFlow}
+\begin{lstlisting}
+struct Dinic {
+    struct Edge {
+        int to, rev;
+        ll c, oc;
+        ll flow() { return max(oc - c, 0LL); } // if you need flows
+    };
+
+    vector<int> lvl, ptr, q;
+    vector<vector<Edge> > adj;
+
+    Dinic(int n) : lvl(n), ptr(n), q(n), adj(n) {
+    }
+
+    void addEdge(int a, int b, ll c, ll rcap = 0) {
+        adj[a].push_back({b, (int) adj[b].size(), c, c});
+        adj[b].push_back({a, (int) adj[a].size() - 1, rcap, rcap});
+    }
+
+    ll dfs(int v, int t, ll f) {
+        if (v == t || !f) return f;
+        for (int &i = ptr[v]; i < (int) adj[v].size(); i++) {
+            Edge &e = adj[v][i];
+            if (lvl[e.to] == lvl[v] + 1)
+                if (ll p = dfs(e.to, t, min(f, e.c))) {
+                    e.c -= p, adj[e.to][e.rev].c += p;
+                    return p;
+                }
+        }
+        return 0;
+    }
+
+    ll calc(int s, int t) {
+        ll flow = 0;
+        q[0] = s;
+        for (int L = 0; L < 31; L++)
+            do {
+                // 'int L=30' maybe faster for random data
+                lvl = ptr = vector<int>((int) q.size());
+                int qi = 0, qe = lvl[s] = 1;
+                while (qi < qe && !lvl[t]) {
+                    int v = q[qi++];
+                    for (Edge e: adj[v])
+                        if (!lvl[e.to] && e.c >> (30 - L))
+                            q[qe++] = e.to, lvl[e.to] = lvl[v] + 1;
+                }
+                while (ll p = dfs(s, t, LLONG_MAX)) flow += p;
+            } while (lvl[t]);
+        return flow;
+    }
+
+    bool leftOfMinCut(int a) { return lvl[a] != 0; }
+};
+\end{lstlisting}
+
+\subsubsection{MinCostMaxFlow}
+\begin{lstlisting}
+struct Edge {
+    int to;
+    int cost;
+    int cap, flow, backEdge;
+};
+ 
+struct MCMF 
+{
+ 
+    const int inf = 1000000010;
+    int n;
+    vector<vector<Edge>> g;
+ 
+    MCMF(int _n) {
+        n = _n + 1;
+        g.resize(n);
+    }
+ 
+    void addEdge(int u, int v, int cap, int cost) {
+        Edge e1 = {v, cost, cap, 0, (int) g[v].size()};
+        Edge e2 = {u, -cost, 0, 0, (int) g[u].size()};
+        g[u].push_back(e1);
+        g[v].push_back(e2);
+    }
+ 
+    pair<int, int> minCostMaxFlow(int s, int t) {
+        int flow = 0;
+        int cost = 0;
+        vector<int> state(n), from(n), from_edge(n);
+        vector<int> d(n);
+        deque<int> q;
+        while (true) {
+            for (int i = 0; i < n; i++)
+                state[i] = 2, d[i] = inf, from[i] = -1;
+            state[s] = 1;
+            q.clear();
+            q.push_back(s);
+            d[s] = 0;
+            while (!q.empty()) {
+                int v = q.front();
+                q.pop_front();
+                state[v] = 0;
+                for (int i = 0; i < (int) g[v].size(); i++) {
+                    Edge e = g[v][i];
+                    if (e.flow >= e.cap || (d[e.to] <= d[v] + e.cost))
+                        continue;
+                    int to = e.to;
+                    d[to] = d[v] + e.cost;
+                    from[to] = v;
+                    from_edge[to] = i;
+                    if (state[to] == 1) continue;
+                    if (!state[to] || (!q.empty() && d[q.front()] > d[to]))
+                        q.push_front(to);
+                    else q.push_back(to);
+                    state[to] = 1;
+                }
+            }
+            if (d[t] == inf) break;
+            int it = t, addflow = inf;
+            while (it != s) {
+                addflow = min(addflow,
+                              g[from[it]][from_edge[it]].cap
+                              - g[from[it]][from_edge[it]].flow);
+                it = from[it];
+            }
+            it = t;
+            while (it != s) {
+                g[from[it]][from_edge[it]].flow += addflow;
+                g[it][g[from[it]][from_edge[it]].backEdge].flow -= addflow;
+                cost += g[from[it]][from_edge[it]].cost * addflow;
+                it = from[it];
+            }
+            flow += addflow;
+        }
+        return {cost, flow};
+    }
+};
+\end{lstlisting}
+
+\subsection{Matching}
+
+\subsubsection{HopcroftKarpMatching}
+\begin{lstlisting}
+struct HopcroftKarp {
+    vector<int> leftMatch, rightMatch, dist, cur;
+    vector<vector<int> > a;
+    int n, m;
+
+    HopcroftKarp() {}
+
+    HopcroftKarp(int n, int m) {
+        this->n = n;
+        this->m = m;
+        a = vector<vector<int> >(n);
+        leftMatch = vector<int>(m, -1);
+        rightMatch = vector<int>(n, -1);
+        dist = vector<int>(n, -1);
+        cur = vector<int>(n, -1);
+    }
+
+    void addEdge(int x, int y) {
+        a[x].push_back(y);
+    }
+
+    int bfs() {
+        int found = 0;
+        queue<int> q;
+        for (int i = 0; i < n; i++)
+            if (rightMatch[i] < 0) dist[i] = 0, q.push(i);
+            else dist[i] = -1;
+
+        while (!q.empty()) {
+            int x = q.front();
+            q.pop();
+            for (int i = 0; i < int(a[x].size()); i++) {
+                int y = a[x][i];
+                if (leftMatch[y] < 0) found = 1;
+                else if (dist[leftMatch[y]] < 0)
+                    dist[leftMatch[y]] = dist[x] + 1, q.push(leftMatch[y]);
+            }
+        }
+
+        return found;
+    }
+
+    int dfs(int x) {
+        for (; cur[x] < int(a[x].size()); cur[x]++) {
+            int y = a[x][cur[x]];
+            if (leftMatch[y] < 0 || (dist[leftMatch[y]] == dist[x] + 1 && dfs(leftMatch[y]))) {
+                leftMatch[y] = x;
+                rightMatch[x] = y;
+                return 1;
+            }
+        }
+        return 0;
+    }
+
+    int maxMatching() {
+        int match = 0;
+        while (bfs()) {
+            for (int i = 0; i < n; i++) cur[i] = 0;
+            for (int i = 0; i < n; i++)
+                if (rightMatch[i] < 0) match += dfs(i);
+        }
+        return match;
+    }
+};
+\end{lstlisting}
+
+\section{Number Theory}
+
+\subsection{Euclidean Algorithm}
+
+\subsubsection{GCD\_LCM}
+\begin{lstlisting}
+ll gcd(ll a, ll b) {
+ if (b == 0)
+    return a;
+ return gcd(b, a % b);
+//    return __gcd(a, b);
+}
+
+ll lcm(ll a, ll b) {
+    return (a / gcd(a, b)) * b;
+}
+\end{lstlisting}
+
+\subsubsection{ExtendedEuclid}
+\begin{lstlisting}
+long long extGCD(long long a, long long b, long long &x, long long &y) {
+    if (b == 0) {
+        x = 1; y = 0;
+        return a;
+    }
+    long long x1, y1;
+    long long d = extGCD(b, a % b, x1, y1);
+    x = y1;
+    y = x1 - y1 * (a / b);
+    return d;
+}
+
+long long modInverse(long long a, long long m) {
+    long long x, y;
+    long long g = extGCD(a, m, x, y);
+    if (g != 1) return -1; // Inverse doesn't exist
+    return (x % m + m) % m;
+}
+\end{lstlisting}
+
+\subsection{Primes and Divisors}
+
+\subsubsection{SieveOfEratosthenes}
+\begin{lstlisting}
+bool isPrime[N];
+
+void seive(int n = N) {
+//complexity: n*log(log(n))
+    memset(isPrime, true, sizeof isPrime);
+    isPrime[0] = false;
+    isPrime[1] = false;
+    for (int i = 2; i * i < n; i++) {
+        if (isPrime[i]) {
+            for (int j = i * i; j < n; j += i) {
+                isPrime[j] = false;
+            }
+        }
+    }
+}
+\end{lstlisting}
+
+\subsubsection{SmallestPrimeFactor}
+\begin{lstlisting}
+vector<int> spf;
+
+void seive(int n = N) {
+    //complexity: n*log(log(n))
+    spf.resize(n);
+    iota(all(spf), 0);
+    for (int i = 2; i * i < n; i++) {
+        if (spf[i] == i) {
+            for (int j = i * i; j < n; j += i) {
+                spf[j] = min(spf[j], i);
+            }
+        }
+    }
+}
+
+vector<int> getPrimeFactors(int n) {
+    //complexity: log(n)
+    vector<int> ans;
+    while (n != 1) {
+        ans.pb(spf[n]);
+        n /= spf[n];
+    }
+    return ans;
+}
+\end{lstlisting}
+
+\subsubsection{DivisorsGeneration}
+\begin{lstlisting}
+template <typename T>
+vector<T> getDivisors(T n) {
+    //complexity: sqrt(n)
+    vector<T> vec;
+    for (ll i = 1; i * i <= n; i++) {
+        if (n % i == 0) {
+            vec.push_back(i);
+            if (n / i != i)
+                vec.push_back(n / i);
+        }
+    }
+    return vec;
+}
+\end{lstlisting}
+
+\subsubsection{PrimeFactorization}
+\begin{lstlisting}
+template <typename T>
+vector<T> getPrimeFactors(T n) {
+    //complexity: sqrt(n)
+    vector<T> vec;
+    for (ll i = 2; i * i <= n; i++) {
+        while (n % i == 0) {
+            vec.push_back(i);
+            n /= i;
+        }
+    }
+    if (n != 1) vec.push_back(n);
+    return vec;
+}
+\end{lstlisting}
+
+\subsection{Modular Arithmetic}
+
+\subsubsection{CRT}
+\begin{lstlisting}
+long long extGCD(long long a, long long b, long long &x, long long &y) {
+    if (b == 0) {
+        x = 1; y = 0;
+        return a;
+    }
+    long long x1, y1;
+    long long d = extGCD(b, a % b, x1, y1);
+    x = y1;
+    y = x1 - y1 * (a / b);
+    return d;
+}
+
+// Solves x = a_i (mod m_i). Returns {x, lcm(m_1, ..., m_k)}.
+pair<long long, long long> CRT(const vector<long long>& a, const vector<long long>& m) {
+    long long res = a[0], lcm = m[0];
+    for (int i = 1; i < a.size(); i++) {
+        long long x, y;
+        long long g = extGCD(lcm, m[i], x, y);
+        if ((a[i] - res) % g != 0) return {-1, -1}; // No solution
+        
+        long long step = m[i] / g;
+        long long k = ((a[i] - res) / g) % step * (x % step) % step;
+        res += k * lcm;
+        lcm *= step;
+        res = (res % lcm + lcm) % lcm;
+    }
+    return {res, lcm};
+}
+\end{lstlisting}
+
+\section{Combinatorics}
+
+\section{Math}
+
+\subsection{Modular Arithmetic}
+
+\subsubsection{ModularArithmetic}
+\begin{lstlisting}
+int fact[N], inv[N], invFact[N]; ///used in nCr(), nPr(), calcFact()
+
+int modSum(ll a, ll b) {
+    if (a < 0)
+        a += MOD;
+    if (b < 0)
+        b += MOD;
+    a += b;
+    if (a >= MOD)
+        a -= MOD;
+    return a;
+
+    a = (a % MOD + MOD) % MOD;
+    b = (b % MOD + MOD) % MOD;
+    return (a + b) % MOD;
+}
+
+int modProd(ll a, ll b) {
+    if (a < 0)
+        a += MOD;
+    if (b < 0)
+        b += MOD;
+    a *= b;
+    if (a >= MOD)
+        a %= MOD;
+    return a;
+
+
+    a = (a % MOD + MOD) % MOD;
+    b = (b % MOD + MOD) % MOD;
+    return (a * b) % MOD;
+}
+
+int modPow(int a, ll b) {
+    int result = 1;
+    while (b) {
+        if (b & 1)
+            result = modProd(result, a);
+        a = modProd(a, a);
+        b >>= 1;
+    }
+    return result;
+}
+
+
+int modInverse(int a) {
+    return modPow(a, MOD - 2);
+}
+
+
+int modDiv(int a, int b) {
+    return modProd(a, modInverse(b));
+}
+
+int nCr(int n, int r) {
+    if (r < 0 || r > n)
+        return 0;
+    //    return modDiv(fact[n], modProd(fact[r], fact[n - r]));
+    return modProd(fact[n], modProd(invFact[r], invFact[n - r]));
+}
+
+int nPr(int n, int r) {
+    if (r < 0 || r > n)
+        return 0;
+    //    return modDiv(fact[n], fact[n - r]);
+    return modProd(fact[n], invFact[n - r]);
+}
+
+void build() {
+    fact[0] = invFact[0] = 1;
+    for (int i = 1; i < N; i++) {
+        fact[i] = modProd(fact[i - 1], i);
+        invFact[i] = modDiv(invFact[i - 1], i);
+        inv[i] = modInverse(i);
+    }
+}
+\end{lstlisting}
+
+\subsubsection{ModularIntClass}
+\begin{lstlisting}
+struct Mint {
+    int v;
+
+    Mint(long long val = 0) {
+        v = int(val % MOD);
+        if (v < 0) v += MOD;
+    }
+
+    Mint operator+(const Mint& o) const { return Mint(v + o.v); }
+    Mint operator-(const Mint& o) const { return Mint(v - o.v); }
+    Mint operator*(const Mint& o) const { return Mint(1LL * v * o.v); }
+    Mint operator/(const Mint& o) const { return *this * o.inv(); }
+
+    Mint& operator+=(const Mint& o) {
+        v += o.v;
+        if (v >= MOD) v -= MOD;
+        return *this;
+    }
+
+    Mint& operator-=(const Mint& o) {
+        v -= o.v;
+        if (v < 0) v += MOD;
+        return *this;
+    }
+
+    Mint& operator*=(const Mint& o) {
+        v = int(1LL * v * o.v % MOD);
+        return *this;
+    }
+
+    Mint& operator/=(const Mint& o) {
+        v = int(1LL * v * o.inv().v % MOD);
+        return *this;
+    }
+
+    Mint pow(long long p) const {
+        Mint a = *this, res = 1;
+        while (p > 0) {
+            if (p & 1) res *= a;
+            a *= a;
+            p >>= 1;
+        }
+        return res;
+    }
+
+    Mint inv() const { return pow(MOD - 2); }
+
+    friend ostream& operator<<(ostream& os, const Mint& m) {
+        os << m.v;
+        return os;
+    }
+};
+
+Mint fact[N], inv[N], invFact[N];
+
+Mint nCr(int n, int r) {
+    if (r < 0 || r > n)
+        return 0;
+    // return fact[n] / (fact[r] * fact[n - r]);
+    return fact[n] * invFact[r] * invFact[n - r];
+}
+
+Mint nPr(int n, int r) {
+    if (r < 0 || r > n)
+        return 0;
+    // return fact[n] / fact[n - r];
+    return fact[n] * invFact[n - r];
+}
+
+void build() {
+    fact[0] = invFact[0] = 1;
+    for (int i = 1; i < N; i++) {
+        fact[i] = fact[i - 1] * i;
+        invFact[i] = invFact[i - 1] / i;
+        inv[i] = Mint(i).inv();
+    }
+}
+\end{lstlisting}
+
+\subsection{Multiplicative Functions}
+
+\subsubsection{EulerTotientPhi}
+\begin{lstlisting}
+int phi[N];
+
+void calculatePhi() {
+    for (int i = 0; i < N; ++i) phi[i] = i & 1 ? i : i / 2;
+    for (int i = 3; i < N; i += 2)
+        if (phi[i] == i)
+            for (int j = i; j < N; j += i) phi[j] -= phi[j] / i;
+}
+\end{lstlisting}
+
+\subsection{Matrices}
+
+\subsubsection{MatrixExponentiation}
+\begin{lstlisting}
+int modSum(ll a, ll b) {
+    if (a < 0)
+        a += MOD;
+    if (b < 0)
+        b += MOD;
+    a += b;
+    if (a >= MOD)
+        a -= MOD;
+    return a;
+}
+
+int modProd(ll a, ll b) {
+    if (a < 0)
+        a += MOD;
+    if (b < 0)
+        b += MOD;
+    a *= b;
+    if (a >= MOD)
+        a %= MOD;
+    return a;
+}
+
+typedef vector<vector<int>> matrix;
+
+matrix operator*(const matrix& lhs, const matrix& rhs) {
+    int n = lhs.size();
+    int m = rhs[0].size();
+    int s1 = lhs[0].size(), s2 = rhs.size();
+    assert(s1 == s2);
+    matrix ret(n, vector<int>(m));
+    for (int i = 0; i < n; ++i)
+        for (int j = 0; j < s1; ++j)
+            for (int k = 0; k < m; ++k)
+                ret[i][k] = modSum(ret[i][k], modProd(lhs[i][j], rhs[j][k]));
+    return ret;
+}
+
+matrix Identity(int n) {
+    matrix ret(n, vector<int>(n));
+    for (int i = 0; i < n; ++i) {
+        ret[i][i] = 1;
+    }
+    return ret;
+}
+
+matrix mat_power(matrix x, ll p) {
+    matrix res = Identity(x.size());
+    while (p) {
+        if (p & 1) res = (res * x);
+        x = (x * x);
+        p >>= 1;
+    }
+    return res;
+}
+\end{lstlisting}
+
+\subsubsection{FastMatrixPower}
+\begin{lstlisting}
+const int SZ = 2, mod = 1e9 + 7;
+
+int modSum(ll a, ll b) {
+    if (a < 0)
+        a += mod;
+    if (b < 0)
+        b += mod;
+    a += b;
+    if (a >= mod)
+        a -= mod;
+    return a;
+}
+
+int modProd(ll a, ll b) {
+    if (a < 0)
+        a += mod;
+    if (b < 0)
+        b += mod;
+    a *= b;
+    if (a >= mod)
+        a %= mod;
+    return a;
+}
+
+typedef array<array<int, SZ>, SZ> matrix;
+
+matrix operator*(const matrix &lhs, const matrix &rhs) {
+    matrix ret{};
+    for (int i = 0; i < SZ; ++i)
+        for (int j = 0; j < SZ; ++j)
+            for (int k = 0; k < SZ; ++k)
+                ret[i][k] = modSum(ret[i][k], modProd(lhs[i][j], rhs[j][k]));
+    return ret;
+}
+
+matrix Identity(int n) {
+    matrix ret = {};
+    for (int i = 0; i < n; ++i) {
+        ret[i][i] = 1;
+    }
+    return ret;
+}
+
+matrix mat_power(matrix x, ll p) {
+    matrix res = Identity(x.size());
+    while (p) {
+        if (p & 1) res = (res * x);
+        x = (x * x);
+        p >>= 1;
+    }
+    return res;
+}
+\end{lstlisting}
+
+\subsection{Linear Algebra}
+
+\subsubsection{LinearXorBasis}
+\begin{lstlisting}
+
+
+struct Basis {
+    vector<ll> basis;
+    int LOG, sz;
+
+    Basis(int log = 60) {
+        LOG = log;
+        sz = 0;
+        basis.resize(LOG);
+    }
+
+    bool insert(ll x) {
+        for (int i = LOG - 1; i >= 0; --i) {
+            if (x >> i & 1 ^ 1)continue;
+            if (basis[i]) {
+                x ^= basis[i];
+            } else {
+                basis[i] = x;
+                sz++;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    ll getMax(ll x = 0) {
+        ll ret = x;
+        for (int i = LOG - 1; i >= 0; --i) {
+            ret = max(ret, ret ^ basis[i]);
+        }
+        return ret;
+    }
+};
+\end{lstlisting}
+
+\subsection{Convolution}
+
+\subsubsection{FastFourierTransform}
+\begin{lstlisting}
+#define rep(aa, bb, cc) for(int aa = bb; aa < cc;aa++)
+#define sz(a) (int)a.size()
+typedef complex<double> C;
+typedef vector<double> vd;
+void fft(vector<C>& a) {
+    int n = sz(a), L = 31 - __builtin_clz(n);
+    static vector<complex<long double>> R(2, 1);
+    static vector<C> rt(2, 1);  // (^ 10% faster if double)
+    for (static int k = 2; k < n; k *= 2) {
+        R.resize(n); rt.resize(n);
+        auto x = polar(1.0L, acos(-1.0L) / k);
+        rep(i,k,2*k) rt[i] = R[i] = i&1 ? R[i/2] * x : R[i/2];
+    }
+    vi rev(n);
+    rep(i,0,n) rev[i] = (rev[i / 2] | (i & 1) << L) / 2;
+    rep(i,0,n) if (i < rev[i]) swap(a[i], a[rev[i]]);
+    for (int k = 1; k < n; k *= 2)
+        for (int i = 0; i < n; i += 2 * k) rep(j,0,k) {
+                // C z = rt[j+k] * a[i+j+k]; // (25% faster if hand-rolled)  /// include-line
+                auto x = (double *)&rt[j+k], y = (double *)&a[i+j+k];        /// exclude-line
+                C z(x[0]*y[0] - x[1]*y[1], x[0]*y[1] + x[1]*y[0]);           /// exclude-line
+                a[i + j + k] = a[i + j] - z;
+                a[i + j] += z;
+            }
+}
+ 
+template<int M> vi convMod(const vi &a, const vi &b) {
+    if (a.empty() || b.empty()) return {};
+    vi res(sz(a) + sz(b) - 1);
+    int B=32-__builtin_clz(sz(res)), n=1<<B, cut=int(sqrt(M));
+    vector<C> L(n), R(n), outs(n), outl(n);
+    rep(i,0,sz(a)) L[i] = C((int)a[i] / cut, (int)a[i] % cut);
+    rep(i,0,sz(b)) R[i] = C((int)b[i] / cut, (int)b[i] % cut);
+    fft(L), fft(R);
+    rep(i,0,n) {
+        int j = -i & (n - 1);
+        outl[j] = (L[i] + conj(L[j])) * R[i] / (2.0 * n);
+        outs[j] = (L[i] - conj(L[j])) * R[i] / (2.0 * n) / 1i;
+    }
+    fft(outl), fft(outs);
+    rep(i,0,sz(res)) {
+        ll av = ll(real(outl[i])+.5), cv = ll(imag(outs[i])+.5);
+        ll bv = ll(imag(outl[i])+.5) + ll(real(outs[i])+.5);
+        res[i] = ((av % M * cut + bv) % M * cut + cv) % M;
+    }
+    return res;
+}
+\end{lstlisting}
+
+\subsubsection{NumberTheoreticTransform}
+\begin{lstlisting}
+const int MOD = 998244353;
+const int ROOT = 3; // Primitive root for 998244353
+
+long long power(long long base, long long exp) {
+    long long res = 1;
+    base %= MOD;
+    while (exp > 0) {
+        if (exp % 2 == 1) res = (res * base) % MOD;
+        base = (base * base) % MOD;
+        exp /= 2;
+    }
+    return res;
+}
+
+long long modInverseFast(long long n) {
+    return power(n, MOD - 2);
+}
+
+void ntt(vector<long long>& a, bool invert) {
+    int n = a.size();
+    for (int i = 1, j = 0; i < n; i++) {
+        int bit = n >> 1;
+        for (; j & bit; bit >>= 1) j ^= bit;
+        j ^= bit;
+        if (i < j) swap(a[i], a[j]);
+    }
+    for (int len = 2; len <= n; len <<= 1) {
+        long long wlen = power(ROOT, (MOD - 1) / len);
+        if (invert) wlen = modInverseFast(wlen);
+        for (int i = 0; i < n; i += len) {
+            long long w = 1;
+            for (int j = 0; j < len / 2; j++) {
+                long long u = a[i + j], v = (a[i + j + len / 2] * w) % MOD;
+                a[i + j] = u + v < MOD ? u + v : u + v - MOD;
+                a[i + j + len / 2] = u - v >= 0 ? u - v : u - v + MOD;
+                w = (w * wlen) % MOD;
+            }
+        }
+    }
+    if (invert) {
+        long long n_inv = modInverseFast(n);
+        for (long long& x : a) x = (x * n_inv) % MOD;
+    }
+}
+\end{lstlisting}
+
+\section{Strings}
+
+\subsection{String Matching}
+
+\subsubsection{KMP\_PrefixFunction}
+\begin{lstlisting}
+vector<int> compute_pi(const string &s) {
+    int n = s.size();
+    vector<int> pi(n);
+    for (int i = 1; i < n; i++) {
+        int j = pi[i - 1];
+        while (j > 0 && s[i] != s[j])
+            j = pi[j - 1];
+        if (s[i] == s[j])
+            j++;
+        pi[i] = j;
+    }
+    return pi;
+}
+
+vector<int> find_matches(const string &text, const string &pat) {
+    int n = pat.length(), m = text.length();
+    string s = pat + "#" + text;
+    vector<int> pi = compute_pi(s), ans;
+    for (int i = n + 1; i <= n + m; i++) { /* n + 1 is where the text starts */
+        if (pi[i] == n) {
+            ans.push_back(i - 2 * n); /* i - (n - 1) - (n + 1) */
+        }
+    }
+    return ans;
+}
+
+void compute_automaton(string s, vector<vector<int>> &aut) {
+    s += '#';
+    int n = s.size();
+    vector<int> pi = compute_pi(s);
+    aut.assign(n, vector<int>(26));
+    for (int i = 0; i < n; i++) {
+        for (int c = 0; c < 26; c++) {
+            if (i > 0 && 'a' + c != s[i])
+                aut[i][c] = aut[pi[i - 1]][c];
+            else
+                aut[i][c] = i + ('a' + c == s[i]);
+        }
+    }
+}
+\end{lstlisting}
+
+\subsubsection{RabinKarp}
+\begin{lstlisting}
+vector<int> rabin_karp(string const &s, string const &t) {
+    const int p = 31;
+    const int m = 1e9 + 9;
+    int S = s.size(), T = t.size();
+
+    vector<ll> p_pow(max(S, T));
+    p_pow[0] = 1;
+    for (int i = 1; i < (int) p_pow.size(); i++)
+        p_pow[i] = (p_pow[i - 1] * p) % m;
+
+    vector<ll> h(T + 1, 0);
+    for (int i = 0; i < T; i++)
+        h[i + 1] = (h[i] + (t[i] - 'a' + 1) * p_pow[i]) % m;
+    ll h_s = 0;
+    for (int i = 0; i < S; i++)
+        h_s = (h_s + (s[i] - 'a' + 1) * p_pow[i]) % m;
+
+    vector<int> occurrences;
+    for (int i = 0; i + S - 1 < T; i++) {
+        ll cur_h = (h[i + S] + m - h[i]) % m;
+        if (cur_h == h_s * p_pow[i] % m)
+            occurrences.push_back(i);
+    }
+    return occurrences;
+}
+\end{lstlisting}
+
+\subsubsection{ZFunction}
+\begin{lstlisting}
+// z[i] is the length of the longest substring starting from s[i] which is also a prefix of s
+vector<int> z_function(string s) {
+    int n = s.length();
+    vector<int> z(n);
+    int l = 0, r = 0;
+    for (int i = 1; i < n; i++) {
+        if (i < r) {
+            z[i] = min(r - i, z[i - l]);
+        }
+        while (i + z[i] < n && s[z[i]] == s[i + z[i]]) {
+            z[i]++;
+        }
+        if (i + z[i] > r) {
+            l = i;
+            r = i + z[i];
+        }
+    }
+    return z;
+}
+\end{lstlisting}
+
+\subsection{Hashing}
+
+\subsubsection{DoubleStringHashing}
+\begin{lstlisting}
+int modSum(ll a, ll b) {
+    ///complexity: 1
+    if (a < 0)
+        a += MOD;
+    if (b < 0)
+        b += MOD;
+    a += b;
+    if (a >= MOD)
+        a %= MOD;
+    return a;
+}
+
+int modProd(ll a, ll b) {
+    ///complexity: 1
+    if (a < 0)
+        a += MOD;
+    if (b < 0)
+        b += MOD;
+    a *= b;
+    if (a >= MOD)
+        a %= MOD;
+    return a;
+}
+
+int fastPow(int a, ll b) {
+    ///complexity: log(b)
+    if (b == 0) return 1;
+    int temp = fastPow(a, b / 2);
+    if (b % 2 == 0)
+        return modProd(temp, temp);
+    return modProd(modProd(a, temp), temp);
+}
+
+
+int modInverse(int a) {
+    ///complexity: log(mod)
+    return fastPow(a, MOD - 2);
+}
+
+
+struct Hash {
+    vector<pair<int, int>> hash_value = {{0, 0}};
+    const pair<int, int> p = {67, 97};
+    vector<pair<int, int>> p_pow = {{1, 1}};
+    vector<pair<int, int>> inv = {{1, 1}};
+
+    void compute(string const &s) {
+        for (char c: s) {
+            if (c >= 'a' && c <= 'z') {
+                c = c - 'a' + 1;
+            } else if (c >= 'A' && c <= 'Z') {
+                c = c - 'A' + 30;
+            } else {
+                c = c - '0' + 60;
+            }
+            int x = modSum(hash_value.back().st, modProd(c, p_pow.back().st));
+            int a = modProd(p_pow.back().st, p.st);
+
+            int y = modSum(hash_value.back().nd, modProd(c, p_pow.back().nd));
+            int b = modProd(p_pow.back().nd, p.nd);
+
+            hash_value.emplace_back(x, y);
+            p_pow.emplace_back(a, b);
+            if (inv.size() == 1) {
+                inv.emplace_back(modInverse(a), modInverse(b));
+            } else {
+                inv.emplace_back(modProd(inv[1].st, inv.back().st), modProd(inv[1].nd, inv.back().nd));
+            }
+        }
+    }
+
+    pair<int, int> get(int l, int r) {
+        l++, r++;
+        pair<int, int> ans;
+        ans.st = modSum(hash_value[r].st, -hash_value[l - 1].st);
+        ans.st = modProd(ans.st, inv[l].st);
+
+
+        ans.nd = modSum(hash_value[r].nd, -hash_value[l - 1].nd);
+        ans.nd = modProd(ans.nd, inv[l].nd);
+
+        return ans;
+    }
+};
+\end{lstlisting}
+
+\subsection{Aho Corasick}
+
+\subsubsection{AhoCorasickAutomaton}
+\begin{lstlisting}
+struct Mapper {
+    int operator()(char c) const { return c - 'a'; }
+};
+
+template <int ALPHABET, typename Mapper>
+struct Aho {
+    struct Node {
+        array<int, ALPHABET> nxt;
+        int link = 0;
+        int terminal_idx = -1; // -1 if not a terminal, else idx of string insertion
+        int exit_link = 0; // Points to the nearest terminal suffix
+        int depth = 0; // Size of the prefix the node represents
+        Node() { nxt.fill(0); }
+    };
+
+    vector<Node> t;
+    vector<int> bfs_order;
+    Mapper get_idx; // Instance of the mapping function
+    int word_count = 0; // Tracks the order of inserted strings
+
+    // Constructor optionally accepts a custom mapper instance
+    Aho(Mapper mapper = Mapper()) : get_idx(mapper) {
+        t.emplace_back();
+    }
+
+    int insert(const string& p) {
+        int u = 0;
+        for (char c : p) {
+            int v = get_idx(c);
+            if (!t[u].nxt[v]) {
+                t[u].nxt[v] = t.size();
+                t.emplace_back();
+                t.back().depth = t[u].depth + 1; // New node's depth is parent's depth + 1
+            }
+            u = t[u].nxt[v];
+        }
+
+        // If this exact string hasn't been inserted before, assign it the current index
+        if (t[u].terminal_idx == -1) {
+            t[u].terminal_idx = word_count;
+        }
+        word_count++; // Increment for the next insertion
+
+        return u;
+    }
+
+    void build() {
+        queue<int> q;
+        for (int c = 0; c < ALPHABET; ++c) {
+            if (t[0].nxt[c]) {
+                q.push(t[0].nxt[c]);
+            }
+        }
+
+        while (!q.empty()) {
+            int u = q.front();
+            q.pop();
+            bfs_order.push_back(u);
+
+            for (int c = 0; c < ALPHABET; ++c) {
+                int v = t[u].nxt[c];
+                if (v) {
+                    t[v].link = t[t[u].link].nxt[c];
+
+                    // Compute the exit link:
+                    // If the immediate suffix link is a terminal, point to it.
+                    // Otherwise, copy its exit link.
+                    t[v].exit_link = (t[t[v].link].terminal_idx != -1) ? t[v].link : t[t[v].link].exit_link;
+
+                    q.push(v);
+                }
+                else {
+                    t[u].nxt[c] = t[t[u].link].nxt[c];
+                }
+            }
+        }
+    }
+
+    int advance(int u, char c) {
+        return t[u].nxt[get_idx(c)];
+    }
+};
+\end{lstlisting}
+
+\subsection{Suffix Structures}
+
+\subsubsection{SuffixArrayLCP}
+\begin{lstlisting}
+struct SuffixArray {
+    string S;
+    // sa is the suffix array with the empty suffix being sa[0]
+    // lcp[i] holds the lcp between sa[i], sa[i - 1]
+    vector<int> logs, sa, lcp, rank;
+    vector<vector<int>> table;
+
+    SuffixArray() {};
+
+    SuffixArray(string &s, int lim = 256) {
+        S = s;
+        int n = s.size() + 1, k = 0, a, b;
+        vector<int> c(s.begin(), s.end() + 1), tmp(n), frq(max(n, lim));
+        c.back() = 0; //0 is less than any character
+        sa = lcp = rank = tmp, iota(sa.begin(), sa.end(), 0);
+        for (int j = 0, p = 0; p < n; j = max(1, j * 2), lim = p) {
+            p = j, iota(tmp.begin(), tmp.end(), n - j);
+            for (int i = 0; i < n; i++) {
+                if (sa[i] >= j)
+                    tmp[p++] = sa[i] - j;
+            }
+
+            fill(frq.begin(), frq.end(), 0);
+
+            for (int i = 0; i < n; i++) frq[c[i]]++;
+            for (int i = 1; i < lim; i++) frq[i] += frq[i - 1];
+            for (int i = n; i--;) sa[--frq[c[tmp[i]]]] = tmp[i];
+
+            swap(c, tmp), p = 1, c[sa[0]] = 0;
+            for (int i = 1; i < n; i++)
+                a = sa[i - 1], b = sa[i], c[b] = (tmp[a] == tmp[b] && tmp[a + j] == tmp[b + j]) ? p - 1 : p++;
+        }
+
+        for (int i = 1; i < n; i++) rank[sa[i]] = i;
+        for (int i = 0, j; i < n - 1; lcp[rank[i++]] = k)
+            for (k &&k--, j = sa[rank[i] - 1];
+                    s[i + k] == s[j + k];
+        k++);
+    }
+
+    void preLcp() {
+        int n = S.size() + 1;
+        logs = vector<int>(n + 5);
+        for (int i = 2; i < n + 5; ++i) {
+            logs[i] = logs[i / 2] + 1;
+        }
+        table = vector<vector<int>>(n, vector<int>(20));
+        for (int i = 0; i < n; ++i) {
+            table[i][0] = lcp[i];
+        }
+
+        for (int j = 1; j <= logs[n]; ++j) {
+            for (int i = 0; i <= n - (1 << j); ++i) {
+                table[i][j] = min(table[i][j - 1], table[i + (1 << (j - 1))][j - 1]);
+            }
+        }
+    }
+
+    int queryLcp(int i, int j) {
+//        if (i == j)return (int) S.size() - i;
+//        i = rank[i], j = rank[j];
+        if (i == j)return (int) S.size() - sa[i];
+        if (i > j)
+            swap(i, j);
+        i++;
+        int len = logs[j - i + 1];
+        return min(table[i][len], table[j - (1 << len) + 1][len]);
+    }
+};
+\end{lstlisting}
+
+\subsubsection{SuffixAutomaton}
+\begin{lstlisting}
+struct SuffixAutomaton {
+    struct Node {
+        int len = 0, link = -1;
+        map<char, int> next;
+    };
+    
+    vector<Node> st;
+    int sz = 1, last = 0;
+
+    SuffixAutomaton(const string& s) {
+        st.resize(s.length() * 2);
+        st[0].len = 0;
+        st[0].link = -1;
+        for (char c : s) extend(c);
+    }
+
+    void extend(char c) {
+        int cur = sz++;
+        st[cur].len = st[last].len + 1;
+        int p = last;
+        while (p != -1 && !st[p].next.count(c)) {
+            st[p].next[c] = cur;
+            p = st[p].link;
+        }
+        if (p == -1) {
+            st[cur].link = 0;
+        } else {
+            int q = st[p].next[c];
+            if (st[p].len + 1 == st[q].len) {
+                st[cur].link = q;
+            } else {
+                int clone = sz++;
+                st[clone].len = st[p].len + 1;
+                st[clone].next = st[q].next;
+                st[clone].link = st[q].link;
+                while (p != -1 && st[p].next[c] == q) {
+                    st[p].next[c] = clone;
+                    p = st[p].link;
+                }
+                st[q].link = st[cur].link = clone;
+            }
+        }
+        last = cur;
+    }
+};
+\end{lstlisting}
+
+\subsection{Palindromes}
+
+\subsubsection{Manacher}
+\begin{lstlisting}
+struct Manacher {
+    vector<int> p;
+    
+    // Returns a vector where p[i] is the radius of the longest palindrome around center i
+    // Centers are interleaved: 0 is before string, 1 is first char, 2 is between 1st & 2nd, etc.
+    Manacher(string s) {
+        string t = "#";
+        for (char c : s) {
+            t += c;
+            t += "#";
+        }
+        int n = t.size();
+        p.assign(n, 0);
+        int c = 0, r = 0;
+        for (int i = 0; i < n; i++) {
+            int mirror = 2 * c - i;
+            if (i < r) p[i] = min(r - i, p[mirror]);
+            while (i - 1 - p[i] >= 0 && i + 1 + p[i] < n && t[i - 1 - p[i]] == t[i + 1 + p[i]]) {
+                p[i]++;
+            }
+            if (i + p[i] > r) {
+                c = i;
+                r = i + p[i];
+            }
+        }
+    }
+    
+    // Check if substring [l, r] (0-based) is a palindrome in O(1)
+    bool is_palindrome(int l, int r) {
+        int len = r - l + 1;
+        int center = l + r + 1;
+        return p[center] >= len;
+    }
+};
+\end{lstlisting}
+
+\section{Dynamic Programming (DP)}
+
+\subsection{DP Optimizations}
+
+\subsubsection{DivideAndConquerDP}
+\begin{lstlisting}
+int a[N];
+ll curCost;
+int curL = 0, curR = -1, freq[N];
+pair<int, ll> pre[N], cur[N];
+// Modify at will :
+int lo(int ind) { return 1; }
+int hi(int ind) { return ind; }
+
+void add(int val) {
+    curCost += freq[val]++;
+}
+
+void remove(int val) {
+    curCost -= --freq[val];
+}
+
+ll Cost(int l, int r) {
+    while (curR < r)
+        add(a[++curR]);
+    while (curL > l)
+        add(a[--curL]);
+    while (curR > r)
+        remove(a[curR--]);
+    while (curL < l)
+        remove(a[curL++]);
+    return curCost;
+}
+
+ll f(int ind, int k) { return pre[k - 1].nd + Cost(k, ind); }
+void store(int ind, int k, ll v) { cur[ind] = pair(k, v); }
+
+void rec(int L, int R, int LO, int HI) {
+    if (L > R) return;
+    int mid = (L + R) >> 1;
+    pair best(llinf, LO);
+    for (int k = max(LO, lo(mid)); k <= min(HI, hi(mid)); ++k)
+        best = min(best, pair(f(mid, k), k));
+    store(mid, best.second, best.first);
+    rec(L, mid - 1, LO, best.second);
+    rec(mid + 1, R, best.second, HI);
+}
+
+void solve(int L, int R) { rec(L, R, -inf, inf); }
+\end{lstlisting}
+
+\subsubsection{ConvexHullTrick}
+\begin{lstlisting}
+//To query the maximum value of the function for all x in [l, r], query only two points: l, r because the functions are convex.
+struct Line {
+    ll m, b;
+    mutable function<const Line *()> succ;
+
+    bool operator<(const Line &other) const {
+        return m < other.m;
+    }
+
+    bool operator<(const ll &x) const {
+        const Line *s = succ();
+        if (!s)
+            return 0;
+        return b - s->b < (s->m - m) * x;
+    }
+};
+
+// will maintain upper hull for maximum
+struct HullDynamic : public multiset<Line, less<>> {
+    bool bad(iterator y) {
+        auto z = next(y);
+        if (y == begin()) {
+            if (z == end())
+                return 0;
+            return y->m == z->m && y->b <= z->b;
+        }
+        auto x = prev(y);
+        if (z == end())
+            return y->m == x->m && y->b <= x->b;
+        return (ld) (x->b - y->b) * (z->m - y->m) >= (ld) (y->b - z->b) * (y->m - x->m);
+    }
+
+    void insert_line(ll m, ll b) {
+//         for minimum
+//        m *= -1;
+//        b *= -1;
+        auto y = insert({m, b});
+        y->succ = [=] { return next(y) == end() ? 0 : &*next(y); };
+        if (bad(y)) {
+            erase(y);
+            return;
+        }
+        while (next(y) != end() && bad(next(y)))
+            erase(next(y));
+        while (y != begin() && bad(prev(y)))
+            erase(prev(y));
+    }
+
+    ll query(ll x) {
+        auto l = *lower_bound(x);
+//        for minimum
+//        return -(l.m * x + l.b);
+        return l.m * x + l.b;
+    }
+};
+\end{lstlisting}
+
+\subsubsection{ConvexHullTrickRollback}
+\begin{lstlisting}
+// Template parameters:
+// IS_MAX: Set to true for Maximum queries, false for Minimum queries.
+// IS_INC: Set to true if slopes added are strictly Increasing, false for Decreasing.
+template<bool IS_MAX = false, bool IS_INC = false>
+struct RollbackCHT {
+    struct Line {
+        ll m, c;
+        Line() : m(0), c(llinf) {}
+        Line(ll m, ll c) : m(m), c(c) {}
+        ll eval(ll x) const { return m * x + c; }
+    };
+
+    struct History {
+        int pos;
+        int sz;
+        Line old_line;
+    };
+
+    vector<Line> st;
+    vector<History> hist;
+    int sz;
+
+    RollbackCHT(int max_nodes) {
+        st.resize(max_nodes);
+        sz = 0;
+    }
+
+    bool redundant(Line l1, Line l2, Line l3) {
+        __int128 dx1 = l1.m - l2.m;
+        __int128 dc1 = l2.c - l1.c;
+        __int128 dx2 = l2.m - l3.m;
+        __int128 dc2 = l3.c - l2.c;
+        return dc1 * dx2 >= dc2 * dx1;
+    }
+
+    void add(ll m, ll c) {
+        // The magic happens here: automatically formats internal state
+        ll m_int = IS_INC ? -m : m;
+        ll c_int = IS_MAX ? -c : c;
+
+        Line l_new(m_int, c_int);
+        int pos = sz;
+        int low = 1, high = sz - 1;
+
+        while (low <= high) {
+            int mid = low + (high - low) / 2;
+            if (redundant(st[mid - 1], st[mid], l_new)) {
+                pos = mid;
+                high = mid - 1;
+            } else {
+                low = mid + 1;
+            }
+        }
+
+        hist.push_back({pos, sz, st[pos]});
+        st[pos] = l_new;
+        sz = pos + 1;
+    }
+
+    void rollback() {
+        if (hist.empty()) return;
+        History h = hist.back();
+        hist.pop_back();
+        sz = h.sz;
+        st[h.pos] = h.old_line;
+    }
+
+    ll query(ll x) {
+        if (sz == 0) return IS_MAX ? -llinf : llinf;
+
+        // The magic happens here: matches x to the internal geometry
+        ll x_int = (IS_INC != IS_MAX) ? -x : x;
+        
+        int low = 0, high = sz - 2;
+        int best = sz - 1;
+        
+        while (low <= high) {
+            int mid = low + (high - low) / 2;
+            if (st[mid].eval(x_int) <= st[mid + 1].eval(x_int)) {
+                best = mid;
+                high = mid - 1; 
+            } else {
+                low = mid + 1;  
+            }
+        }
+        
+        ll ans = st[best].eval(x_int);
+        return IS_MAX ? -ans : ans;
+    }
+};
+\end{lstlisting}
+
+\subsubsection{LiChaoTree}
+\begin{lstlisting}
+// To get an instance : node *root = EMPTY;
+typedef pair<long long, long long> line;
+int start_x, end_x;
+line neutral{0,-1e18};
+
+ll sub(const line &l, ll x) {
+    return l.first * x + l.second;
+}
+
+double inter(const line &l1, const line &l2) {
+    return (l2.second - l1.second) / (l1.first - l2.first - .0);
+}
+
+extern struct node *const EMPTY;
+struct node {
+    line l;
+    node *lf, *rt;
+    node() : l(neutral), lf(this), rt(this) {}
+    node(line l) : l(l), lf(EMPTY), rt(EMPTY) {}
+};
+node *const EMPTY = new node;
+
+void insert(line l, int lx, int rx, node *&cur, ll ns = start_x, ll ne = end_x) {
+    if(rx < ns || lx > ne) return;
+    if(ns >= lx && ne <= rx) {
+        if (cur == EMPTY) {
+            cur = new node(l);
+            return;
+        }
+        if (l.first == cur->l.first) {
+            cur->l = max(cur->l, l);
+            return;
+        }
+
+        auto x = inter(l, cur->l);
+        if (x < ns || x > ne) {
+            if (sub(l, ns) > sub(cur->l, ns)) cur->l = l;
+            return;
+        }
+        ll mid = ns + (ne - ns) / 2;
+        if (x < mid) {
+            if (sub(l, ne) > sub(cur->l, ne)) swap(l, cur->l);
+            insert(l, lx, rx, cur->lf, ns, mid);
+        } else {
+            if (sub(l, ns) > sub(cur->l, ns)) swap(l, cur->l);
+            insert(l,lx, rx, cur->rt, mid + 1, ne);
+        }
+        return;
+    }
+
+    if (cur == EMPTY) {
+        cur = new node(neutral);
+    }
+    ll mid = ns + (ne - ns) / 2;
+    insert(l, lx, rx, cur->lf, ns, mid);
+    insert(l, lx, rx, cur->rt, mid + 1, ne);
+}
+
+ll query(ll x, node *cur, ll ns = start_x, ll ne = end_x) {
+    auto ret = sub(cur->l, x);
+    if (x < ns || x > ne)
+        return sub(neutral, x);
+    if (ns == ne)
+        return ret;
+    ll mid = ns + (ne - ns) / 2;
+    if (x <= mid)
+        return max(ret, query(x, cur->lf, ns, mid));
+    return max(ret, query(x, cur->rt, mid + 1, ne));
+}
+\end{lstlisting}
+
+\subsubsection{PersistentLiChaoTree}
+\begin{lstlisting}
+const ll maxN = 1e7 + 5;
+
+struct Line {
+    ll m, c;
+
+    Line() : m(0), c(llinf) {}
+
+    Line(ll m, ll c) : m(m), c(c) {}
+};
+
+ll sub(ll x, Line l) {
+    return x * l.m + l.c;
+}
+
+// Persistent Li Chao
+struct Node {
+// range I am responsible for
+    Line line;
+    Node *left, *right;
+
+    Node() {
+        left = right = NULL;
+    }
+
+    Node(ll m, ll c) {
+        line = Line(m, c);
+        left = right = NULL;
+    }
+
+    void extend(int l, int r) {
+        if (left == NULL && l != r) {
+            left = new Node();
+            right = new Node();
+        }
+    }
+
+    Node *copy(Node *node) {
+        Node *newNode = new Node;
+        newNode->left = node->left;
+        newNode->right = node->right;
+        newNode->line = node->line;
+        return newNode;
+    }
+
+    Node *add(Line toAdd, int l, int r) {
+        int mid = (l + r) / 2;
+        Node *cur = copy(this);
+        if (l == r) {
+            if (sub(l, toAdd) < sub(l, cur->line))
+                swap(toAdd, cur->line);
+            return cur;
+        }
+        bool lef = sub(l, toAdd) < sub(l, cur->line);
+        bool midE = sub(mid + 1, toAdd) < sub(mid + 1, cur->line);
+        if (midE)
+            swap(cur->line, toAdd);
+        cur->extend(l, r);
+        if (lef != midE) {
+            cur->left = cur->left->add(toAdd, l, mid);
+        } else {
+            if (mid + 1 > r)
+                return cur;
+            cur->right = cur->right->add(toAdd, mid + 1, r);
+        }
+        return cur;
+    }
+
+    Node *add(Line toAdd) {
+        return add(toAdd, -maxN + 1, maxN - 1);
+    }
+
+    ll query(ll x, int l, int r) {
+        int mid = (l + r) / 2;
+        if (l == r || left == NULL)
+            return sub(x, line);
+        extend(l, r);
+        if (x <= mid)
+            return min(sub(x, line), left->query(x, l, mid));
+        else
+            return min(sub(x, line), right->query(x, mid + 1, r));
+    }
+
+    ll query(ll x) {
+        return query(x, -maxN + 1, maxN - 1);
+    }
+
+    void clear() {
+        if (left != NULL) {
+            left->clear();
+            right->clear();
+        }
+        delete this;
+    }
+};
+
+Node *tree[N];
+\end{lstlisting}
+
+\subsection{Bitmask DP}
+
+\subsubsection{SOS\_DP}
+\begin{lstlisting}
+// Computes the sum of all subsets for every bitmask in O(N * 2^N)
+vector<long long> SOS_DP(int n_bits, const vector<long long>& a) {
+    int max_mask = 1 << n_bits;
+    vector<long long> dp = a; // dp[mask] initially holds exactly the value for mask
+    
+    for (int i = 0; i < n_bits; ++i) {
+        for (int mask = 0; mask < max_mask; ++mask) {
+            if (mask & (1 << i)) {
+                dp[mask] += dp[mask ^ (1 << i)];
+            }
+        }
+    }
+    return dp; // dp[mask] now contains sum of all submasks of mask
+}
+\end{lstlisting}
+
+\section{Trees}
+
+\subsection{Lowest Common Ancestor (LCA)}
+
+\subsubsection{BinaryLiftingLCA}
+\begin{lstlisting}
+struct LCA {
+    static const int B = 21;
+    vector<array<int, 2>> tour;
+    vector<array<array<int, 2>, B>> T;
+    vector<int> d, in, lg;
+
+    LCA(int n, auto &adj): d(n + 1), in(n + 1), lg(n*2 + 1) {
+        tour.reserve(n *= 2);
+        T.resize(n);
+        dfs(0, 0, adj);
+        for(int i = 0; i < n; ++i) lg[i]=__lg(i), T[i][0]=tour[i];
+        for (int j = 1; j < B; ++j)
+            for (int i = 0; i + (1 << j) - 1 < n; ++i)
+                T[i][j] = min(T[i][j - 1], T[i+(1 << j - 1)][j - 1]);
+    }
+
+    void dfs(int u, int p, auto &adj) {
+        in[u] = size(tour);
+        tour.push_back({d[u], u});
+        for (int v: adj[u]) {
+            if (v == p) continue;
+            d[v] = d[u] + 1;
+            dfs(v, u, adj);
+            tour.push_back({d[u], u});
+        }
+    }
+
+    int get(int u, int v) {
+        int l = min(in[u], in[v]), r = max(in[u], in[v]);
+        int j = lg[r - l + 1];
+        return min(T[l][j], T[r - (1 << j) + 1][j])[1];
+    }
+
+    int dist(int u, int v) { return d[u]+d[v]-2*d[get(u, v)]; }
+};
+\end{lstlisting}
+
+\subsection{DSU on Tree}
+
+\subsubsection{DSUOnTree\_Sack}
+\begin{lstlisting}
+class DSUOnTree {
+private:
+    struct Query {
+        int idx, x;
+    };
+
+    int n;
+    vector<vector<int>> adj;
+    vector<int> sz, depth;
+    vector<bool> big;
+    vector<vector<Query>> queries;
+    vector<int> ans;
+
+    // ==========================================
+    //       PROBLEM SPECIFIC STATE VARIABLES
+    // ==========================================
+    vector<char> c; // Example: Array of characters per node
+    
+    // Example state variables
+    // int distinct_count = 0;
+    // vector<int> freq;
+
+    void add(int u, int p) {
+        // --- ADD LOGIC HERE ---
+        // Example: freq[c[u] - 'a']++;
+
+        for (int v : adj[u]) {
+            if (v == p || big[v]) continue; // Skip parent and heavy child[cite: 4]
+            add(v, u);
+        }
+    }
+
+    void remove(int u, int p) {
+        // --- REMOVE LOGIC HERE ---
+        // Example: freq[c[u] - 'a']--;
+
+        for (int v : adj[u]) {
+            if (v == p || big[v]) continue; // Skip parent and heavy child[cite: 4]
+            remove(v, u);
+        }
+    }
+
+    int get_answer(int u, int x = 0) {
+        // --- QUERY ANSWER LOGIC HERE ---
+        return 0; 
+    }
+    // ==========================================
+
+    void pre(int u, int p = 0) {
+        sz[u] = 1;
+        depth[u] = depth[p] + 1;
+        for (int v : adj[u]) {
+            if (v == p) continue;
+            pre(v, u);
+            sz[u] += sz[v]; // Compute subtree size[cite: 4]
+        }
+    }
+
+    void dfs(int u, int p = 0, bool keep = false) {
+        int mx = -1, bigChild = -1;
+        
+        // Find the heavy child[cite: 4]
+        for (int v : adj[u]) {
+            if (v == p) continue;
+            if (sz[v] > mx) {
+                mx = sz[v];
+                bigChild = v;
+            }
+        }
+
+        // Process light children and clear them[cite: 4]
+        for (int v : adj[u]) {
+            if (v == p || v == bigChild) continue;
+            dfs(v, u, false);
+        }
+
+        // Process heavy child and keep it[cite: 4]
+        if (bigChild != -1) {
+            dfs(bigChild, u, true);
+            big[bigChild] = true; 
+        }
+
+        // Add current node and its light children[cite: 4]
+        add(u, p);
+        
+        // Answer all queries for the current node[cite: 4]
+        for (const auto& q : queries[u]) {
+            ans[q.idx] = get_answer(u, q.x);
+        }
+
+        // Reset the big child flag[cite: 4]
+        if (bigChild != -1) {
+            big[bigChild] = false;
+        }
+
+        // Clear state if this node is not meant to be kept[cite: 4]
+        if (!keep) {
+            remove(u, p);
+        }
+    }
+
+public:
+    // Initialize with 1-based indexing in mind
+    DSUOnTree(int nodes, const vector<char>& chars) : n(nodes), c(chars) {
+        adj.assign(n + 1, vector<int>());
+        sz.assign(n + 1, 0);
+        depth.assign(n + 1, 0);
+        big.assign(n + 1, false);
+        queries.assign(n + 1, vector<Query>());
+        // Initialize problem-specific arrays here (e.g., freq.assign(26, 0);)
+    }
+
+    void add_edge(int u, int v) {
+        adj[u].push_back(v);
+        adj[v].push_back(u);
+    }
+
+    void add_query(int node, int query_idx, int x = 0) {
+        queries[node].push_back({query_idx, x});
+    }
+
+    vector<int> solve(int root, int num_queries) {
+        ans.assign(num_queries, 0);
+        pre(root, 0); // Precalculate sizes and depths[cite: 4]
+        dfs(root, 0, false); // Run the sack algorithm[cite: 4]
+        return ans;
+    }
+};
+\end{lstlisting}
+
+\subsection{Heavy Light Decomposition (HLD)}
+
+\subsubsection{HeavyLightDecomposition}
+\begin{lstlisting}
+class HLD {
+public:
+    vector<int> par, sz, head, tin, tout, who, depth;
+
+    int dfs1(int u, vector<vector<int> > &adj) {
+        for (int &v: adj[u]) {
+            if (v == par[u])continue;
+            depth[v] = depth[u] + 1;
+            par[v] = u;
+            sz[u] += dfs1(v, adj);
+            if (sz[v] > sz[adj[u][0]] || adj[u][0] == par[u]) swap(v, adj[u][0]);
+        }
+        return sz[u];
+    }
+
+    void dfs2(int u, int &timer, const vector<vector<int> > &adj) {
+        tin[u] = timer++;
+        for (int v: adj[u]) {
+            if (v == par[u])continue;
+            head[v] = (timer == tin[u] + 1 ? head[u] : v);
+            dfs2(v, timer, adj);
+        }
+        tout[u] = timer - 1;
+    }
+
+    HLD(vector<vector<int> > adj, int r = 0)
+        : par(adj.size(), -1), sz(adj.size(), 1), head(adj.size(), r), tin(adj.size()), tout(adj.size()),
+          who(adj.size()),
+          depth(adj.size()) {
+        dfs1(r, adj);
+        int x = 0;
+        dfs2(r, x, adj);
+        for (int i = 0; i < adj.size(); ++i) who[tin[i]] = i;
+    }
+
+    vector<pair<int, int> > path(int u, int v) {
+        vector<pair<int, int> > res;
+        for (;; v = par[head[v]]) {
+            if (depth[head[u]] > depth[head[v]])swap(u, v);
+            if (head[u] != head[v]) {
+                res.emplace_back(tin[head[v]], tin[v]);
+            } else {
+                if (depth[u] > depth[v])swap(u, v);
+                res.emplace_back(tin[u], tin[v]);
+                return res;
+            }
+        }
+    }
+
+    pair<int, int> subtree(int u) {
+        return {tin[u], tout[u]};
+    }
+
+    int dist(int u, int v) {
+        return depth[u] + depth[v] - 2 * depth[lca(u, v)];
+    }
+
+    int lca(int u, int v) {
+        for (;; v = par[head[v]]) {
+            if (depth[head[u]] > depth[head[v]])swap(u, v);
+            if (head[u] == head[v]) {
+                if (depth[u] > depth[v])swap(u, v);
+                return u;
+            }
+        }
+    }
+
+    bool isAncestor(int u, int v) {
+        return tin[u] <= tin[v] && tout[u] >= tout[v];
+    }
+};
+\end{lstlisting}
+
+\subsection{Centroid Decomposition}
+
+\subsubsection{CentroidDecomposition}
+\begin{lstlisting}
+class CentroidDecomposition {
+private:
+    int n;
+    vector<vector<int>> adj;
+    vector<int> sz, par, nodes;
+    vector<bool> vis;
+
+    int dfsSz(int u, int p) {
+        sz[u] = 1;
+        for (int v : adj[u]) {
+            if (vis[v] || v == p) continue;
+            sz[u] += dfsSz(v, u);
+        }
+        return sz[u];
+    }
+
+    int getCentroid(int u, int p, int total_nodes) {
+        for (int v : adj[u]) {
+            if (vis[v] || v == p) continue;
+            if (sz[v] * 2 > total_nodes) {
+                return getCentroid(v, u, total_nodes);
+            }
+        }
+        return u;
+    }
+
+    void collect(int u, int p) {
+        nodes.push_back(u);
+        for (int v : adj[u]) {
+            if (vis[v] || v == p) continue;
+            collect(v, u);
+        }
+    }
+
+    void build(int u, int p) {
+        int total_nodes = dfsSz(u, p);
+        int centroid = getCentroid(u, p, total_nodes);
+        
+        if (p != -1) {
+            par[centroid] = p;
+        } else {
+            par[centroid] = centroid;
+        }
+        
+        vis[centroid] = true;
+
+        // ==========================================
+        //       PROBLEM SPECIFIC PROCESSING
+        // ==========================================
+        // Process paths going through the 'centroid' here
+        for (int v : adj[centroid]) {
+            if (vis[v]) continue;
+            nodes.clear();
+            collect(v, centroid);
+            
+            // e.g., Update answers using the nodes collected from this subtree branch
+        }
+        // ==========================================
+
+        // Recursively decompose the remaining components
+        for (int v : adj[centroid]) {
+            if (vis[v]) continue;
+            build(v, centroid);
+        }
+    }
+
+public:
+    // Initialize with 1-based indexing
+    CentroidDecomposition(int nodes_count) : n(nodes_count) {
+        adj.assign(n + 1, vector<int>());
+        sz.assign(n + 1, 0);
+        par.assign(n + 1, 0);
+        vis.assign(n + 1, false);
+    }
+
+    void add_edge(int u, int v) {
+        adj[u].push_back(v);
+        adj[v].push_back(u);
+    }
+
+    // Start decomposition, usually from node 1
+    void decompose(int root = 1) {
+        build(root, -1);
+    }
+
+    // Returns the parent of a node in the centroid tree
+    int get_centroid_parent(int u) const {
+        return par[u];
+    }
+};
+\end{lstlisting}
+
+\section{Game Theory}
+
+\section{Geometry}
+
+\subsection{Geometry 2D}
+
+\subsubsection{Point2D}
+\begin{lstlisting}
+template<class T>
+int sgn(T x) { return (x > 0) - (x < 0); }
+
+template<class T>
+struct Point {
+    typedef Point P;
+    T x, y;
+
+    Point(T x = 0, T y = 0) : x(x), y(y) {}
+
+    bool operator<(P p) const { return tie(x, y) < tie(p.x, p.y); }
+
+    bool operator==(P p) const { return tie(x, y) == tie(p.x, p.y); }
+
+    P operator+(P p) const { return P(x + p.x, y + p.y); }
+
+    P operator-(P p) const { return P(x - p.x, y - p.y); }
+
+    P operator*(T d) const { return P(x * d, y * d); }
+
+    P operator/(T d) const { return P(x / d, y / d); }
+
+    T dot(P p) const { return x * p.x + y * p.y; }
+
+    T cross(P p) const { return x * p.y - y * p.x; }
+
+    T cross(P a, P b) const { return (a - *this).cross(b - *this); }
+
+    T dist2() const { return x * x + y * y; }
+    
+    T dist2(P b) const { return (*this - b).dist2(); };
+    
+    double dist() const { return sqrt((double) dist2()); }
+
+    double dist(P b) { return (*this - b).dist(); };
+
+    // angle to x-axis in interval [-pi, pi]
+    double angle() const { return atan2(y, x); }
+
+    P unit() const { return *this / dist(); } // makes dist()=1
+    P perp() const { return P(-y, x); } // rotates +90 degrees
+    P normal() const { return perp().unit(); }
+
+    P getVector(const P &p) const { return p - (*this); }
+
+    // returns point rotated 'a' radians ccw around the origin
+    P rotate(double a) const {
+        return P(x * cos(a) - y * sin(a), x * sin(a) + y * cos(a));
+    }
+
+    friend ostream &operator<<(ostream &os, P p) {
+//        return os << "(" << p.x << "," << p.y << ")";
+        return os << p.x << " " << p.y;
+    }
+
+    friend istream &operator>>(istream &is, P &p) {
+        return is >> p.x >> p.y;
+    }
+
+
+    // Project point onto line through a and b (assuming a != b).
+    P projectOnLine(const P &a, const P &b) const {
+        P ab = a.getVector(b);
+        P ac = a.getVector(*this);
+        return a + ab * ac.dot(ab) / a.dist2(b);
+    }
+
+    // Project point c onto line segment through a and b (assuming a != b).
+    P projectOnSegment(const P &a, const P &b) const {
+        P &c = (P &) *this;
+        P ab = a.getVector(b);
+        P ac = a.getVector(c);
+
+        long double r = ac.dot(ab), d = a.dist2(b);
+        if (r < 0) return a;
+        if (r > d) return b;
+
+        return a + ab * r / d;
+    }
+
+    P reflectAroundLine(const P &a, const P &b) const {
+        return projectOnLine(a, b) * 2 - (*this);
+    }
+};
+
+int dcmp(const ld &a, const ld &b){
+    if(fabs(a - b) < eps)
+        return 0;
+
+    return (a > b ? 1 : -1);
+}
+\end{lstlisting}
+
+\subsubsection{Line2D}
+\begin{lstlisting}
+template<class T>
+double lineDist(T p, T s, T e) {
+    if (s == e) {
+        return s.dist(p);
+    }
+    return fabs((p - s).cross(e - s) / (e - s).dist());
+}
+
+template<class T>
+pair<int, T> lineInter(T s1, T e1, T s2, T e2) {
+    // first = 0 no intersection
+    // first = 1 intersection
+    // first = -1 infinite intersection
+    auto d = (e1 - s1).cross(e2 - s2);
+    if (dcmp(d,0) == 0) // if parallel   same line first = -1 else first = 0
+        return {-(s1.cross(e1, s2) == 0), {0,0}};
+    auto p = s2.cross(e1, e2), q = s2.cross(e2, s1);
+    return {1, (s1 * p + e1 * q) / d};
+}
+
+
+
+template<class T>
+bool onSegment(T p,T s, T e) {
+    return dcmp(p.cross(s, e) ,0) == 0 && dcmp((s - p).dot(e - p) , 0) <= 0;
+}
+
+
+template<class T>
+double segDist(T p, T s, T e) {
+    if (dcmp((p - s).dot(e - s),0) <= 0)return s.dist(p);
+    if (dcmp((p - e).dot(e - s),0) >= 0)return e.dist(p);
+    return lineDist(p, s, e);
+}
+
+template<class T>
+pair<int, T> segInter(T s1, T e1, T s2, T e2) {
+    // first = 0 no intersection
+    // first = 1 intersection`
+    // first = -1 infinite intersection
+    pair<int, T> ret = lineInter(s1, e1, s2, e2);
+    if (ret.first == 0)return ret;
+    else if (ret.first == 1) {
+        if (onSegment(ret.second, s1, e1) && onSegment(ret.second, s2, e2))
+            return ret;
+        else
+            return {0, {0, 0}};
+    } else {
+        if (onSegment(s1, s2, e2) || onSegment(e1, s2, e2))
+            return {-1, (onSegment(s1, s2, e2) ? s1 : e1)};
+        else if (onSegment(s2, s1, e1) || onSegment(e2, s1, e1))
+            return {-1, (onSegment(s2, s1, e1) ? s2 : e2)};
+        else
+            return {0, {0, 0}};
+    }
+}
+
+
+template<class T>
+T closestOnSegment(T p, T s, T e) {
+    if ((p - s).dot(e - s) <= 0) return s;
+    else if ((p - e).dot(e - s) >= 0) return e;
+    else return p.projectOnLine(s, e);
+}
+
+template<class T>
+double segSegDist(T s1, T e1, T s2, T e2) {
+    if(segInter(s1,e1,s2,e2).first != 0)
+        return 0;
+    double ret = min({segDist(s1,s2,e2), segDist(e1,s2,e2), segDist(s2,s1,e1), segDist(e2,s1,e1)});
+    return ret;
+}
+
+
+
+template<class T>
+bool onRay(T p, T s, T e) {
+    return dcmp(p.cross(s, e) , 0) == 0 && dcmp((p - s).dot(e - s) , 0) >= 0;
+}
+
+template<class T>
+double rayDist(T p, T s, T e) {
+    if ((p - s).dot(e - s) <= 0) {
+        return s.dist(p);
+    }
+    return lineDist(p, s, e);
+}
+
+
+template<class T>
+pair<int, T> rayInter(T s1, T e1, T s2, T e2) {
+    // first = 0 no intersection
+    // first = 1 intersection
+    // first = -1 infinite intersection
+    pair<int, T> ret = lineInter(s1, e1, s2, e2);
+    if (ret.first == 0)return ret;
+    else if (ret.first == 1) {
+        if (onRay(ret.second, s1, e1) && onRay(ret.second, s2, e2))
+            return ret;
+        else
+            return {0, {0,0}};
+    } else {
+        if(onRay(s1, s2, e2) || onRay(s2, s1, e1))
+            return {-1,onRay(s1, s2, e2) ? s1:s2};
+        else
+            return {0, {0,0}};
+    }
+}
+
+template<class T>
+double rayRayDist(T s1, T e1, T s2, T e2) {
+    if(rayInter(s1,e1,s2,e2).first != 0)
+        return 0;
+    double ret = min(rayDist(s1,s2,e2), rayDist(s2,s1,e1));
+    return ret;
+}
+\end{lstlisting}
+
+\subsubsection{AngleOperations}
+\begin{lstlisting}
+template<class T>
+// angle between [0, 2*pi]
+ld angleBetween(T a, T b) {
+    ld ret = atan2(a.cross(b), a.dot(b));
+    if (dcmp(ret, 0) == -1) {
+        ret += 2 * PI;
+    }
+//    return min(ret, 2 * PI - ret);    //to return the smaller angle
+    return ret;
+}
+
+template<class T>
+ld angleO(T a, T O, T b) { /// angle(aOb)
+    assert(a.dist(O) > eps && b.dist(O) > eps); // nan
+    T v1 = (a - O), v2 = (b - O);
+    return angleBetween(v1, v2);
+}
+
+
+// (-pi, pi]
+ld format(ld angle) {
+    while (dcmp(angle, PI) == 1)
+        angle -= 2 * PI;
+    while (dcmp(angle, -PI) != 1)
+        angle += 2 * PI;
+    return angle;
+}
+\end{lstlisting}
+
+\subsubsection{PolygonArea}
+\begin{lstlisting}
+template<class T>
+ld polygonArea(vector<T>&v){
+    ld ret = 0;
+    int n = v.size();
+    for (int i = 0; i < n; ++i) {
+        ret += v[i].cross(v[(i+1)%n]);
+    }
+    return 0.5 * abs(ret);
+}
+\end{lstlisting}
+
+\subsubsection{Circle3Points}
+\begin{lstlisting}
+typedef Point<double> P;
+ 
+bool isColliner(const P &A, const P &B, const P &C)
+{
+    return dcmp(P(B - A).cross(P(C - A)), 0) == 0;
+}
+ 
+P ccCenter(const P &A, const P &B, const P &C)
+{
+    P b = C - A, c = B - A;
+    return A + (b * c.dist2() - c * b.dist2()).perp() / b.cross(c) / 2;
+}
+ 
+double ccRadius(const P &A, const P &B, const P &C)
+{
+    return (B - A).dist() * (C - B).dist() * (A - C).dist() /
+           abs((B - A).cross(C - A)) / 2;
+}
+\end{lstlisting}
+
+\subsubsection{CircleLineIntersection}
+\begin{lstlisting}
+template<class T>
+vector<T> circleLine(T o, double r, T a, T b) {
+    double h2 = r * r - lineDist(o, a, b) * lineDist(o, a, b);
+    if (dcmp(h2, 0) != -1) { // the line touches the circle
+        T p = o.projectOnLine(a, b); // point P
+        T h = (a - b).unit() * sqrt(h2); // vector parallel to l, of length h
+        if (p - h == p + h)
+            return {p - h};
+        else
+            return {p - h, p + h};
+    }
+    return {};
+}
+
+template<class T>
+vector<T> circleSegment(T o, double r, T a, T b) {
+    vector<T> v = circleLine(o, r, a, b);
+    vector<T> out;
+    for (auto x: v)
+        if (onSegment(x, a, b))
+            out.pb(x);
+    return out;
+}
+\end{lstlisting}
+
+\subsubsection{CircleCircleIntersection}
+\begin{lstlisting}
+template<class T>
+ld circleInter(T a,T b,ll r1,ll r2){
+    if(r1 > r2){
+        swap(r1,r2);
+        swap(a,b);
+    }
+    ld d = sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
+    if(d >= r1 + r2){
+        return 0;
+    }
+    if(d + r1 <= r2){
+        return PI * r1 * r1;
+    }
+    ld theta = acos((d * d + r2*r2 - r1*r1)/(2 * d * r2));
+    ld alpha = acos((d * d + r1*r1 - r2*r2)/(2 * d * r1));
+    ld s1 = theta * r2 * r2;
+    ld t1 = 0.5 * r2 * r2 * sin(2 * theta);
+    ld s2 = alpha * r1 * r1;
+    ld t2 = 0.5 * r1 * r1 * sin(2 * alpha);
+    return (s1 - t1) + (s2 - t2);
+}
+\end{lstlisting}
+
+\subsubsection{ConvexHullAndrew}
+\begin{lstlisting}
+template<class T>
+vector<T> convexHull(vector<T> pts, bool inc_collinear = false) {
+
+    T p0 = *min_element(pts.begin(), pts.end(), [](T &a, T &b) {
+        return make_pair(a.y, a.x) < make_pair(b.y, b.x);
+    });
+
+    sort(pts.begin(), pts.end(), [&p0](T &a, T &b) {
+        ll o = p0.cross(a, b);
+        if (o != 0)return o > 0;
+        return (a - p0).dist2() < (b - p0).dist2();
+    });
+
+    if (inc_collinear) {
+        int ind = pts.size() - 1;
+        while (ind >= 0 && p0.cross(pts[ind], pts.back()) == 0) --ind;
+        reverse(pts.begin() + ind + 1, pts.end());
+    }
+
+    vector<T> ch;
+    for (int i = 0; i < (int) pts.size(); i++) {
+        int sz = ch.size();
+        while (ch.size() > 1 &&
+               (ch[sz - 2].cross(ch[sz - 1], pts[i]) < 0 ||
+                (!inc_collinear && ch[sz - 2].cross(ch[sz - 1], pts[i]) == 0))) {
+            ch.pop_back();
+            sz = ch.size();
+        }
+        ch.push_back(pts[i]);
+    }
+
+    return ch;
+}
+\end{lstlisting}
+
+\subsubsection{RotatingCalipers}
+\begin{lstlisting}
+template<class T>
+ll hullDiameter(vector<T> S) {
+    int n = S.size(), j = n < 2 ? 0 : 1;
+    ll ret = 0;
+    for (int i = 0; i < j; ++i) {
+        for (;; j = (j + 1) % n) {
+            ret = max(ret, (ll)(S[i] - S[j]).dist2());
+            if ((S[(j + 1) % n] - S[j]).cross(S[i + 1] - S[i]) >= 0)
+                break;
+        }
+    }
+    // returns the squared diameter
+    return ret;
+}
+
+template<class T>
+ld hullWidth(vector<T> S) {
+    int n = S.size();
+    if(n <= 2)return 0;
+    int i = 0,j = 1;
+    ld ret = 1e18;
+    while (i < n){
+        while((S[(i + 1) % n] - S[i]).cross(S[(j + 1)%n] - S[j]) >= 0)j = (j + 1) % n;
+        ret = min(ret,lineDist(S[j], S[i],S[(i+1)%n]));
+        i++;
+    }
+    return ret;
+}
+\end{lstlisting}
+
+\subsubsection{MinimumEnclosingCircle}
+\begin{lstlisting}
+typedef Point<double> P;
+#define rep(aa, bb, cc) for(int aa = bb; aa < cc;aa++)
+
+P ccCenter(const P& A, const P& B, const P& C) {
+    P b = C - A, c = B - A;
+    return A + (b * c.dist2() - c * b.dist2()).perp() / b.cross(c) / 2;
+}
+
+pair<P, double> mec(vector<P> ps) {
+    shuffle(all(ps), mt19937(time(0)));
+    P o = ps[0];
+    double r = 0, EPS = 1 + 1e-8;
+    rep(i, 0, ps.size()) if ((o - ps[i]).dist() > r * EPS) {
+        o = ps[i], r = 0;
+        rep(j, 0, i) if ((o - ps[j]).dist() > r * EPS) {
+            o = (ps[i] + ps[j]) / 2;
+            r = (o - ps[i]).dist();
+            rep(k, 0, j) if ((o - ps[k]).dist() > r * EPS) {
+                o = ccCenter(ps[i], ps[j], ps[k]);
+                r = (o - ps[i]).dist();
+            }
+        }
+    }
+    return {o, r};
+}
+\end{lstlisting}
+
+\subsubsection{HalfPlaneIntersection}
+\begin{lstlisting}
+// Basic half-plane struct.
+template<class T>
+struct Halfplane {
+
+    // 'p' is a passing point of the line and 'pq' is the direction vector of the line.
+    T p, pq;
+    long double angle;
+
+    Halfplane() {}
+    Halfplane(const T& a, const T& b) : p(a), pq(b - a) {
+        angle = atan2l(pq.y, pq.x);
+    }
+
+    // Check if point 'r' is outside this half-plane.
+    // Every half-plane allows the region to the LEFT of its line.
+    bool out(const T& r) {
+        return dcmp(pq.cross(r - p),0) < 0;
+    }
+
+    // Comparator for sorting.
+    bool operator < (const Halfplane& e) const {
+        return angle < e.angle;
+    }
+
+    // Intersection point of the lines of two half-planes. It is assumed they're never parallel.
+    friend T inter(const Halfplane& s, const Halfplane& t) {
+        long double alpha = (ld)(t.p - s.p).cross(t.pq) / s.pq.cross(t.pq);
+        return s.p + (s.pq * alpha);
+    }
+};
+
+template<class T>
+vector<T> hpIntersect(vector<Halfplane<T>> H) {
+    ld inf = 1e9;
+    T box[4] = {  // Bounding box in CCW order
+            Point(inf, inf),
+            Point(-inf, inf),
+            Point(-inf, -inf),
+            Point(inf, -inf)
+    };
+
+    for(int i = 0; i < 4; i++) { // Add bounding box half-planes.
+        Halfplane aux(box[i], box[(i+1) % 4]);
+        H.push_back(aux);
+    }
+
+    // Sort by angle and start algorithm
+    sort(H.begin(), H.end());
+    deque<Halfplane<T>> dq;
+    int len = 0;
+    for(int i = 0; i < int(H.size()); i++) {
+
+        // Remove from the back of the deque while last half-plane is redundant
+        while (len > 1 && H[i].out(inter(dq[len-1], dq[len-2]))) {
+            dq.pop_back();
+            --len;
+        }
+
+        // Remove from the front of the deque while first half-plane is redundant
+        while (len > 1 && H[i].out(inter(dq[0], dq[1]))) {
+            dq.pop_front();
+            --len;
+        }
+
+        // Special case check: Parallel half-planes
+        if (len > 0 && fabsl(H[i].pq.cross(dq[len-1].pq)) < eps) {
+            // Opposite parallel half-planes that ended up checked against each other.
+            if (dcmp(H[i].pq.dot(dq[len-1].pq),0) < 0)
+                return vector<T>();
+
+            // Same direction half-plane: keep only the leftmost half-plane.
+            if (H[i].out(dq[len-1].p)) {
+                dq.pop_back();
+                --len;
+            }
+            else continue;
+        }
+
+        // Add new half-plane
+        dq.push_back(H[i]);
+        ++len;
+    }
+
+    // Final cleanup: Check half-planes at the front against the back and vice-versa
+    while (len > 2 && dq[0].out(inter(dq[len-1], dq[len-2]))) {
+        dq.pop_back();
+        --len;
+    }
+
+    while (len > 2 && dq[len-1].out(inter(dq[0], dq[1]))) {
+        dq.pop_front();
+        --len;
+    }
+
+    // Report empty intersection if necessary
+    if (len < 3) return vector<T>();
+
+    // Reconstruct the convex polygon from the remaining half-planes.
+    vector<T> ret(len);
+    for(int i = 0; i < len; i++) {
+        ret[i] = inter(dq[i], dq[(i+1)%len]);
+    }
+    return ret;
+}
+\end{lstlisting}
+
+\subsection{Geometry 3D}
+
+\subsubsection{Point3D}
+\begin{lstlisting}
+template<class T>
+struct Point3D {
+    typedef Point3D P;
+    typedef const P &R;
+    T x, y, z;
+
+    explicit Point3D(T x = 0, T y = 0, T z = 0) : x(x), y(y), z(z) {}
+
+    bool operator<(R p) const {
+        return tie(x, y, z) < tie(p.x, p.y, p.z);
+    }
+
+    bool operator==(R p) const {
+        return tie(x, y, z) == tie(p.x, p.y, p.z);
+    }
+
+    P operator+(R p) const { return P(x + p.x, y + p.y, z + p.z); }
+
+    P operator-() const { return P(-x, -y, -z); }
+
+    P operator-(R p) const { return P(x - p.x, y - p.y, z - p.z); }
+
+    P operator*(T d) const { return P(x * d, y * d, z * d); }
+
+    P operator/(T d) const { return P(x / d, y / d, z / d); }
+
+    T dot(R p) const { return x * p.x + y * p.y + z * p.z; }
+
+    P cross(R p) const {
+        return P(y * p.z - z * p.y, z * p.x - x * p.z, x * p.y - y * p.x);
+    }
+
+    T dist2() const { return x * x + y * y + z * z; }
+
+    double dist() const { return sqrt((double) dist2()); }
+
+//Azimuthal angle ( longitude) to x=axis in interval [=pi , pi ]
+    double phi() const { return atan2(y, x); }
+
+//Zenith angle ( latitude ) to the z=axis in interval [0 , pi ]
+    double theta() const { return atan2(sqrt(x * x + y * y), z); }
+
+    P unit() const { return *this / (T) dist(); } //makes dist ()=1
+//returns unit vector normal to *this and p
+    P normal(P p) const { return cross(p).unit(); }
+
+//returns point rotated 'angle ' radians ccw around axis
+    P rotate(double angle, P axis) const {
+        double s = sin(angle), c = cos(angle);
+        P u = axis.unit();
+        return u * dot(u) * (1 - c) + (*this) * c - cross(u) * s;
+    }
+
+    friend ostream &operator<<(ostream &os, P p) {
+//        return os << "(" << p.x << "," << p.y << ")";
+        return os << p.x << " " << p.y << " " << p.z;
+    }
+
+    friend istream &operator>>(istream &is, P &p) {
+        return is >> p.x >> p.y >> p.z;
+    }
+};
+
+
+namespace Axis {
+    Point3D<double> x(1, 0, 0);
+    Point3D<double> y(0, 1, 0);
+    Point3D<double> z(0, 0, 1);
+};
+\end{lstlisting}
+
+\end{document}
