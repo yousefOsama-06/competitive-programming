@@ -1,10 +1,9 @@
-ll gcd(ll a, ll b) {
- if (b == 0)
-    return a;
- return gcd(b, a % b);
-//    return __gcd(a, b);
-}
+// GCD & LCM - Standard C++17 Built-ins (#include <numeric>)
+// std::gcd(a, b) and std::lcm(a, b) are available natively in C++17
+// Time Complexity: O(log(min(a, b)))
 
-ll lcm(ll a, ll b) {
-    return (a / gcd(a, b)) * b;
-}
+#include <numeric>
+
+// Standard C++17 built-ins:
+// ll g = std::gcd(a, b);
+// ll l = std::lcm(a, b);
