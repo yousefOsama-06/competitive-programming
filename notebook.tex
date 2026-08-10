@@ -2249,7 +2249,7 @@ struct FloydWarshall {
 
 \subsection{Graph Connectivity}
 
-\subsubsection{BridgesAndCutEdges}
+\subsubsection{Bridges}
 \begin{lstlisting}
 // Bridges (Cut Edges) in Undirected Graph - O(V + E)
 struct Bridges {
@@ -2290,7 +2290,7 @@ struct Bridges {
 };
 \end{lstlisting}
 
-\subsubsection{ArticulationPoints}
+\subsubsection{CutPoints}
 \begin{lstlisting}
 // Articulation Points (Cut Vertices) in Undirected Graph - O(V + E)
 struct ArticulationPoints {
@@ -2334,7 +2334,7 @@ struct ArticulationPoints {
 };
 \end{lstlisting}
 
-\subsubsection{SCC\_Tarjan}
+\subsubsection{SCC}
 \begin{lstlisting}
 // Strongly Connected Components (Tarjan's Algorithm) - O(V + E)
 struct SCC {
@@ -2536,7 +2536,7 @@ struct EulerianPath {
 
 \subsection{Flow and Min Cut}
 
-\subsubsection{DinicMaxFlow}
+\subsubsection{Dinic}
 \begin{lstlisting}
 struct Dinic {
     struct Edge {
@@ -2592,7 +2592,7 @@ struct Dinic {
 };
 \end{lstlisting}
 
-\subsubsection{MinCostMaxFlow}
+\subsubsection{MCMF}
 \begin{lstlisting}
 struct Edge {
     int to;
@@ -2675,7 +2675,7 @@ struct MCMF
 
 \subsection{Matching}
 
-\subsubsection{HopcroftKarpMatching}
+\subsubsection{HopcroftKarp}
 \begin{lstlisting}
 struct HopcroftKarp {
     vector<int> leftMatch, rightMatch, dist, cur;
@@ -2785,7 +2785,7 @@ long long modInverse(long long a, long long m) {
 
 \subsection{Primes and Divisors}
 
-\subsubsection{SieveOfEratosthenes}
+\subsubsection{Sieve}
 \begin{lstlisting}
 bool isPrime[N];
 
@@ -2804,7 +2804,7 @@ void seive(int n = N) {
 }
 \end{lstlisting}
 
-\subsubsection{SmallestPrimeFactor}
+\subsubsection{SPF}
 \begin{lstlisting}
 vector<int> spf;
 
@@ -2832,7 +2832,7 @@ vector<int> getPrimeFactors(int n) {
 }
 \end{lstlisting}
 
-\subsubsection{DivisorsGeneration}
+\subsubsection{Divisors}
 \begin{lstlisting}
 template <typename T>
 vector<T> getDivisors(T n) {
@@ -2849,7 +2849,7 @@ vector<T> getDivisors(T n) {
 }
 \end{lstlisting}
 
-\subsubsection{PrimeFactorization}
+\subsubsection{Factorization}
 \begin{lstlisting}
 template <typename T>
 vector<T> getPrimeFactors(T n) {
@@ -3235,7 +3235,7 @@ struct Basis {
 
 \subsection{Convolution}
 
-\subsubsection{FastFourierTransform}
+\subsubsection{FFT}
 \begin{lstlisting}
 #define rep(aa, bb, cc) for(int aa = bb; aa < cc;aa++)
 #define sz(a) (int)a.size()
@@ -3286,7 +3286,7 @@ template<int M> vi convMod(const vi &a, const vi &b) {
 }
 \end{lstlisting}
 
-\subsubsection{NumberTheoreticTransform}
+\subsubsection{NTT}
 \begin{lstlisting}
 const int MOD = 998244353;
 const int ROOT = 3; // Primitive root for 998244353
@@ -3338,7 +3338,7 @@ void ntt(vector<long long>& a, bool invert) {
 
 \subsection{String Matching}
 
-\subsubsection{KMP\_PrefixFunction}
+\subsubsection{KMP}
 \begin{lstlisting}
 vector<int> compute_pi(const string &s) {
     int n = s.size();
@@ -3436,7 +3436,7 @@ vector<int> z_function(string s) {
 
 \subsection{Hashing}
 
-\subsubsection{DoubleStringHashing}
+\subsubsection{StringHashing}
 \begin{lstlisting}
 int modSum(ll a, ll b) {
     ///complexity: 1
@@ -3526,7 +3526,7 @@ struct Hash {
 
 \subsection{Aho Corasick}
 
-\subsubsection{AhoCorasickAutomaton}
+\subsubsection{AhoCorasick}
 \begin{lstlisting}
 struct Mapper {
     int operator()(char c) const { return c - 'a'; }
@@ -3614,7 +3614,7 @@ struct Aho {
 
 \subsection{Suffix Structures}
 
-\subsubsection{SuffixArrayLCP}
+\subsubsection{SuffixArray}
 \begin{lstlisting}
 struct SuffixArray {
     string S;
@@ -3827,7 +3827,7 @@ void rec(int L, int R, int LO, int HI) {
 void solve(int L, int R) { rec(L, R, -inf, inf); }
 \end{lstlisting}
 
-\subsubsection{ConvexHullTrick}
+\subsubsection{CHT}
 \begin{lstlisting}
 //To query the maximum value of the function for all x in [l, r], query only two points: l, r because the functions are convex.
 struct Line {
@@ -3886,7 +3886,7 @@ struct HullDynamic : public multiset<Line, less<>> {
 };
 \end{lstlisting}
 
-\subsubsection{ConvexHullTrickRollback}
+\subsubsection{CHTRollback}
 \begin{lstlisting}
 // Template parameters:
 // IS_MAX: Set to true for Maximum queries, false for Minimum queries.
@@ -4177,7 +4177,7 @@ vector<long long> SOS_DP(int n_bits, const vector<long long>& a) {
 
 \subsection{Lowest Common Ancestor (LCA)}
 
-\subsubsection{BinaryLiftingLCA}
+\subsubsection{LCA}
 \begin{lstlisting}
 struct LCA {
     static const int B = 21;
@@ -4218,7 +4218,7 @@ struct LCA {
 
 \subsection{DSU on Tree}
 
-\subsubsection{DSUOnTree\_Sack}
+\subsubsection{DSUOnTree}
 \begin{lstlisting}
 class DSUOnTree {
 private:
@@ -4352,7 +4352,7 @@ public:
 
 \subsection{Heavy Light Decomposition (HLD)}
 
-\subsubsection{HeavyLightDecomposition}
+\subsubsection{HLD}
 \begin{lstlisting}
 class HLD {
 public:
@@ -4429,7 +4429,7 @@ public:
 
 \subsection{Centroid Decomposition}
 
-\subsubsection{CentroidDecomposition}
+\subsubsection{Centroid}
 \begin{lstlisting}
 class CentroidDecomposition {
 private:
@@ -4531,10 +4531,8 @@ public:
 
 \subsubsection{Point2D}
 \begin{lstlisting}
-template<class T>
-int sgn(T x) { return (x > 0) - (x < 0); }
-
-template<class T>
+// 2D Point / Vector Primitive
+template <typename T = double>
 struct Point {
     typedef Point P;
     T x, y;
@@ -4600,19 +4598,15 @@ struct Point {
 
     // Project point c onto line segment through a and b (assuming a != b).
     P projectOnSegment(const P &a, const P &b) const {
-        P &c = (P &) *this;
-        P ab = a.getVector(b);
-        P ac = a.getVector(c);
-
+        P ab = b - a, ac = *this - a;
         long double r = ac.dot(ab), d = a.dist2(b);
         if (r < 0) return a;
         if (r > d) return b;
-
         return a + ab * r / d;
     }
 
     P reflectAroundLine(const P &a, const P &b) const {
-        return projectOnLine(a, b) * 2 - (*this);
+        return projectOnLine(a, b) * 2 - *this;
     }
 };
 
@@ -4746,67 +4740,55 @@ double rayRayDist(T s1, T e1, T s2, T e2) {
 
 \subsubsection{AngleOperations}
 \begin{lstlisting}
-template<class T>
-// angle between [0, 2*pi]
+// Angle Operations in 2D - [-pi, pi] and [0, 2*pi]
+template<typename T>
 ld angleBetween(T a, T b) {
-    ld ret = atan2(a.cross(b), a.dot(b));
-    if (dcmp(ret, 0) == -1) {
-        ret += 2 * PI;
-    }
-//    return min(ret, 2 * PI - ret);    //to return the smaller angle
-    return ret;
+    ld res = atan2(a.cross(b), a.dot(b));
+    return res < 0 ? res + 2 * PI : res;
 }
 
-template<class T>
-ld angleO(T a, T O, T b) { /// angle(aOb)
-    assert(a.dist(O) > eps && b.dist(O) > eps); // nan
-    T v1 = (a - O), v2 = (b - O);
-    return angleBetween(v1, v2);
+template<typename T>
+ld angleO(T a, T O, T b) {
+    return angleBetween(a - O, b - O);
 }
 
-
-// (-pi, pi]
-ld format(ld angle) {
-    while (dcmp(angle, PI) == 1)
-        angle -= 2 * PI;
-    while (dcmp(angle, -PI) != 1)
-        angle += 2 * PI;
+ld formatAngle(ld angle) {
+    while (angle > PI) angle -= 2 * PI;
+    while (angle <= -PI) angle += 2 * PI;
     return angle;
 }
 \end{lstlisting}
 
 \subsubsection{PolygonArea}
 \begin{lstlisting}
-template<class T>
-ld polygonArea(vector<T>&v){
-    ld ret = 0;
+// Polygon Area (Shoelace Formula) - O(N)
+template<typename T>
+ld polygonArea(const vector<T>& v) {
+    ld area = 0;
     int n = v.size();
-    for (int i = 0; i < n; ++i) {
-        ret += v[i].cross(v[(i+1)%n]);
+    for (int i = 0; i < n; i++) {
+        area += v[i].cross(v[(i + 1) % n]);
     }
-    return 0.5 * abs(ret);
+    return 0.5 * abs(area);
 }
 \end{lstlisting}
 
 \subsubsection{Circle3Points}
 \begin{lstlisting}
+// Circumcenter & Circumradius of 3 Points
 typedef Point<double> P;
- 
-bool isColliner(const P &A, const P &B, const P &C)
-{
+
+bool isColliner(const P &A, const P &B, const P &C) {
     return dcmp(P(B - A).cross(P(C - A)), 0) == 0;
 }
- 
-P ccCenter(const P &A, const P &B, const P &C)
-{
+
+P ccCenter(const P &A, const P &B, const P &C) {
     P b = C - A, c = B - A;
     return A + (b * c.dist2() - c * b.dist2()).perp() / b.cross(c) / 2;
 }
- 
-double ccRadius(const P &A, const P &B, const P &C)
-{
-    return (B - A).dist() * (C - B).dist() * (A - C).dist() /
-           abs((B - A).cross(C - A)) / 2;
+
+double ccRadius(const P &A, const P &B, const P &C) {
+    return (B - A).dist() * (C - B).dist() * (A - C).dist() / (2 * abs((B - A).cross(C - A)));
 }
 \end{lstlisting}
 
@@ -4862,7 +4844,7 @@ ld circleInter(T a,T b,ll r1,ll r2){
 }
 \end{lstlisting}
 
-\subsubsection{ConvexHullAndrew}
+\subsubsection{ConvexHull}
 \begin{lstlisting}
 // Convex Hull (Andrew's Monotone Chain) - O(N log N)
 // Returns vertices in counter-clockwise order
@@ -4887,40 +4869,38 @@ vector<P> convexHull(vector<P> pts) {
 
 \subsubsection{RotatingCalipers}
 \begin{lstlisting}
-template<class T>
-ll hullDiameter(vector<T> S) {
+// Rotating Calipers - O(N) Convex Polygon Diameter & Width
+template<typename T>
+ll hullDiameter(const vector<T>& S) {
     int n = S.size(), j = n < 2 ? 0 : 1;
-    ll ret = 0;
-    for (int i = 0; i < j; ++i) {
+    ll res = 0;
+    for (int i = 0; i < j; i++) {
         for (;; j = (j + 1) % n) {
-            ret = max(ret, (ll)(S[i] - S[j]).dist2());
-            if ((S[(j + 1) % n] - S[j]).cross(S[i + 1] - S[i]) >= 0)
-                break;
+            res = max(res, (ll)(S[i] - S[j]).dist2());
+            if ((S[(j + 1) % n] - S[j]).cross(S[i + 1] - S[i]) >= 0) break;
         }
     }
-    // returns the squared diameter
-    return ret;
+    return res;
 }
 
-template<class T>
-ld hullWidth(vector<T> S) {
+template<typename T>
+ld hullWidth(const vector<T>& S) {
     int n = S.size();
-    if(n <= 2)return 0;
-    int i = 0,j = 1;
-    ld ret = 1e18;
-    while (i < n){
-        while((S[(i + 1) % n] - S[i]).cross(S[(j + 1)%n] - S[j]) >= 0)j = (j + 1) % n;
-        ret = min(ret,lineDist(S[j], S[i],S[(i+1)%n]));
-        i++;
+    if (n <= 2) return 0;
+    int j = 1;
+    ld res = 1e18;
+    for (int i = 0; i < n; i++) {
+        while ((S[(i + 1) % n] - S[i]).cross(S[(j + 1) % n] - S[j]) >= 0) j = (j + 1) % n;
+        res = min(res, lineDist(S[j], S[i], S[(i + 1) % n]));
     }
-    return ret;
+    return res;
 }
 \end{lstlisting}
 
 \subsubsection{MinimumEnclosingCircle}
 \begin{lstlisting}
+// Minimum Enclosing Circle (Welzl's Algorithm) - O(N) Expected Time
 typedef Point<double> P;
-#define rep(aa, bb, cc) for(int aa = bb; aa < cc;aa++)
 
 P ccCenter(const P& A, const P& B, const P& C) {
     P b = C - A, c = B - A;
@@ -4928,17 +4908,24 @@ P ccCenter(const P& A, const P& B, const P& C) {
 }
 
 pair<P, double> mec(vector<P> ps) {
-    shuffle(all(ps), mt19937(time(0)));
+    shuffle(all(ps), mt19937(chrono::steady_clock::now().time_since_epoch().count()));
     P o = ps[0];
-    double r = 0, EPS = 1 + 1e-8;
-    rep(i, 0, ps.size()) if ((o - ps[i]).dist() > r * EPS) {
-        o = ps[i], r = 0;
-        rep(j, 0, i) if ((o - ps[j]).dist() > r * EPS) {
-            o = (ps[i] + ps[j]) / 2;
-            r = (o - ps[i]).dist();
-            rep(k, 0, j) if ((o - ps[k]).dist() > r * EPS) {
-                o = ccCenter(ps[i], ps[j], ps[k]);
-                r = (o - ps[i]).dist();
+    double r = 0, EPS = 1 + 1e-9;
+    int n = ps.size();
+    for (int i = 0; i < n; i++) {
+        if ((o - ps[i]).dist() > r * EPS) {
+            o = ps[i]; r = 0;
+            for (int j = 0; j < i; j++) {
+                if ((o - ps[j]).dist() > r * EPS) {
+                    o = (ps[i] + ps[j]) / 2;
+                    r = (o - ps[i]).dist();
+                    for (int k = 0; k < j; k++) {
+                        if ((o - ps[k]).dist() > r * EPS) {
+                            o = ccCenter(ps[i], ps[j], ps[k]);
+                            r = (o - ps[i]).dist();
+                        }
+                    }
+                }
             }
         }
     }
@@ -5058,7 +5045,8 @@ vector<T> hpIntersect(vector<Halfplane<T>> H) {
 
 \subsubsection{Point3D}
 \begin{lstlisting}
-template<class T>
+// 3D Point / Vector Primitive
+template <typename T = double>
 struct Point3D {
     typedef Point3D P;
     typedef const P &R;
@@ -5094,17 +5082,17 @@ struct Point3D {
 
     double dist() const { return sqrt((double) dist2()); }
 
-//Azimuthal angle ( longitude) to x=axis in interval [=pi , pi ]
+    //Azimuthal angle ( longitude) to x=axis in interval [=pi , pi ]
     double phi() const { return atan2(y, x); }
 
-//Zenith angle ( latitude ) to the z=axis in interval [0 , pi ]
+    //Zenith angle ( latitude ) to the z=axis in interval [0 , pi ]
     double theta() const { return atan2(sqrt(x * x + y * y), z); }
 
     P unit() const { return *this / (T) dist(); } //makes dist ()=1
-//returns unit vector normal to *this and p
+    //returns unit vector normal to *this and p
     P normal(P p) const { return cross(p).unit(); }
 
-//returns point rotated 'angle ' radians ccw around axis
+    //returns point rotated 'angle ' radians ccw around axis
     P rotate(double angle, P axis) const {
         double s = sin(angle), c = cos(angle);
         P u = axis.unit();
