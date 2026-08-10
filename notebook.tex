@@ -223,42 +223,35 @@ vector<int> random(int n) {
 
 \subsection{coordinateCompression}
 \begin{lstlisting}
+// Coordinate Compression - O(N log N)
+template<typename T>
 struct Compress {
-    map<int, int> m;
-    vector<int> undo;
+    vector<T> v;
 
-    Compress(vector<int>& v, int base = 0) {
-        m.clear();
-        set<int> s;
-        for (int x : v) {
-            s.insert(x);
+    Compress(vector<T>& a) : v(a) {
+        sort(all(v));
+        v.erase(unique(all(v)), v.end());
+        for (auto &x : a) {
+            x = lower_bound(all(v), x) - v.begin();
         }
-        undo.resize(s.size() + base);
-        int i = base;
-        for (int x : s) {
-            undo[i] = x;
-            m[x] = i++;
-        }
-        for (int& x : v)
-            x = m[x];
+    }
+
+    T operator[](int i) const {
+        return v[i];
     }
 };
 \end{lstlisting}
 
 \subsection{grayCode}
 \begin{lstlisting}
+// Gray Code Generator - O(2^N)
+// g(n) = n ^ (n >> 1)
 vector<int> grayCode(int n) {
-    vector<int> vec = {0};
-    vector<bool> used(1 << n, false);
-    used[0] = true;
-    while (vec.size() < (1 << n)) {
-        int bit = 0;
-        while (used[vec.back() ^ (1 << bit)])
-            bit++;
-        vec.push_back(vec.back() ^ (1 << bit));
-        used[vec.back() ^ (1 << bit)] = true;
+    vector<int> res(1 << n);
+    for (int i = 0; i < (1 << n); i++) {
+        res[i] = i ^ (i >> 1);
     }
-    return vec;
+    return res;
 }
 \end{lstlisting}
 
@@ -266,12 +259,24 @@ vector<int> grayCode(int n) {
 \begin{lstlisting}
 #include <ext/pb_ds/assoc_container.hpp>
 using namespace __gnu_pbds;
-//gp_hash_table<int, int> table;
-const int RANDOM = chrono::high_resolution_clock::now().time_since_epoch().count();
-struct chash {
-    int operator()(int x) const { return x ^ RANDOM; }
+
+// Custom Hash to prevent anti-hash tests in unordered_map / gp_hash_table
+struct custom_hash {
+    static uint64_t splitmix64(uint64_t x) {
+        x += 0x9e3779b97f4a7c15;
+        x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
+        x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
+        return x ^ (x >> 31);
+    }
+
+    size_t operator()(uint64_t x) const {
+        static const uint64_t FIXED_RANDOM = chrono::steady_clock::now().time_since_epoch().count();
+        return splitmix64(x + FIXED_RANDOM);
+    }
 };
-// gp_hash_table<int, int, chash> table;
+
+// Usage: gp_hash_table<ll, int, custom_hash> table;
+//        unordered_map<ll, int, custom_hash> safe_map;
 \end{lstlisting}
 
 \subsection{pragmas}
@@ -881,175 +886,132 @@ struct SegTree {
 
 \subsubsection{FenwickTree}
 \begin{lstlisting}
-template<typename T>
-class FenwickTree {
-public:
-    vector<T> tree;
+// Fenwick Tree (Binary Indexed Tree) - 0-based indexing
+// Space: O(N), Time: O(log N) per update/query
+template<typename T = ll>
+struct FenwickTree {
     int n;
+    vector<T> tree;
 
-    // Default constructor
-    FenwickTree() : n(0) {}
+    FenwickTree(int n = 0) : n(n), tree(n + 1, 0) {}
 
-    // Constructor with size
-    FenwickTree(int n) {
-        init(n);
+    void add(int i, T delta) {
+        for (i++; i <= n; i += i & -i) tree[i] += delta;
     }
 
-    void init(int n) {
-        this->n = n;
-        // 1-based indexing needs size n + 1. Padding by 2 is safe.
-        tree.assign(n + 2, 0); 
+    void set(int i, T val) {
+        add(i, val - query(i, i));
     }
 
-    void update(int x, T val) {
-        x++; // Convert 0-based to 1-based
-        for (; x <= n; x += x & -x) {
-            tree[x] += val;
-        }
+    T query(int i) {
+        T sum = 0;
+        for (i++; i > 0; i -= i & -i) sum += tree[i];
+        return sum;
     }
 
-    void assign(int x, T val) {
-        update(x, val - getRange(x, x));
-    }
-
-    T getPrefix(int x) {
-        x++; // Convert 0-based to 1-based
-        if (x <= 0) return 0;
-        T ret = 0;
-        for (; x; x -= x & -x) {
-            ret += tree[x];
-        }
-        return ret;
-    }
-
-    T getRange(int l, int r) {
+    T query(int l, int r) {
         if (l > r) return 0;
-        return getPrefix(r) - getPrefix(l - 1);
+        return query(r) - query(l - 1);
     }
 
-    // Returns the 0-based index of the first prefix sum >= x
-    int lowerBound(T x) {
+    // Returns first 0-based index where prefix sum >= val
+    int lower_bound(T val) {
         int pos = 0;
-        // sz > 0 is enough; don't break early if x == 0 to handle 0-value elements properly
-        for (int sz = (1 << __lg(n)); sz > 0; sz >>= 1) {
-            if (pos + sz <= n && tree[pos + sz] < x) {
-                x -= tree[pos + sz];
+        for (int sz = 1 << (n ? __lg(n) : 0); sz > 0; sz >>= 1) {
+            if (pos + sz <= n && tree[pos + sz] < val) {
+                val -= tree[pos + sz];
                 pos += sz;
             }
         }
-        return pos; // pos is the 0-based index (since 1-based would be pos + 1)
+        return pos;
     }
 };
 \end{lstlisting}
 
 \subsubsection{FenwickTree2D}
 \begin{lstlisting}
-template<typename T>
-class FenwickTree2D {
-public:
-    vector<vector<T>> tree;
+// 2D Fenwick Tree - 0-based indexing
+// Space: O(N * M), Time: O(log N * log M) per update/query
+template<typename T = ll>
+struct FenwickTree2D {
     int n, m;
+    vector<vector<T>> tree;
 
-    // Default constructor
-    FenwickTree2D() : n(0), m(0) {}
+    FenwickTree2D(int n = 0, int m = 0) : n(n), m(m), tree(n + 1, vector<T>(m + 1, 0)) {}
 
-    // Constructor with dimensions
-    FenwickTree2D(int n, int m) {
-        init(n, m);
-    }
-
-    void init(int n, int m) {
-        this->n = n;
-        this->m = m;
-        // 1-based indexing needs sizes n + 1 and m + 1. Padding by 2 is safe.
-        tree.assign(n + 2, vector<T>(m + 2, 0)); 
-    }
-
-    // Point update: Adds 'val' to the cell (x, y)
-    void update(int x, int y, T val) {
-        x++; y++; // Convert 0-based to 1-based
-        for (int i = x; i <= n; i += i & -i) {
-            for (int j = y; j <= m; j += j & -j) {
+    void add(int x, int y, T val) {
+        for (int i = x + 1; i <= n; i += i & -i) {
+            for (int j = y + 1; j <= m; j += j & -j) {
                 tree[i][j] += val;
             }
         }
     }
 
-    // Point assignment: Sets the cell (x, y) to 'val'
-    void assign(int x, int y, T val) {
-        update(x, y, val - getRange(x, y, x, y));
+    void set(int x, int y, T val) {
+        add(x, y, val - query(x, y, x, y));
     }
 
-    // 2D Prefix sum: Returns the sum of the subgrid from (0, 0) to (x, y)
-    T getPrefix(int x, int y) {
-        x++; y++; // Convert 0-based to 1-based
-        if (x <= 0 || y <= 0) return 0;
-        
-        // Clamp to maximum dimensions if queries exceed bounds
-        x = min(x, n);
-        y = min(y, m);
-        
-        T ret = 0;
-        for (int i = x; i > 0; i -= i & -i) {
-            for (int j = y; j > 0; j -= j & -j) {
-                ret += tree[i][j];
+    T query(int x, int y) {
+        T sum = 0;
+        for (int i = min(x + 1, n); i > 0; i -= i & -i) {
+            for (int j = min(y + 1, m); j > 0; j -= j & -j) {
+                sum += tree[i][j];
             }
         }
-        return ret;
+        return sum;
     }
 
-    // 2D Range sum: Returns the sum of the subgrid from top-left (x1, y1) to bottom-right (x2, y2)
-    T getRange(int x1, int y1, int x2, int y2) {
+    // 2D Subgrid Range Sum from (x1, y1) to (x2, y2) inclusive
+    T query(int x1, int y1, int x2, int y2) {
         if (x1 > x2 || y1 > y2) return 0;
-        
-        // Inclusion-Exclusion Principle
-        return getPrefix(x2, y2) 
-             - getPrefix(x1 - 1, y2) 
-             - getPrefix(x2, y1 - 1) 
-             + getPrefix(x1 - 1, y1 - 1);
+        return query(x2, y2) - query(x1 - 1, y2) - query(x2, y1 - 1) + query(x1 - 1, y1 - 1);
     }
 };
 \end{lstlisting}
 
 \subsubsection{Offline2DFenwickTree}
 \begin{lstlisting}
-template <typename T>
+// Offline 2D Fenwick Tree (Compressed 2D BIT)
+// Space: O(N + Q log N), Time: O(log^2 N) per query
+template<typename T = ll>
 struct BIT2D {
     int n;
     vector<vector<int>> vals;
     vector<vector<T>> bit;
 
-    int ind(const vector<int> &v, int x) {
-        return upper_bound(begin(v), end(v), x) - begin(v) - 1;
+    int ind(const vector<int>& v, int x) {
+        return upper_bound(all(v), x) - v.begin() - 1;
     }
 
-    // n: the limit of the first dimension
-    // all update operations you will make
-    BIT2D(int n, vector<array<int, 2>> todo): n(n + 1), vals(n + 1), bit(n + 1) {
-        sort(begin(todo), end(todo), [](auto &a, auto &b) { return a[1] < b[1]; });
+    // n: max row index, todo: all (r, c) update coordinates that will be called
+    BIT2D(int n, vector<array<int, 2>> todo) : n(n + 1), vals(n + 1), bit(n + 1) {
+        sort(all(todo), [](const auto& a, const auto& b) { return a[1] < b[1]; });
 
-        for (int i = 0; i < n; i++) vals[i].push_back(-oo);
-        for (auto [r, c] : todo)
-            for (; r < n; r |= r + 1)
-                if (vals[r].back() != c) vals[r].push_back(c);
-
-        for (int i = 0; i < n; i++) bit[i].resize(vals[i].size());
+        for (int i = 0; i <= n; i++) vals[i].pb(INT_MIN);
+        for (auto [r, c] : todo) {
+            for (int x = r; x <= n; x |= x + 1) {
+                if (vals[x].back() != c) vals[x].pb(c);
+            }
+        }
+        for (int i = 0; i <= n; i++) bit[i].resize(vals[i].size(), 0);
     }
 
     void add(int r, int c, T val) {
-        for (; r < n; r |= r + 1) {
-            int i = ind(vals[r], c);
-            for (; i < bit[r].size(); i |= i + 1) bit[r][i] += val;
+        for (; r <= n; r |= r + 1) {
+            for (int i = ind(vals[r], c); i < (int)bit[r].size(); i |= i + 1) {
+                bit[r][i] += val;
+            }
         }
     }
 
     T query(int r, int c) {
-        T ans = 0;
-        for (; r >= 0; r = (r & r + 1) - 1) {
-            int i = ind(vals[r], c);
-            for (; i >= 0; i = (i & i + 1) - 1) ans += bit[r][i];
+        T res = 0;
+        for (; r >= 0; r = (r & (r + 1)) - 1) {
+            for (int i = ind(vals[r], c); i >= 0; i = (i & (i + 1)) - 1) {
+                res += bit[r][i];
+            }
         }
-        return ans;
+        return res;
     }
 
     T query(int r1, int c1, int r2, int c2) {
@@ -1057,7 +1019,7 @@ struct BIT2D {
     }
 
     void reset() {
-        for(auto &v: bit) for(auto &i: v) i = 0;
+        for (auto& v : bit) fill(all(v), 0);
     }
 };
 \end{lstlisting}
@@ -1066,160 +1028,128 @@ struct BIT2D {
 
 \subsubsection{SparseTable}
 \begin{lstlisting}
-#define sz(aa) (int)aa.size()
+// Sparse Table (Range Minimum/Maximum Query) - O(N log N) build, O(1) query
+template<typename T, typename F = function<T(T, T)>>
+struct SparseTable {
+    int n;
+    vector<vector<T>> mat;
+    F func;
 
-template <class T>
-struct sparseTable {
-    vector<vector<T>> jmp;
-
-    void build(const vector<T>& V) {
-        jmp.assign(1, V);
-        for (int pw = 1, k = 1; pw * 2 <= sz(V); pw *= 2, ++k) {
-            jmp.emplace_back(sz(V) - pw * 2 + 1);
-            for (int j = 0; j < sz(jmp[k]); ++j) {
-                jmp[k][j] = max(jmp[k - 1][j], jmp[k - 1][j + pw]);
+    SparseTable() = default;
+    SparseTable(const vector<T>& a, F f = [](T x, T y) { return max(x, y); }) : n(a.size()), func(f) {
+        int k = n ? __lg(n) + 1 : 0;
+        mat.assign(k, a);
+        for (int j = 1; j < k; j++) {
+            for (int i = 0; i + (1 << j) <= n; i++) {
+                mat[j][i] = func(mat[j - 1][i], mat[j - 1][i + (1 << (j - 1))]);
             }
         }
     }
 
-    T query(int l, int r) {
-        assert(l <= r);
-        int dep = 31 - __builtin_clz(r - l + 1);
-        return max(jmp[dep][l], jmp[dep][r - (1 << dep) + 1]);
+    T query(int l, int r) const {
+        int j = __lg(r - l + 1);
+        return func(mat[j][l], mat[j][r - (1 << j) + 1]);
     }
 };
 \end{lstlisting}
 
 \subsubsection{SparseTable2D}
 \begin{lstlisting}
-#define sz(aa) (int)aa.size()
-
-template <class T>
-struct sparseTable2D {
+// 2D Sparse Table - O(N * M * log N * log M) build, O(1) query
+template<typename T = ll>
+struct SparseTable2D {
     int n, m;
-    // jmp[kr][kc][i][j] stores the max of a 2^kr by 2^kc rectangle starting at (i, j)
+    // jmp[kr][kc][i][j] = max in 2^kr x 2^kc subgrid starting at (i, j)
     vector<vector<vector<vector<T>>>> jmp;
 
-    void build(const vector<vector<T>>& V) {
-        n = sz(V);
-        if (n == 0) return;
-        m = sz(V[0]);
-        if (m == 0) return;
+    SparseTable2D(const vector<vector<T>>& grid) {
+        n = grid.size();
+        if (!n) return;
+        m = grid[0].size();
+        if (!m) return;
 
-        int log_n = 32 - __builtin_clz(n);
-        int log_m = 32 - __builtin_clz(m);
-
+        int log_n = __lg(n) + 1, log_m = __lg(m) + 1;
         jmp.assign(log_n, vector<vector<vector<T>>>(log_m, vector<vector<T>>(n, vector<T>(m))));
 
-        // Base case: 1x1 rectangles (kr = 0, kc = 0)
-        for (int i = 0; i < n; ++i) {
-            for (int j = 0; j < m; ++j) {
-                jmp[0][0][i][j] = V[i][j];
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                jmp[0][0][i][j] = grid[i][j];
             }
         }
 
-        // Build 1D sparse tables for each row (kr = 0, increasing kc)
-        for (int kc = 1; kc < log_m; ++kc) {
-            for (int i = 0; i < n; ++i) {
-                for (int j = 0; j + (1 << kc) <= m; ++j) {
-                    jmp[0][kc][i][j] = max(jmp[0][kc - 1][i][j], 
-                                           jmp[0][kc - 1][i][j + (1 << (kc - 1))]);
+        for (int kc = 1; kc < log_m; kc++) {
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j + (1 << kc) <= m; j++) {
+                    jmp[0][kc][i][j] = max(jmp[0][kc - 1][i][j], jmp[0][kc - 1][i][j + (1 << (kc - 1))]);
                 }
             }
         }
 
-        // Build the 2D tables by merging rows (increasing kr, for all kc)
-        for (int kr = 1; kr < log_n; ++kr) {
-            for (int kc = 0; kc < log_m; ++kc) {
-                for (int i = 0; i + (1 << kr) <= n; ++i) {
-                    for (int j = 0; j + (1 << kc) <= m; ++j) {
-                        jmp[kr][kc][i][j] = max(jmp[kr - 1][kc][i][j], 
-                                                jmp[kr - 1][kc][i + (1 << (kr - 1))][j]);
+        for (int kr = 1; kr < log_n; kr++) {
+            for (int kc = 0; kc < log_m; kc++) {
+                for (int i = 0; i + (1 << kr) <= n; i++) {
+                    for (int j = 0; j + (1 << kc) <= m; j++) {
+                        jmp[kr][kc][i][j] = max(jmp[kr - 1][kc][i][j], jmp[kr - 1][kc][i + (1 << (kr - 1))][j]);
                     }
                 }
             }
         }
     }
 
-    // Queries the maximum in the subgrid from (r1, c1) to (r2, c2) inclusive
-    T query(int r1, int c1, int r2, int c2) {
-        assert(r1 <= r2 && c1 <= c2);
-        int kr = 31 - __builtin_clz(r2 - r1 + 1);
-        int kc = 31 - __builtin_clz(c2 - c1 + 1);
-
-        // Get the 4 overlapping sub-rectangles
-        T top_left = jmp[kr][kc][r1][c1];
-        T top_right = jmp[kr][kc][r1][c2 - (1 << kc) + 1];
-        T bottom_left = jmp[kr][kc][r2 - (1 << kr) + 1][c1];
-        T bottom_right = jmp[kr][kc][r2 - (1 << kr) + 1][c2 - (1 << kc) + 1];
-
-        return max({top_left, top_right, bottom_left, bottom_right});
+    T query(int r1, int c1, int r2, int c2) const {
+        int kr = __lg(r2 - r1 + 1), kc = __lg(c2 - c1 + 1);
+        return max({jmp[kr][kc][r1][c1],
+                    jmp[kr][kc][r1][c2 - (1 << kc) + 1],
+                    jmp[kr][kc][r2 - (1 << kr) + 1][c1],
+                    jmp[kr][kc][r2 - (1 << kr) + 1][c2 - (1 << kc) + 1]});
     }
 };
 \end{lstlisting}
 
 \subsubsection{SquareSparseTable}
 \begin{lstlisting}
-#define sz(aa) (int)aa.size()
-
-template <class T>
-struct squareSparseTable {
+// 2D Square Sparse Table - O(N * M * log(min(N, M))) build, O(1) square query
+template<typename T = ll>
+struct SquareSparseTable {
     int n, m;
-    // jmp[k][i][j] stores the max of a 2^k by 2^k square starting at (i, j)
+    // jmp[k][i][j] = max of 2^k x 2^k square starting at (i, j)
     vector<vector<vector<T>>> jmp;
 
-    void build(const vector<vector<T>>& V) {
-        n = sz(V);
-        if (n == 0) return;
-        m = sz(V[0]);
-        if (m == 0) return;
+    SquareSparseTable(const vector<vector<T>>& grid) {
+        n = grid.size();
+        if (!n) return;
+        m = grid[0].size();
+        if (!m) return;
 
-        // The maximum possible square side length is min(n, m)
-        int max_len = min(n, m);
-        int log_max = 32 - __builtin_clz(max_len);
-
-        // Only 3 dimensions: log(min(N,M)) x N x M
+        int log_max = __lg(min(n, m)) + 1;
         jmp.assign(log_max, vector<vector<T>>(n, vector<T>(m)));
 
-        // Base case: 1x1 squares (k = 0)
-        for (int i = 0; i < n; ++i) {
-            for (int j = 0; j < m; ++j) {
-                jmp[0][i][j] = V[i][j];
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                jmp[0][i][j] = grid[i][j];
             }
         }
 
-        // Build larger squares by combining 4 smaller squares
-        for (int k = 1; k < log_max; ++k) {
-            int pw = 1 << (k - 1); // Length of the smaller squares (2^(k-1))
-            for (int i = 0; i + (pw * 2) <= n; ++i) {
-                for (int j = 0; j + (pw * 2) <= m; ++j) {
-                    jmp[k][i][j] = max({
-                        jmp[k - 1][i][j],               // Top-Left
-                        jmp[k - 1][i][j + pw],          // Top-Right
-                        jmp[k - 1][i + pw][j],          // Bottom-Left
-                        jmp[k - 1][i + pw][j + pw]      // Bottom-Right
-                    });
+        for (int k = 1; k < log_max; k++) {
+            int pw = 1 << (k - 1);
+            for (int i = 0; i + (pw * 2) <= n; i++) {
+                for (int j = 0; j + (pw * 2) <= m; j++) {
+                    jmp[k][i][j] = max({jmp[k - 1][i][j],
+                                        jmp[k - 1][i][j + pw],
+                                        jmp[k - 1][i + pw][j],
+                                        jmp[k - 1][i + pw][j + pw]});
                 }
             }
         }
     }
 
-    // Queries the maximum in a square from (r1, c1) to (r2, c2)
-    T query(int r1, int c1, int r2, int c2) {
-        assert(r1 <= r2 && c1 <= c2);
-        assert((r2 - r1) == (c2 - c1)); // Ensure it is actually a square
-
-        int len = r2 - r1 + 1;
-        int k = 31 - __builtin_clz(len);
-        int pw = 1 << k;
-
-        // Overlap four 2^k x 2^k squares to cover the arbitrary S x S square
-        return max({
-            jmp[k][r1][c1],
-            jmp[k][r1][c2 - pw + 1],
-            jmp[k][r2 - pw + 1][c1],
-            jmp[k][r2 - pw + 1][c2 - pw + 1]
-        });
+    // Queries max in square subgrid from (r1, c1) to (r2, c2)
+    T query(int r1, int c1, int r2, int c2) const {
+        int k = __lg(r2 - r1 + 1), pw = 1 << k;
+        return max({jmp[k][r1][c1],
+                    jmp[k][r1][c2 - pw + 1],
+                    jmp[k][r2 - pw + 1][c1],
+                    jmp[k][r2 - pw + 1][c2 - pw + 1]});
     }
 };
 \end{lstlisting}
@@ -1228,94 +1158,94 @@ struct squareSparseTable {
 
 \subsubsection{StringTrie}
 \begin{lstlisting}
+// Prefix Trie for Strings
+// Time: O(L) per insert/query, Space: O(N * L * Alphabet)
 struct Trie {
-    vector<vector<int>> trie;
-    vector<int> cnt;
-    //    vector<int>leaves;
-    int m, sz;
+    vector<vector<int>> nxt;
+    vector<int> cnt, end_cnt;
+    int alpha;
 
-    int addNode() {
-        trie.emplace_back(m, -1);
-        cnt.emplace_back();
-        // leaves.emplace_back();
-        sz++;
-        return sz - 1;
+    Trie(int alpha = 26) : alpha(alpha) {
+        add_node();
     }
 
-    Trie(int m = 26) : m(m), sz(0) {
-        addNode();
-    };
-
-    // insert or remove
-    void insert(string &s, int type = 1) {
-        int cur = 0;
-        for (auto c: s) {
-            if (trie[cur][c - 'a'] == -1)
-                trie[cur][c - 'a'] = addNode();
-            cur = trie[cur][c - 'a'];
-            cnt[cur] += type;
-        }
-        // leaves[cur] += type;
+    int add_node() {
+        nxt.emplace_back(alpha, -1);
+        cnt.emplace_back(0);
+        end_cnt.emplace_back(0);
+        return nxt.size() - 1;
     }
 
-
-    int query(string &s) {
-        int cur = 0;
-        for (auto c: s) {
-            if (trie[cur][c - 'a'] == -1)
-                return 0;
-            cur = trie[cur][c - 'a'];
+    void insert(const string& s, int val = 1) {
+        int u = 0;
+        cnt[u] += val;
+        for (char c : s) {
+            int ch = c - 'a';
+            if (nxt[u][ch] == -1) nxt[u][ch] = add_node();
+            u = nxt[u][ch];
+            cnt[u] += val;
         }
-        return cnt[cur];
+        end_cnt[u] += val;
+    }
+
+    int count_prefix(const string& s) {
+        int u = 0;
+        for (char c : s) {
+            int ch = c - 'a';
+            if (nxt[u][ch] == -1) return 0;
+            u = nxt[u][ch];
+        }
+        return cnt[u];
     }
 };
 \end{lstlisting}
 
 \subsubsection{BinaryTrie}
 \begin{lstlisting}
-struct Trie{
-    vector<vector<int>>trie;
-    vector<int>cnt;
-//    vector<int>leaves;
-    int mxBit,sz;
+// Binary Trie for 64-bit integers and XOR operations
+// Time: O(BITS) per operation
+struct BinaryTrie {
+    vector<array<int, 2>> nxt;
+    vector<int> cnt;
+    int max_bit;
 
-    int addNode(){
-        trie.emplace_back(2,-1);
-        cnt.emplace_back();
-//        leaves.emplace_back();
-        sz++;
-        return sz - 1;
+    BinaryTrie(int max_bit = 60) : max_bit(max_bit) {
+        add_node();
     }
 
-    Trie(int mx = 60): mxBit(mx),sz(0){
-        addNode();
-    };
-
-    // insert or remove
-    void insert(ll x,int type = 1){
-        int cur = 0;
-        cnt[cur] += type;
-        for (int i = mxBit; i >= 0; --i) {
-            int t = (x >> i)&1;
-            if(trie[cur][t] == -1)
-                trie[cur][t] = addNode();
-            cur = trie[cur][t];
-            cnt[cur] += type;
-        }
-//        leaves[cur] += type;
+    int add_node() {
+        nxt.push_back({-1, -1});
+        cnt.push_back(0);
+        return nxt.size() - 1;
     }
 
-    ll maxXor(ll x){
-        // no elements in trie
-        int cur = 0;
-        if(!cnt[cur])return -1e9;
-        for (int i = mxBit; i >= 0; --i) {
-            int t = (x >> i)&1^1;
-            if(trie[cur][t] == -1 || !cnt[trie[cur][t]])t ^= 1;
-            cur = trie[cur][t];
-            if(t)x ^= 1ll << i;
+    void insert(ll x, int val = 1) {
+        int u = 0;
+        cnt[u] += val;
+        for (int i = max_bit; i >= 0; i--) {
+            int b = (x >> i) & 1;
+            if (nxt[u][b] == -1) nxt[u][b] = add_node();
+            u = nxt[u][b];
+            cnt[u] += val;
         }
-        return x;
+    }
+
+    // Returns element in trie maximizing (x ^ element)
+    ll max_xor(ll x) const {
+        if (!cnt[0]) return -1e18;
+        int u = 0;
+        ll res = 0;
+        for (int i = max_bit; i >= 0; i--) {
+            int b = (x >> i) & 1;
+            int want = b ^ 1;
+            if (nxt[u][want] != -1 && cnt[nxt[u][want]] > 0) {
+                res |= (1LL << i);
+                u = nxt[u][want];
+            } else {
+                u = nxt[u][b];
+            }
+        }
+        return res;
     }
 };
 \end{lstlisting}
@@ -1324,97 +1254,93 @@ struct Trie{
 
 \subsubsection{DSU}
 \begin{lstlisting}
+// Disjoint Set Union (DSU) - Path Compression & Union by Size
+// Time: O(alpha(N)) per operation
 struct DSU {
     vector<int> par, sz;
-    
-    DSU(int n) : par(n), sz(n, 1) { iota(par.begin(), par.end(), 0); }
 
-    int find(int x) {
-        if(x == par[x])return x;
-        return par[x] = find(par[x]);
+    DSU(int n = 0) : par(n), sz(n, 1) {
+        iota(all(par), 0);
     }
 
-    bool same(int x, int y) { return find(x) == find(y); }
+    int find(int x) {
+        return par[x] == x ? x : par[x] = find(par[x]);
+    }
+
+    bool same(int x, int y) {
+        return find(x) == find(y);
+    }
 
     bool join(int x, int y) {
         x = find(x);
         y = find(y);
         if (x == y) return false;
-        if (sz[x] < sz[y])
-            swap(x, y);
+        if (sz[x] < sz[y]) swap(x, y);
         sz[x] += sz[y];
         par[y] = x;
         return true;
     }
 
-    int size(int x) { return sz[find(x)]; }
+    int size(int x) {
+        return sz[find(x)];
+    }
 };
 \end{lstlisting}
 
 \subsubsection{DSURollback}
 \begin{lstlisting}
+// DSU with Rollback - No path compression to allow backtracking
+// Time: O(log N) per operation, O(1) rollback
 struct DSURollback {
     vector<int> par, sz;
-    vector<pair<int, int>> history; // Stores {child_node, old_size_of_parent}
+    vector<pair<int, int>> history; // {child_node, old_parent_size}
 
-    DSURollback(int n) : par(n), sz(n, 1) { 
-        iota(par.begin(), par.end(), 0); 
+    DSURollback(int n = 0) : par(n), sz(n, 1) {
+        iota(all(par), 0);
     }
 
-    // Path compression is removed to preserve tree structure for rollbacks
     int find(int x) {
-        if(x == par[x]) return x;
-        return find(par[x]);
+        return par[x] == x ? x : find(par[x]);
     }
 
-    bool same(int x, int y) { return find(x) == find(y); }
+    bool same(int x, int y) {
+        return find(x) == find(y);
+    }
 
     bool join(int x, int y) {
         x = find(x);
         y = find(y);
-        
         if (x == y) {
-            // Push dummy state to keep the rollback count 1:1 with join calls
-            history.push_back({-1, -1}); 
+            history.eb(-1, -1);
             return false;
         }
-        
         if (sz[x] < sz[y]) swap(x, y);
-        
-        // Record the node that becomes the child and the parent's current size
-        history.push_back({y, sz[x]}); 
-        
+        history.eb(y, sz[x]);
         sz[x] += sz[y];
         par[y] = x;
         return true;
     }
 
-    int size(int x) { return sz[find(x)]; }
+    int size(int x) {
+        return sz[find(x)];
+    }
 
-    // Undoes the last join operation
     void rollback() {
         if (history.empty()) return;
-        
         auto [y, old_sz_x] = history.back();
         history.pop_back();
-        
         if (y != -1) {
-            int x = par[y];
-            sz[x] = old_sz_x;
-            par[y] = y; // Restore the child to be its own parent
+            sz[par[y]] = old_sz_x;
+            par[y] = y;
         }
     }
 
-    // Returns the current number of operations performed
-    int get_state() {
+    int get_state() const {
         return history.size();
     }
 
-    // Rolls back to a specific saved state
     void rollback_to(int state) {
-        while (history.size() > state) {
-            rollback();
-        }
+        while ((int)history.size() > state) rollback();
     }
 };
 \end{lstlisting}
@@ -2145,11 +2071,18 @@ struct ImplicitTreap {
 
 \subsubsection{OrderedSet}
 \begin{lstlisting}
+// Policy-Based Data Structure: ordered_set
+// Time: O(log N) per operation
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
 
 using namespace __gnu_pbds;
-template<class t> using ordered_set = tree<t, null_type, less<t>, rb_tree_tag, tree_order_statistics_node_update>;
+template<typename T>
+using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+
+// Usage:
+// st.find_by_order(k): Iterator to k-th element (0-based)
+// st.order_of_key(x): Number of elements strictly smaller than x
 \end{lstlisting}
 
 \subsection{Monotonic Data Structures}
@@ -2210,36 +2143,33 @@ struct TwoStackQ {
 
 \subsubsection{TopoSort}
 \begin{lstlisting}
+// Topological Sort (Kahn's Algorithm) - O(V + E)
 struct TopoSort {
     int n;
     vector<vector<int>> adj;
-    vector<int> in_degree, order;
+    vector<int> deg, order;
 
-    TopoSort(int n) : n(n), adj(n + 1), in_degree(n + 1, 0) {}
+    TopoSort(int n = 0) : n(n), adj(n + 1), deg(n + 1, 0) {}
 
     void add_edge(int u, int v) {
-        adj[u].push_back(v);
-        in_degree[v]++;
+        adj[u].pb(v);
+        deg[v]++;
     }
 
     bool solve() {
         queue<int> q;
-        for (int i = 1; i <= n; ++i) {
-            if (in_degree[i] == 0) q.push(i);
+        for (int i = 1; i <= n; i++) {
+            if (!deg[i]) q.push(i);
         }
-
         while (!q.empty()) {
             int u = q.front();
             q.pop();
-            order.push_back(u);
-
+            order.pb(u);
             for (int v : adj[u]) {
-                if (--in_degree[v] == 0) {
-                    q.push(v);
-                }
+                if (!--deg[v]) q.push(v);
             }
         }
-        return order.size() == n; // Returns false if there is a cycle
+        return (int)order.size() == n; // false if graph has cycles
     }
 };
 \end{lstlisting}
@@ -2248,38 +2178,38 @@ struct TopoSort {
 
 \subsubsection{Dijkstra}
 \begin{lstlisting}
+// Dijkstra's Shortest Path Algorithm - O((V + E) log V)
 struct Dijkstra {
     int n;
     vector<vector<pair<int, ll>>> adj;
     vector<ll> dist;
-    vector<int> parent;
+    vector<int> par;
 
-    Dijkstra(int n) : n(n), adj(n + 1), dist(n + 1, llinf), parent(n + 1, -1) {}
+    Dijkstra(int n = 0) : n(n), adj(n + 1), dist(n + 1, llinf), par(n + 1, -1) {}
 
     void add_edge(int u, int v, ll w, bool directed = false) {
-        adj[u].push_back({v, w});
-        if (!directed) adj[v].push_back({u, w});
+        adj[u].eb(v, w);
+        if (!directed) adj[v].eb(u, w);
     }
 
-    void solve(int source) {
-        fill(dist.begin(), dist.end(), llinf);
-        fill(parent.begin(), parent.end(), -1);
-        priority_queue<pair<ll, int>, vector<pair<ll, int>>, greater<pair<ll, int>>> pq;
-        
-        dist[source] = 0;
-        pq.push({0, source});
+    void solve(int src) {
+        fill(all(dist), llinf);
+        fill(all(par), -1);
+        priority_queue<pair<ll, int>, vector<pair<ll, int>>, greater<>> pq;
+
+        dist[src] = 0;
+        pq.emplace(0, src);
 
         while (!pq.empty()) {
             auto [d, u] = pq.top();
             pq.pop();
-
             if (d > dist[u]) continue;
 
             for (auto& [v, w] : adj[u]) {
                 if (dist[u] + w < dist[v]) {
                     dist[v] = dist[u] + w;
-                    parent[v] = u;
-                    pq.push({dist[v], v});
+                    par[v] = u;
+                    pq.emplace(dist[v], v);
                 }
             }
         }
@@ -2289,12 +2219,13 @@ struct Dijkstra {
 
 \subsubsection{FloydWarshall}
 \begin{lstlisting}
+// Floyd-Warshall All-Pairs Shortest Path - O(V^3)
 struct FloydWarshall {
     int n;
     vector<vector<ll>> dist;
 
-    FloydWarshall(int n) : n(n), dist(n + 1, vector<ll>(n + 1, llinf)) {
-        for (int i = 0; i <= n; ++i) dist[i][i] = 0;
+    FloydWarshall(int n = 0) : n(n), dist(n + 1, vector<ll>(n + 1, llinf)) {
+        for (int i = 0; i <= n; i++) dist[i][i] = 0;
     }
 
     void add_edge(int u, int v, ll w, bool directed = false) {
@@ -2303,9 +2234,9 @@ struct FloydWarshall {
     }
 
     void solve() {
-        for (int k = 1; k <= n; ++k) {
-            for (int i = 1; i <= n; ++i) {
-                for (int j = 1; j <= n; ++j) {
+        for (int k = 1; k <= n; k++) {
+            for (int i = 1; i <= n; i++) {
+                for (int j = 1; j <= n; j++) {
                     if (dist[i][k] < llinf && dist[k][j] < llinf) {
                         dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j]);
                     }
@@ -2320,155 +2251,148 @@ struct FloydWarshall {
 
 \subsubsection{BridgesAndCutEdges}
 \begin{lstlisting}
-int n;
-vector<int> adj[N];
+// Bridges (Cut Edges) in Undirected Graph - O(V + E)
+struct Bridges {
+    int n, timer;
+    vector<vector<int>> adj;
+    vector<int> tin, low;
+    vector<pair<int, int>> bridges;
 
-bool vis[N];
-int in[N], low[N];
-int timer;
+    Bridges(int n = 0) : n(n), timer(0), adj(n + 1), tin(n + 1, 0), low(n + 1, 0) {}
 
-set<pair<int, int>> bridges;
+    void add_edge(int u, int v) {
+        adj[u].pb(v);
+        adj[v].pb(u);
+    }
 
-void dfs(int u, int p = 0) {
-    vis[u] = true;
-    in[u] = low[u] = timer++;
-    for (int v: adj[u]) {
-        if (v == p) continue;
-        if (vis[v]) {
-            low[u] = min(low[u], in[v]);
-        } else {
-            dfs(v, u);
-            low[u] = min(low[u], low[v]);
-            if (low[v] > in[u]) {
-                /// (u, v) is a Bridge
-                bridges.insert({u, v});
-                bridges.insert({v, u});
+    void dfs(int u, int p = 0) {
+        tin[u] = low[u] = ++timer;
+        for (int v : adj[u]) {
+            if (v == p) continue;
+            if (tin[v]) {
+                low[u] = min(low[u], tin[v]);
+            } else {
+                dfs(v, u);
+                low[u] = min(low[u], low[v]);
+                if (low[v] > tin[u]) bridges.eb(u, v);
             }
         }
     }
-}
 
-void find_bridges() {
-    timer = 0;
-    fill(vis, vis + n + 1, false);
-    for (int i = 1; i <= n; ++i) {
-        if (!vis[i])
-            dfs(i);
+    void solve() {
+        timer = 0;
+        fill(all(tin), 0);
+        bridges.clear();
+        for (int i = 1; i <= n; i++) {
+            if (!tin[i]) dfs(i);
+        }
     }
-}
+};
 \end{lstlisting}
 
 \subsubsection{ArticulationPoints}
 \begin{lstlisting}
-int n;
-vector<int> adj[N];
+// Articulation Points (Cut Vertices) in Undirected Graph - O(V + E)
+struct ArticulationPoints {
+    int n, timer;
+    vector<vector<int>> adj;
+    vector<int> tin, low;
+    vector<bool> is_cut;
 
-bool vis[N];
-int in[N], low[N];
-int timer;
+    ArticulationPoints(int n = 0) : n(n), timer(0), adj(n + 1), tin(n + 1, 0), low(n + 1, 0), is_cut(n + 1, false) {}
 
-bool cutPoint[N];
+    void add_edge(int u, int v) {
+        adj[u].pb(v);
+        adj[v].pb(u);
+    }
 
-void dfs(int u, int p = -1) {
-    vis[u] = true;
-    in[u] = low[u] = timer++;
-    int children = 0;
-    for (int v: adj[u]) {
-        if (v == p) continue;
-        if (vis[v]) {
-            low[u] = min(low[u], in[v]);
-        } else {
-            dfs(v, u);
-            low[u] = min(low[u], low[v]);
-            if (low[v] >= in[u] && p != -1) {
-                /// u is a Cut Point
-                cutPoint[u] = true;
+    void dfs(int u, int p = 0) {
+        tin[u] = low[u] = ++timer;
+        int children = 0;
+        for (int v : adj[u]) {
+            if (v == p) continue;
+            if (tin[v]) {
+                low[u] = min(low[u], tin[v]);
+            } else {
+                dfs(v, u);
+                low[u] = min(low[u], low[v]);
+                if (low[v] >= tin[u] && p != 0) is_cut[u] = true;
+                children++;
             }
-            children++;
+        }
+        if (p == 0 && children > 1) is_cut[u] = true;
+    }
+
+    void solve() {
+        timer = 0;
+        fill(all(tin), 0);
+        fill(all(is_cut), false);
+        for (int i = 1; i <= n; i++) {
+            if (!tin[i]) dfs(i);
         }
     }
-    if (p == -1 && children > 1) {
-        /// u is a Cut Point
-        cutPoint[u] = true;
-    }
-}
-
-bool connected = true;
-
-void find_cut_points() {
-    timer = 0;
-    fill(vis, vis + n + 1, false);
-    for (int i = 1; i <= n; ++i) {
-        if (!vis[i]) {
-            if (i != 1)
-                connected = false;
-            dfs(i);
-        }
-    }
-}
+};
 \end{lstlisting}
 
 \subsubsection{SCC\_Tarjan}
 \begin{lstlisting}
-// assuming nodes are zero based
+// Strongly Connected Components (Tarjan's Algorithm) - O(V + E)
 struct SCC {
-    vector<vector<int>> adj, adjRev, comps;
-    vector<pair<int, int>> edges;
-    vector<int> revOut, compOf;
-    vector<bool> vis;
-    int N;
+    int n, timer = 0, num_comps = 0;
+    vector<vector<int>> adj;
+    vector<int> tin, low, comp;
+    vector<bool> in_st;
+    stack<int> st;
+    vector<vector<int>> comps;
 
-    void init(int n) {
-        N = n;
-        adj.resize(n);
-        adjRev.resize(n);
-        vis.resize(n);
-        compOf.resize(n);
-    }
+    SCC(int n = 0) : n(n), adj(n + 1), tin(n + 1, 0), low(n + 1, 0), comp(n + 1, -1), in_st(n + 1, false) {}
 
-    void addEdge(int u, int v) {
-        edges.pb(make_pair(u, v));
+    void add_edge(int u, int v) {
         adj[u].pb(v);
-        adjRev[v].pb(u);
     }
 
-    void dfs1(int u) {
-        vis[u] = true;
-        for (auto v: adj[u])
-            if (!vis[v])
-                dfs1(v);
-        revOut.pb(u);
-    }
+    void dfs(int u) {
+        tin[u] = low[u] = ++timer;
+        st.push(u);
+        in_st[u] = true;
 
-    void dfs2(int u) {
-        vis[u] = true;
-        comps.back().pb(u);
-        compOf[u] = comps.size() - 1;
-        for (auto v: adjRev[u])
-            if (!vis[v])dfs2(v);
-    }
-
-    void gen() {
-        fill(all(vis), false);
-        for (int i = 0; i < N; ++i) {
-            if (!vis[i])
-                dfs1(i);
+        for (int v : adj[u]) {
+            if (!tin[v]) {
+                dfs(v);
+                low[u] = min(low[u], low[v]);
+            } else if (in_st[v]) {
+                low[u] = min(low[u], tin[v]);
+            }
         }
-        reverse(all(revOut));
-        fill(all(vis), false);
-        for (auto node: revOut) {
-            if (vis[node])continue;
+
+        if (low[u] == tin[u]) {
             comps.pb({});
-            dfs2(node);
+            while (true) {
+                int v = st.top();
+                st.pop();
+                in_st[v] = false;
+                comp[v] = num_comps;
+                comps.back().pb(v);
+                if (u == v) break;
+            }
+            num_comps++;
         }
     }
 
-    vector<vector<int>> generateCondensedGraph() {
-        vector<vector<int>> adjCon(comps.size());
-        for (auto edge: edges)
-            if (compOf[edge.st] != compOf[edge.nd])
-                adjCon[compOf[edge.st]].pb(compOf[edge.nd]);
-        return adjCon;
+    void solve() {
+        for (int i = 1; i <= n; i++) {
+            if (!tin[i]) dfs(i);
+        }
+    }
+
+    vector<vector<int>> build_dag() {
+        vector<vector<int>> dag(num_comps);
+        for (int u = 1; u <= n; u++) {
+            for (int v : adj[u]) {
+                if (comp[u] != comp[v]) dag[comp[u]].pb(comp[v]);
+            }
+        }
+        return dag;
     }
 };
 \end{lstlisting}
@@ -3279,36 +3203,32 @@ matrix mat_power(matrix x, ll p) {
 \begin{lstlisting}
 
 
+// Linear XOR Basis - Vector Space over GF(2)
+// Time: O(LOG_BITS) per insert/query
 struct Basis {
     vector<ll> basis;
-    int LOG, sz;
+    int log_bits, sz;
 
-    Basis(int log = 60) {
-        LOG = log;
-        sz = 0;
-        basis.resize(LOG);
-    }
+    Basis(int log_bits = 60) : log_bits(log_bits), sz(0), basis(log_bits, 0) {}
 
     bool insert(ll x) {
-        for (int i = LOG - 1; i >= 0; --i) {
-            if (x >> i & 1 ^ 1)continue;
-            if (basis[i]) {
-                x ^= basis[i];
-            } else {
+        for (int i = log_bits - 1; i >= 0; i--) {
+            if (!(x & (1LL << i))) continue;
+            if (!basis[i]) {
                 basis[i] = x;
                 sz++;
                 return true;
             }
+            x ^= basis[i];
         }
         return false;
     }
 
-    ll getMax(ll x = 0) {
-        ll ret = x;
-        for (int i = LOG - 1; i >= 0; --i) {
-            ret = max(ret, ret ^ basis[i]);
+    ll getMax(ll res = 0) const {
+        for (int i = log_bits - 1; i >= 0; i--) {
+            res = max(res, res ^ basis[i]);
         }
-        return ret;
+        return res;
     }
 };
 \end{lstlisting}
@@ -4944,38 +4864,24 @@ ld circleInter(T a,T b,ll r1,ll r2){
 
 \subsubsection{ConvexHullAndrew}
 \begin{lstlisting}
-template<class T>
-vector<T> convexHull(vector<T> pts, bool inc_collinear = false) {
-
-    T p0 = *min_element(pts.begin(), pts.end(), [](T &a, T &b) {
-        return make_pair(a.y, a.x) < make_pair(b.y, b.x);
-    });
-
-    sort(pts.begin(), pts.end(), [&p0](T &a, T &b) {
-        ll o = p0.cross(a, b);
-        if (o != 0)return o > 0;
-        return (a - p0).dist2() < (b - p0).dist2();
-    });
-
-    if (inc_collinear) {
-        int ind = pts.size() - 1;
-        while (ind >= 0 && p0.cross(pts[ind], pts.back()) == 0) --ind;
-        reverse(pts.begin() + ind + 1, pts.end());
+// Convex Hull (Andrew's Monotone Chain) - O(N log N)
+// Returns vertices in counter-clockwise order
+template<typename P>
+vector<P> convexHull(vector<P> pts) {
+    int n = pts.size(), k = 0;
+    if (n <= 2) return pts;
+    vector<P> h(2 * n);
+    sort(all(pts));
+    for (int i = 0; i < n; i++) {
+        while (k >= 2 && h[k - 2].cross(h[k - 1], pts[i]) <= 0) k--;
+        h[k++] = pts[i];
     }
-
-    vector<T> ch;
-    for (int i = 0; i < (int) pts.size(); i++) {
-        int sz = ch.size();
-        while (ch.size() > 1 &&
-               (ch[sz - 2].cross(ch[sz - 1], pts[i]) < 0 ||
-                (!inc_collinear && ch[sz - 2].cross(ch[sz - 1], pts[i]) == 0))) {
-            ch.pop_back();
-            sz = ch.size();
-        }
-        ch.push_back(pts[i]);
+    for (int i = n - 2, t = k + 1; i >= 0; i--) {
+        while (k >= t && h[k - 2].cross(h[k - 1], pts[i]) <= 0) k--;
+        h[k++] = pts[i];
     }
-
-    return ch;
+    h.resize(k - 1);
+    return h;
 }
 \end{lstlisting}
 

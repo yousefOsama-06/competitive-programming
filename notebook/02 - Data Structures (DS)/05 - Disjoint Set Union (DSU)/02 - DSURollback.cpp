@@ -1,64 +1,54 @@
+// DSU with Rollback - No path compression to allow backtracking
+// Time: O(log N) per operation, O(1) rollback
 struct DSURollback {
     vector<int> par, sz;
-    vector<pair<int, int>> history; // Stores {child_node, old_size_of_parent}
+    vector<pair<int, int>> history; // {child_node, old_parent_size}
 
-    DSURollback(int n) : par(n), sz(n, 1) { 
-        iota(par.begin(), par.end(), 0); 
+    DSURollback(int n = 0) : par(n), sz(n, 1) {
+        iota(all(par), 0);
     }
 
-    // Path compression is removed to preserve tree structure for rollbacks
     int find(int x) {
-        if(x == par[x]) return x;
-        return find(par[x]);
+        return par[x] == x ? x : find(par[x]);
     }
 
-    bool same(int x, int y) { return find(x) == find(y); }
+    bool same(int x, int y) {
+        return find(x) == find(y);
+    }
 
     bool join(int x, int y) {
         x = find(x);
         y = find(y);
-        
         if (x == y) {
-            // Push dummy state to keep the rollback count 1:1 with join calls
-            history.push_back({-1, -1}); 
+            history.eb(-1, -1);
             return false;
         }
-        
         if (sz[x] < sz[y]) swap(x, y);
-        
-        // Record the node that becomes the child and the parent's current size
-        history.push_back({y, sz[x]}); 
-        
+        history.eb(y, sz[x]);
         sz[x] += sz[y];
         par[y] = x;
         return true;
     }
 
-    int size(int x) { return sz[find(x)]; }
+    int size(int x) {
+        return sz[find(x)];
+    }
 
-    // Undoes the last join operation
     void rollback() {
         if (history.empty()) return;
-        
         auto [y, old_sz_x] = history.back();
         history.pop_back();
-        
         if (y != -1) {
-            int x = par[y];
-            sz[x] = old_sz_x;
-            par[y] = y; // Restore the child to be its own parent
+            sz[par[y]] = old_sz_x;
+            par[y] = y;
         }
     }
 
-    // Returns the current number of operations performed
-    int get_state() {
+    int get_state() const {
         return history.size();
     }
 
-    // Rolls back to a specific saved state
     void rollback_to(int state) {
-        while (history.size() > state) {
-            rollback();
-        }
+        while ((int)history.size() > state) rollback();
     }
 };

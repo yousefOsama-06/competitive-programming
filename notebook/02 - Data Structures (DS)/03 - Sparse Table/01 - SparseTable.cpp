@@ -1,22 +1,23 @@
-#define sz(aa) (int)aa.size()
+// Sparse Table (Range Minimum/Maximum Query) - O(N log N) build, O(1) query
+template<typename T, typename F = function<T(T, T)>>
+struct SparseTable {
+    int n;
+    vector<vector<T>> mat;
+    F func;
 
-template <class T>
-struct sparseTable {
-    vector<vector<T>> jmp;
-
-    void build(const vector<T>& V) {
-        jmp.assign(1, V);
-        for (int pw = 1, k = 1; pw * 2 <= sz(V); pw *= 2, ++k) {
-            jmp.emplace_back(sz(V) - pw * 2 + 1);
-            for (int j = 0; j < sz(jmp[k]); ++j) {
-                jmp[k][j] = max(jmp[k - 1][j], jmp[k - 1][j + pw]);
+    SparseTable() = default;
+    SparseTable(const vector<T>& a, F f = [](T x, T y) { return max(x, y); }) : n(a.size()), func(f) {
+        int k = n ? __lg(n) + 1 : 0;
+        mat.assign(k, a);
+        for (int j = 1; j < k; j++) {
+            for (int i = 0; i + (1 << j) <= n; i++) {
+                mat[j][i] = func(mat[j - 1][i], mat[j - 1][i + (1 << (j - 1))]);
             }
         }
     }
 
-    T query(int l, int r) {
-        assert(l <= r);
-        int dep = 31 - __builtin_clz(r - l + 1);
-        return max(jmp[dep][l], jmp[dep][r - (1 << dep) + 1]);
+    T query(int l, int r) const {
+        int j = __lg(r - l + 1);
+        return func(mat[j][l], mat[j][r - (1 << j) + 1]);
     }
 };

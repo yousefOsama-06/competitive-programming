@@ -1,45 +1,46 @@
-struct Trie{
-    vector<vector<int>>trie;
-    vector<int>cnt;
-//    vector<int>leaves;
-    int mxBit,sz;
+// Binary Trie for 64-bit integers and XOR operations
+// Time: O(BITS) per operation
+struct BinaryTrie {
+    vector<array<int, 2>> nxt;
+    vector<int> cnt;
+    int max_bit;
 
-    int addNode(){
-        trie.emplace_back(2,-1);
-        cnt.emplace_back();
-//        leaves.emplace_back();
-        sz++;
-        return sz - 1;
+    BinaryTrie(int max_bit = 60) : max_bit(max_bit) {
+        add_node();
     }
 
-    Trie(int mx = 60): mxBit(mx),sz(0){
-        addNode();
-    };
-
-    // insert or remove
-    void insert(ll x,int type = 1){
-        int cur = 0;
-        cnt[cur] += type;
-        for (int i = mxBit; i >= 0; --i) {
-            int t = (x >> i)&1;
-            if(trie[cur][t] == -1)
-                trie[cur][t] = addNode();
-            cur = trie[cur][t];
-            cnt[cur] += type;
-        }
-//        leaves[cur] += type;
+    int add_node() {
+        nxt.push_back({-1, -1});
+        cnt.push_back(0);
+        return nxt.size() - 1;
     }
 
-    ll maxXor(ll x){
-        // no elements in trie
-        int cur = 0;
-        if(!cnt[cur])return -1e9;
-        for (int i = mxBit; i >= 0; --i) {
-            int t = (x >> i)&1^1;
-            if(trie[cur][t] == -1 || !cnt[trie[cur][t]])t ^= 1;
-            cur = trie[cur][t];
-            if(t)x ^= 1ll << i;
+    void insert(ll x, int val = 1) {
+        int u = 0;
+        cnt[u] += val;
+        for (int i = max_bit; i >= 0; i--) {
+            int b = (x >> i) & 1;
+            if (nxt[u][b] == -1) nxt[u][b] = add_node();
+            u = nxt[u][b];
+            cnt[u] += val;
         }
-        return x;
+    }
+
+    // Returns element in trie maximizing (x ^ element)
+    ll max_xor(ll x) const {
+        if (!cnt[0]) return -1e18;
+        int u = 0;
+        ll res = 0;
+        for (int i = max_bit; i >= 0; i--) {
+            int b = (x >> i) & 1;
+            int want = b ^ 1;
+            if (nxt[u][want] != -1 && cnt[nxt[u][want]] > 0) {
+                res |= (1LL << i);
+                u = nxt[u][want];
+            } else {
+                u = nxt[u][b];
+            }
+        }
+        return res;
     }
 };

@@ -1,27 +1,17 @@
-template<class T>
-// angle between [0, 2*pi]
+// Angle Operations in 2D - [-pi, pi] and [0, 2*pi]
+template<typename T>
 ld angleBetween(T a, T b) {
-    ld ret = atan2(a.cross(b), a.dot(b));
-    if (dcmp(ret, 0) == -1) {
-        ret += 2 * PI;
-    }
-//    return min(ret, 2 * PI - ret);    //to return the smaller angle
-    return ret;
+    ld res = atan2(a.cross(b), a.dot(b));
+    return res < 0 ? res + 2 * PI : res;
 }
 
-template<class T>
-ld angleO(T a, T O, T b) { /// angle(aOb)
-    assert(a.dist(O) > eps && b.dist(O) > eps); // nan
-    T v1 = (a - O), v2 = (b - O);
-    return angleBetween(v1, v2);
+template<typename T>
+ld angleO(T a, T O, T b) {
+    return angleBetween(a - O, b - O);
 }
 
-
-// (-pi, pi]
-ld format(ld angle) {
-    while (dcmp(angle, PI) == 1)
-        angle -= 2 * PI;
-    while (dcmp(angle, -PI) != 1)
-        angle += 2 * PI;
+ld formatAngle(ld angle) {
+    while (angle > PI) angle -= 2 * PI;
+    while (angle <= -PI) angle += 2 * PI;
     return angle;
 }

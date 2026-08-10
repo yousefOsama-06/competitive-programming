@@ -1,20 +1,17 @@
+// Coordinate Compression - O(N log N)
+template<typename T>
 struct Compress {
-    map<int, int> m;
-    vector<int> undo;
+    vector<T> v;
 
-    Compress(vector<int>& v, int base = 0) {
-        m.clear();
-        set<int> s;
-        for (int x : v) {
-            s.insert(x);
+    Compress(vector<T>& a) : v(a) {
+        sort(all(v));
+        v.erase(unique(all(v)), v.end());
+        for (auto &x : a) {
+            x = lower_bound(all(v), x) - v.begin();
         }
-        undo.resize(s.size() + base);
-        int i = base;
-        for (int x : s) {
-            undo[i] = x;
-            m[x] = i++;
-        }
-        for (int& x : v)
-            x = m[x];
+    }
+
+    T operator[](int i) const {
+        return v[i];
     }
 };

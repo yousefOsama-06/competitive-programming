@@ -1,59 +1,40 @@
-template<typename T>
-class FenwickTree {
-public:
-    vector<T> tree;
+// Fenwick Tree (Binary Indexed Tree) - 0-based indexing
+// Space: O(N), Time: O(log N) per update/query
+template<typename T = ll>
+struct FenwickTree {
     int n;
+    vector<T> tree;
 
-    // Default constructor
-    FenwickTree() : n(0) {}
+    FenwickTree(int n = 0) : n(n), tree(n + 1, 0) {}
 
-    // Constructor with size
-    FenwickTree(int n) {
-        init(n);
+    void add(int i, T delta) {
+        for (i++; i <= n; i += i & -i) tree[i] += delta;
     }
 
-    void init(int n) {
-        this->n = n;
-        // 1-based indexing needs size n + 1. Padding by 2 is safe.
-        tree.assign(n + 2, 0); 
+    void set(int i, T val) {
+        add(i, val - query(i, i));
     }
 
-    void update(int x, T val) {
-        x++; // Convert 0-based to 1-based
-        for (; x <= n; x += x & -x) {
-            tree[x] += val;
-        }
+    T query(int i) {
+        T sum = 0;
+        for (i++; i > 0; i -= i & -i) sum += tree[i];
+        return sum;
     }
 
-    void assign(int x, T val) {
-        update(x, val - getRange(x, x));
-    }
-
-    T getPrefix(int x) {
-        x++; // Convert 0-based to 1-based
-        if (x <= 0) return 0;
-        T ret = 0;
-        for (; x; x -= x & -x) {
-            ret += tree[x];
-        }
-        return ret;
-    }
-
-    T getRange(int l, int r) {
+    T query(int l, int r) {
         if (l > r) return 0;
-        return getPrefix(r) - getPrefix(l - 1);
+        return query(r) - query(l - 1);
     }
 
-    // Returns the 0-based index of the first prefix sum >= x
-    int lowerBound(T x) {
+    // Returns first 0-based index where prefix sum >= val
+    int lower_bound(T val) {
         int pos = 0;
-        // sz > 0 is enough; don't break early if x == 0 to handle 0-value elements properly
-        for (int sz = (1 << __lg(n)); sz > 0; sz >>= 1) {
-            if (pos + sz <= n && tree[pos + sz] < x) {
-                x -= tree[pos + sz];
+        for (int sz = 1 << (n ? __lg(n) : 0); sz > 0; sz >>= 1) {
+            if (pos + sz <= n && tree[pos + sz] < val) {
+                val -= tree[pos + sz];
                 pos += sz;
             }
         }
-        return pos; // pos is the 0-based index (since 1-based would be pos + 1)
+        return pos;
     }
 };

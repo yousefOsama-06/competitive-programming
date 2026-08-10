@@ -1,0 +1,534 @@
+Basics
+    Intro to Programming
+        1. What is Programming? - Importance: ★★★ | Difficulty: Very Easy
+    Learn a Language
+        2. Intro to C++ and Setting up the Environment - Importance: ★★★ | Difficulty: Very Easy
+        3. Data Types, Variables and Input Output - Importance: ★★★ | Difficulty: Very Easy
+        4. Operators - Importance: ★★★ | Difficulty: Very Easy
+        5. Conditional Statements - Importance: ★★★ | Difficulty: Very Easy
+        6. Loops - Importance: ★★★ | Difficulty: Very Easy
+        7. Functions - Importance: ★★★ | Difficulty: Very Easy
+        8. Arrays - Importance: ★★★ | Difficulty: Very Easy
+        9. Strings - Importance: ★★★ | Difficulty: Very Easy
+        10. Pointers and References - Importance: ★★☆ | Difficulty: Medium
+        11. Structures - Importance: ★★☆ | Difficulty: Easy
+    Intro to Competitive Programming
+        12. What is Competitive Programming? - Importance: ★★★ | Difficulty: Very Easy
+    Bitwise Thinking
+        13. Bitwise Operations and Bitmasks - Importance: ★★★ | Difficulty: Medium
+    Complexity Analysis
+        14. Big O Notation and Time and Space Complexity Analysis - Importance: ★★★ | Difficulty: Easy
+        15. Fast Input Output - Importance: ★★☆ | Difficulty: Easy
+    Recursion
+        16. Recursion - Importance: ★★★ | Difficulty: Medium
+    Very Basic Math
+        17. Divisors - Importance: ★★★ | Difficulty: Very Easy
+        18. GCD and LCM - Importance: ★★★ | Difficulty: Very Easy
+        19. Harmonic Number - Importance: ★☆☆ | Difficulty: Easy
+    Range Queries Without Updates
+        20. Prefix Sum - Importance: ★★★ | Difficulty: Very Easy
+        21. Prefix XOR - Importance: ★★☆ | Difficulty: Easy
+    Standard Template Library (STL)
+        22. Intro to STL, Containers and Iterators - Importance: ★★★ | Difficulty: Easy
+        23. Pairs and Tuples - Importance: ★★★ | Difficulty: Very Easy
+        24. Vector - Importance: ★★★ | Difficulty: Very Easy
+        25. Stack - Importance: ★★★ | Difficulty: Easy
+        26. Queue - Importance: ★★★ | Difficulty: Easy
+        27. Priority Queue / Heap - Importance: ★★★ | Difficulty: Medium
+        28. Deque - Importance: ★★☆ | Difficulty: Easy
+        29. Set, Unordered Set and Multiset - Importance: ★★★ | Difficulty: Medium
+        30. Map and Unordered Map - Importance: ★★★ | Difficulty: Medium
+        31. Bitset - Importance: ★★☆ | Difficulty: Medium
+        32. List / Linked List - Importance: ★☆☆ | Difficulty: Easy
+    Leveraging Monotonicity
+        33. Binary Search - Importance: ★★★ | Difficulty: Easy
+        34. Two Pointers - Importance: ★★★ | Difficulty: Easy
+    Basic Sorting Algorithms
+        35. Bubble Sort - Importance: ★☆☆ | Difficulty: Very Easy
+        36. Selection Sort - Importance: ★☆☆ | Difficulty: Very Easy
+        37. Insertion Sort - Importance: ★☆☆ | Difficulty: Very Easy
+        38. Counting Sort - Importance: ★★☆ | Difficulty: Easy
+        39. Merge Sort - Importance: ★★☆ | Difficulty: Medium
+        40. Quick Sort - Importance: ★★☆ | Difficulty: Medium
+        41. Radix Sort - Importance: ★☆☆ | Difficulty: Hard
+        42. C++ STL Sort and Custom Comparator - Importance: ★★★ | Difficulty: Easy
+    Divide and Conquer
+        43. Divide and Conquer - Importance: ★★☆ | Difficulty: Medium
+    Greedy and Constructive
+        44. Basic Greedy Algorithms - Importance: ★★★ | Difficulty: Easy
+        45. Basic Constructive Algorithms - Importance: ★★☆ | Difficulty: Medium
+    2D Prefix Sum
+        46. 2D Prefix Sum - Importance: ★★★ | Difficulty: Easy
+    More Techniques
+        47. Difference Array - Importance: ★★★ | Difficulty: Easy
+        48. Sliding Window Technique - Importance: ★★★ | Difficulty: Easy
+    Bit Manipulation
+        49. Bit Manipulation - Importance: ★★★ | Difficulty: Medium
+        50. The XOR Trick - Importance: ★★☆ | Difficulty: Easy
+    Basic Modular Arithmetic
+        51. Binary Exponentiation and Basic Modular Arithmetic - Importance: ★★★ | Difficulty: Easy
+        52. Fermat's Little Theorem and Modular Inverse - Importance: ★★★ | Difficulty: Easy
+    Basic Counting
+        53. Permutations, Combinations and Basic Counting Problems - Importance: ★★★ | Difficulty: Easy
+        54. Stars and Bars - Importance: ★★☆ | Difficulty: Medium
+        55. Pigeonhole Principle - Importance: ★★☆ | Difficulty: Easy
+    Very Basic Graphs
+        56. Introduction to Graphs | Definitions and Representations - Importance: ★★★ | Difficulty: Very Easy
+Data Structures (DS)
+    Segment Tree
+        57. Segment Tree (Point Update Range Query) - Importance: ★★★ | Difficulty: Easy
+        58. Segment Tree with Lazy Propagation - Importance: ★★★ | Difficulty: Hard
+        59. Persistent Segment Tree - Importance: ★★☆ | Difficulty: Very Hard
+        60. Persistent Segment Tree with Lazy Propagation - Importance: ★☆☆ | Difficulty: Very Hard
+        61. 2D Segment Tree - Importance: ★☆☆ | Difficulty: Very Hard
+        62. Dynamic Segment Tree - Importance: ★★☆ | Difficulty: Very Hard
+        63. 2D Dynamic Segment Tree - Importance: ★☆☆ | Difficulty: Very Hard
+        64. Merge Sort Tree - Importance: ★★☆ | Difficulty: Hard
+        65. Iterative Segment Tree - Importance: ★★☆ | Difficulty: Medium
+        66. Segment Tree Merging - Importance: ★☆☆ | Difficulty: Very Hard
+        67. Segment Tree Beats - Importance: ★☆☆ | Difficulty: Very Hard
+        68. XOR Segment Tree - Importance: ★☆☆ | Difficulty: Very Hard
+        69. Historic Information on Segment Trees - Importance: ★☆☆ | Difficulty: Very Hard
+    Binary Indexed Tree (BIT)
+        70. BIT / Fenwick Tree - Importance: ★★★ | Difficulty: Easy
+        71. Lower bound on BIT - Importance: ★★☆ | Difficulty: Medium
+        72. BIT with Range Update and Range Query - Importance: ★★☆ | Difficulty: Medium
+        73. 2D BIT - Importance: ★★☆ | Difficulty: Hard
+        74. 2D BIT with Range Update and Range Query - Importance: ★☆☆ | Difficulty: Very Hard
+    Sparse Table
+        75. Sparse Table - Importance: ★★★ | Difficulty: Easy
+        76. Sparse Table 2D - Importance: ★★☆ | Difficulty: Medium
+        77. Disjoint Sparse Table - Importance: ★☆☆ | Difficulty: Hard
+    Trie
+        78. Trie on Strings and Bits - Importance: ★★★ | Difficulty: Medium
+        79. Persistent Trie - Importance: ★★☆ | Difficulty: Hard
+    Disjoint Set Union (DSU)
+        80. DSU / Union Find - Importance: ★★★ | Difficulty: Easy
+        81. DSU with Rollbacks - Importance: ★★☆ | Difficulty: Hard
+        82. Reachability Tree / DSU Tree / Kruskal Reconstruction Tree (KRT) - Importance: ★★☆ | Difficulty: Hard
+        83. Partially Persistent DSU - Importance: ★☆☆ | Difficulty: Very Hard
+        84. Persistent DSU - Importance: ★☆☆ | Difficulty: Very Hard
+        85. Augmented DSU / Weighted DSU - Importance: ★★☆ | Difficulty: Medium
+        86. DSU on Tree and Small to Large Merging - Importance: ★★★ | Difficulty: Hard
+        87. [Trick] Maintaining Log N DSU / Range Parallel DSU - Importance: ★☆☆ | Difficulty: Very Hard
+    Square Root Decomposition
+        88. Basic SQRT Decomposition - Importance: ★★★ | Difficulty: Medium
+        89. Splitting Objects into Light and Heavy / Case Processing - Importance: ★★☆ | Difficulty: Hard
+        90. Batch Processing / SQRT Decomposition on Queries - Importance: ★★☆ | Difficulty: Hard
+        91. SQRT Decomposition Split and Build Technique - Importance: ★☆☆ | Difficulty: Very Hard
+        92. SQRT Fragmented Tree / Block Tree / SQRT Decomposition on Trees - Importance: ★☆☆ | Difficulty: Very Hard
+        93. Mo's Algorithm - Importance: ★★★ | Difficulty: Hard
+        94. Rollback Mo and Mo's with DSU - Importance: ★★☆ | Difficulty: Hard
+        95. Mo's on Tree - Importance: ★★☆ | Difficulty: Hard
+        96. Sweepline Mo - Importance: ★☆☆ | Difficulty: Very Hard
+        97. Mo's with Update / 3D Mo (Offline) - Importance: ★☆☆ | Difficulty: Very Hard
+        98. Mo's with Update / 3D Mo (Online) - Importance: ★☆☆ | Difficulty: Very Hard
+        99. 4D Mo - Importance: ★☆☆ | Difficulty: Very Hard
+    Heavy Light Decomposition (HLD)
+        100. Heavy Light Decomposition (HLD) ft Subtrees and Path Query - Importance: ★★★ | Difficulty: Hard
+    Centroid Decomposition
+        101. Centroid Decomposition - Importance: ★★★ | Difficulty: Hard
+        102. Persistent Centroid Decomposition - Importance: ★☆☆ | Difficulty: Very Hard
+    Long Path Decomposition
+        103. Long Path Decomposition - Importance: ★☆☆ | Difficulty: Very Hard
+    BST
+        104. Binary Search Tree (BST) - Importance: ★★☆ | Difficulty: Easy
+    Balanced Binary Search Tree (BBST)
+        105. Treap - Importance: ★★★ | Difficulty: Hard
+        106. Implicit Treap - Importance: ★★★ | Difficulty: Hard
+        107. Persistent Treap - Importance: ★☆☆ | Difficulty: Very Hard
+        108. Rope - Importance: ★☆☆ | Difficulty: Hard
+        109. Splay Tree - Importance: ★☆☆ | Difficulty: Very Hard
+    Link Cut Tree (LCT)
+        110. Link Cut Tree (LCT) - Importance: ★★☆ | Difficulty: Very Hard
+        111. Euler Tour Tree (ETT) - Importance: ★☆☆ | Difficulty: Very Hard
+        112. Top Tree / AAA Tree - Importance: ★☆☆ | Difficulty: Very Hard
+        113. Link Cut Cactus - Importance: ★☆☆ | Difficulty: Very Hard
+    Policy Based Data Structures
+        114. Ordered Set - Importance: ★★★ | Difficulty: Easy
+        115. GP Hash Table - Importance: ★★☆ | Difficulty: Medium
+    More Tree Data Structures
+        116. Wavelet Tree - Importance: ★★☆ | Difficulty: Hard
+        117. Cartesian Tree - Importance: ★★☆ | Difficulty: Medium
+        118. K-Dimensional Tree (KD Tree) - Importance: ★☆☆ | Difficulty: Very Hard
+        119. SQRT Tree - Importance: ★☆☆ | Difficulty: Hard
+        120. Permutation Tree - Importance: ★☆☆ | Difficulty: Very Hard
+        121. PQ Tree - Importance: ★☆☆ | Difficulty: Very Hard
+    Dynamic Connectivity
+        122. Dynamic Connectivity Problem (Offline) - Importance: ★★☆ | Difficulty: Very Hard
+        123. Dynamic Connectivity Problem (Online) / HDLT Algorithm - Importance: ★☆☆ | Difficulty: Very Hard
+    Monotonic Data Structures
+        124. Monotonic Stack: All Nearest Smaller Values and All Subarray Maximum/Minimum - Importance: ★★★ | Difficulty: Medium
+        125. Monotonic Queue - Importance: ★★★ | Difficulty: Medium
+        126. Monotonic Queue 2D - Importance: ★★☆ | Difficulty: Hard
+        127. Monotonic Deque - Importance: ★★☆ | Difficulty: Medium
+    Miscellaneous
+        128. Interval Set - Importance: ★☆☆ | Difficulty: Medium
+        129. Persistent Array - Importance: ★☆☆ | Difficulty: Hard
+        130. Persistent Queue - Importance: ★☆☆ | Difficulty: Very Hard
+        131. Persistent Meldable Heap / Leftist Heap - Importance: ★☆☆ | Difficulty: Very Hard
+    Techniques
+        132. Venice Technique - Importance: ★☆☆ | Difficulty: Hard
+        133. Offline Queries - Importance: ★★★ | Difficulty: Medium
+        134. Static to Dynamic Trick / Log Decomposition - Importance: ★☆☆ | Difficulty: Very Hard
+        135. Divide and Conquer on Queries - Importance: ★★☆ | Difficulty: Hard
+        136. CDQ Divide and Conquer - Importance: ★★☆ | Difficulty: Hard
+        137. Queue Undo Trick - Importance: ★☆☆ | Difficulty: Hard
+        138. Priority Queue Undo Trick - Importance: ★☆☆ | Difficulty: Hard
+Graph Theory
+    Graph Traversal
+        139. Depth First Search (DFS) - Importance: ★★★ | Difficulty: Very Easy
+        140. Breadth First Search (BFS) - Importance: ★★★ | Difficulty: Very Easy
+        141. DFS Tree - Importance: ★★★ | Difficulty: Medium
+        142. Topological Sorting - Importance: ★★★ | Difficulty: Easy
+        143. Tree Diameter - Importance: ★★★ | Difficulty: Easy
+        144. Euler Tour Technique - Importance: ★★★ | Difficulty: Medium
+        145. Inverse Graph - Importance: ★☆☆ | Difficulty: Very Easy
+    Lowest Common Ancestor (LCA)
+        146. Binary Lifting and LCA - Importance: ★★★ | Difficulty: Medium
+        147. LCA in O(1) - Importance: ★★☆ | Difficulty: Hard
+    Graph Connectivity
+        148. Strongly Connected Components (SCC) - Importance: ★★★ | Difficulty: Medium
+        149. Incremental SCC - Importance: ★☆☆ | Difficulty: Very Hard
+        150. Articulation Bridges and Bridge Tree - Importance: ★★★ | Difficulty: Medium
+        151. Online Articulation Bridges - Importance: ★☆☆ | Difficulty: Very Hard
+        152. Articulation Points and Block Cut Tree - Importance: ★★★ | Difficulty: Medium
+        153. Three Edge Connectivity - Importance: ★☆☆ | Difficulty: Very Hard
+        154. Four Edge Connectivity - Importance: ★☆☆ | Difficulty: Very Hard
+        155. Dynamic K-Connectivity - Importance: ★☆☆ | Difficulty: Very Hard
+        156. Ear Decomposition - Importance: ★☆☆ | Difficulty: Very Hard
+    Orientation
+        157. Strong Orientation - Importance: ★★☆ | Difficulty: Hard
+        158. ST-numbering / Bipolar Orientation - Importance: ★☆☆ | Difficulty: Very Hard
+    Minimum Spanning Tree (MST)
+        159. Minimum Spanning Tree (MST) - Prim's and Kruskal's - Importance: ★★★ | Difficulty: Easy
+        160. Steiner Tree Problem - Importance: ★★☆ | Difficulty: Hard
+        161. Boruvka's Algorithm - Importance: ★★☆ | Difficulty: Hard
+        162. Minimum Diameter Spanning Tree - Importance: ★☆☆ | Difficulty: Very Hard
+        163. Manhattan MST - Importance: ★★☆ | Difficulty: Hard
+        164. Euclidean MST - Importance: ★☆☆ | Difficulty: Hard
+        165. Directed MST - Importance: ★☆☆ | Difficulty: Hard
+        166. Dynamic MST - Importance: ★☆☆ | Difficulty: Very Hard
+        167. Kirchoffs Theorem ft Number of MSTs - Importance: ★☆☆ | Difficulty: Hard
+    Shortest Paths
+        168. Dijkstra's Algorithm - Importance: ★★★ | Difficulty: Easy
+        169. [Trick] Dijkstra on Segment Tree - Importance: ★★☆ | Difficulty: Hard
+        170. Floyd Warshall - Importance: ★★★ | Difficulty: Easy
+        171. Bellman Ford - Importance: ★★★ | Difficulty: Medium
+        172. Shortest Path Faster Algorithm (SPFA) - Importance: ★☆☆ | Difficulty: Medium
+        173. Johnson's Algorithm - Importance: ★★☆ | Difficulty: Medium
+        174. 0/1 BFS - Importance: ★★★ | Difficulty: Easy
+        175. Dial's algorithm - Importance: ★☆☆ | Difficulty: Medium
+        176. Eppsteins Algorithm - Importance: ★☆☆ | Difficulty: Very Hard
+        177. Suurballe's Algorithm - Importance: ★☆☆ | Difficulty: Very Hard
+        178. A* Algorithm - Importance: ★☆☆ | Difficulty: Medium
+    Cycles
+        179. Cycle Detection - Importance: ★★★ | Difficulty: Very Easy
+        180. [Problem] Minimum Weight Cycle For Each Vertex - Importance: ★☆☆ | Difficulty: Hard
+        181. [Problem] Minimum Weight Cycle For Each Edge - Importance: ★☆☆ | Difficulty: Hard
+        182. Minimum Mean Weight Cycle - Importance: ★☆☆ | Difficulty: Hard
+        183. Number of 3 and 4 length Cycles - Importance: ★☆☆ | Difficulty: Medium
+    More Tree Stuff
+        184. Virtual Tree / Auxiliary Tree - Importance: ★★★ | Difficulty: Hard
+        185. Rerooting Technique - Importance: ★★★ | Difficulty: Medium
+        186. Union of Two Paths on a Tree - Importance: ★☆☆ | Difficulty: Hard
+        187. Intersection of Two Paths on a Tree - Importance: ★☆☆ | Difficulty: Hard
+        188. [Problem] Number of Paths of Each Length in a Tree - Importance: ★☆☆ | Difficulty: Hard
+        189. Dynamic Online Tree Diameter - Importance: ★☆☆ | Difficulty: Very Hard
+        190. [Problem] Tree Orientation to Maximize Pairs of Reachable Nodes - Importance: ★☆☆ | Difficulty: Hard
+    Satisfiability
+        191. 2 SAT - Importance: ★★★ | Difficulty: Medium
+        192. 3 SAT - Importance: ★☆☆ | Difficulty: Very Hard
+        193. System Of Difference Constraints - Importance: ★★☆ | Difficulty: Hard
+    Eulerian Path
+        194. Eulerian Path and Cycle - Importance: ★★★ | Difficulty: Medium
+    Hamiltonian Path
+        195. Hamiltonian Path and Cycle - Importance: ★★☆ | Difficulty: Hard
+        196. Hamiltonian Path Heuristic Algorithm - Importance: ★☆☆ | Difficulty: Medium
+    Cliques and Independent Sets
+        197. Maximum Clique - Importance: ★★☆ | Difficulty: Hard
+        198. Maximum Independent Set (MIS) - Importance: ★★☆ | Difficulty: Hard
+    Graph Coloring
+        199. Chromatic Number - Importance: ★★☆ | Difficulty: Hard
+        200. Welsh-Powell Algorithm - Importance: ★☆☆ | Difficulty: Easy
+        201. Chromatic Polynomial ft Number of DAGs - Importance: ★☆☆ | Difficulty: Very Hard
+        202. Edge Coloring of Simple Graph - Importance: ★☆☆ | Difficulty: Hard
+        203. Edge Coloring of Bipartite Graph - Importance: ★☆☆ | Difficulty: Hard
+    Graph Counting
+        204. Counting Labeled Graphs - Importance: ★☆☆ | Difficulty: Medium
+        205. Prufer Code - Importance: ★★☆ | Difficulty: Medium
+        206. [Problem] Number of Arborescences with n Nodes - Importance: ★☆☆ | Difficulty: Hard
+        207. Tuttes Theorem ft Arborescences in a Graph - Importance: ★☆☆ | Difficulty: Very Hard
+        208. BEST Theorem - Importance: ★☆☆ | Difficulty: Hard
+    Dynamic Acyclic Graphs (DAG)
+        209. DAG Reachability - Importance: ★★☆ | Difficulty: Medium
+        210. Incremental DAG Reachability - Importance: ★☆☆ | Difficulty: Very Hard
+    Dominators
+        211. Dominator Tree - Importance: ★☆☆ | Difficulty: Very Hard
+    Special Graphs
+        212. Cactus Graph - Importance: ★☆☆ | Difficulty: Hard
+        213. Tournament Graph - Importance: ★☆☆ | Difficulty: Hard
+        214. Chordal Graph - Importance: ★☆☆ | Difficulty: Very Hard
+    Flow and Min Cut
+        215. Maximum Flow / Minimum Cut - Importance: ★★★ | Difficulty: Hard
+        216. Min Cost Max Flow (MCMF) - Importance: ★★★ | Difficulty: Hard
+        217. Min Cost Max Flow with Negative Cycles - Importance: ★☆☆ | Difficulty: Very Hard
+        218. Maximum Closure Problem - Importance: ★★☆ | Difficulty: Medium
+        219. L-R Flow - Importance: ★★☆ | Difficulty: Hard
+        220. Gomory-Hu Tree - Importance: ★★☆ | Difficulty: Very Hard
+        221. Gomory-Hu Tree of a Planar Graph - Importance: ★☆☆ | Difficulty: Very Hard
+        222. Stoer Wagner Algorithm - Importance: ★☆☆ | Difficulty: Hard
+        223. Chinese Postman Problem - Importance: ★☆☆ | Difficulty: Hard
+        224. Uniqueness of Min Cut - Importance: ★☆☆ | Difficulty: Hard
+        225. Maximum Density Subgraph - Importance: ★☆☆ | Difficulty: Hard
+        226. Min Cut in a Planar Graph - Importance: ★☆☆ | Difficulty: Hard
+        227. Max Cut in a Planar Graph - Importance: ★☆☆ | Difficulty: Hard
+    Matching
+        228. Bipartite Matching (HopCroft Karp and Kuhn's) - Importance: ★★★ | Difficulty: Hard
+        229. Hungarian Algorithm / Bipartite Weighted Matching - Importance: ★★★ | Difficulty: Hard
+        230. Blossom Algorithm Unweighted / General Matching - Importance: ★★☆ | Difficulty: Very Hard
+        231. Blossom Algorithm Weighted / General Weighted Matching - Importance: ★☆☆ | Difficulty: Very Hard
+        232. Stable Marriage Problem - Importance: ★★☆ | Difficulty: Medium
+        233. Konig's Theorem and MIS in Bipartite Graphs - Importance: ★★☆ | Difficulty: Medium
+        234. Halls Theorem - Importance: ★★☆ | Difficulty: Medium
+        235. Matching using Determinants - Importance: ★☆☆ | Difficulty: Hard
+    Partially Ordered Set (POSET)
+        236. POSET ft Dilworth's and Mirsky's Theorem - Importance: ★★☆ | Difficulty: Medium
+    Miscellaneous (Graph)
+        237. Functional Graphs - Importance: ★★★ | Difficulty: Medium
+        238. Degree Sequences, Erdos-Gallai, Gale-Ryser and Havel–Hakimi - Importance: ★★☆ | Difficulty: Medium
+        239. Tree Isomorphism - Importance: ★★☆ | Difficulty: Hard
+        240. Binarizing a Tree - Importance: ★☆☆ | Difficulty: Easy
+        241. Planarity Check - Importance: ★☆☆ | Difficulty: Very Hard
+
+Number Theory
+    Primes and Divisors
+        242. Sieve, Prime Factorization and Divisors - Importance: ★★★ | Difficulty: Easy
+        243. Linear Sieve - Importance: ★★★ | Difficulty: Easy
+        244. Segmented Sieve - Importance: ★★★ | Difficulty: Easy
+        245. Sieve upto 1e9 - Importance: ★★☆ | Difficulty: Hard
+        246. Miller-Rabin Primality Test - Importance: ★★★ | Difficulty: Medium
+        247. Pollard Rho - Importance: ★★★ | Difficulty: Hard
+        248. Prime Counting Function - Importance: ★★☆ | Difficulty: Very Hard
+        249. Prime Gap - Importance: ★☆☆ | Difficulty: Medium
+        250. [Problem] Counting Numbers Having Exactly K Divisors - Importance: ★☆☆ | Difficulty: Hard
+        251. [Problem] Smallest Number Having Exactly K Divisors - Importance: ★☆☆ | Difficulty: Hard
+        252. Sum of The Number of Divisors in cbrt(n) - Importance: ★☆☆ | Difficulty: Very Hard
+        253. Wilson's Theorem - Importance: ★★☆ | Difficulty: Easy
+        254. Implicit Prime Factorization - Importance: ★☆☆ | Difficulty: Hard
+    Multiplicative Functions
+        255. Number of Divisors / Sum of Divisors / Sigma Function - Importance: ★★★ | Difficulty: Easy
+        256. Euler's Totient Function / Phi Function - Importance: ★★★ | Difficulty: Easy
+        257. Power Tower / Generalized Euler theorem - Importance: ★★☆ | Difficulty: Medium
+        258. Mobius Function and Mobius Inversion - Importance: ★★★ | Difficulty: Hard
+        259. Dirichlet convolution - Importance: ★★☆ | Difficulty: Hard
+        260. Min_25 Sieve - Importance: ★★☆ | Difficulty: Very Hard
+        261. Powerful Number Sieve / PN Sieve - Importance: ★☆☆ | Difficulty: Very Hard
+    Euclidean Algorithm
+        262. Euclidean Algorithm - Importance: ★★★ | Difficulty: Very Easy
+        263. Extended Euclid - Importance: ★★★ | Difficulty: Easy
+        264. Bezout's Identity - Importance: ★★★ | Difficulty: Easy
+        265. Chicken McNugget Theorem - Importance: ★★☆ | Difficulty: Easy
+    Modular Arithmetic
+        266. Linear Congruence Equation - Importance: ★★★ | Difficulty: Easy
+        267. Chinese Remainder Theorem (CRT) - Importance: ★★★ | Difficulty: Medium
+        268. Primitive Root - Importance: ★★☆ | Difficulty: Hard
+        269. Multiplicative Order and Carmichael's Lambda Function - Importance: ★★☆ | Difficulty: Hard
+        270. Discrete Log / Baby Step Giant Step - Importance: ★★★ | Difficulty: Hard
+        271. Discrete Root - Importance: ★☆☆ | Difficulty: Hard
+        272. Discrete Root in O(P^(1/4)) - Importance: ★☆☆ | Difficulty: Very Hard
+        273. Discrete Square Root, Tonelli Shanks Algorithm, Cipolla's Algorithm - Importance: ★★☆ | Difficulty: Very Hard
+        274. Number of Distinct Kth Powers Modulo N - Importance: ★☆☆ | Difficulty: Very Hard
+        275. Number of Solutions to X^2 = 1 mod M - Importance: ★☆☆ | Difficulty: Hard
+    Linear Diophantine Equations
+        276. Linear Diophantine Equation with Two Variables - Importance: ★★★ | Difficulty: Easy
+        277. Linear Diophantine Equation with N Variables - Importance: ★★☆ | Difficulty: Medium
+        278. Trivariable Linear Diophantine Equation with Nonnegative Solutions - Importance: ★☆☆ | Difficulty: Hard
+        279. Multivariable Linear Diophantine Equation with Nonnegative Solutions - Importance: ★☆☆ | Difficulty: Hard
+        280. Linear Diophantine With N Unknowns and Two Equations - Importance: ★☆☆ | Difficulty: Very Hard
+    Solutions to Equations
+        281. Number of Solutions to a Basic Linear Algebraic Equation - Importance: ★☆☆ | Difficulty: Medium
+        282. Number of Solutions to a Basic Linear Algebraic Equation using Meet in the Middle - Importance: ★☆☆ | Difficulty: Hard
+        283. Number of Nonnegative Integer Solutions to ax + by ≤ c - Importance: ★☆☆ | Difficulty: Medium
+        284. Number of Integer Solutions to 1/x + 1/y = 1/k - Importance: ★☆☆ | Difficulty: Easy
+        285. Two / Three / Four Squares Theorem - Importance: ★☆☆ | Difficulty: Hard
+        286. Pell's Equation - Importance: ★★☆ | Difficulty: Hard
+    Floor Sum
+        287. Sum of Floors - Importance: ★★☆ | Difficulty: Hard
+        288. Floor Sum and Mod Sum of Arithmetic Progression - Importance: ★★★ | Difficulty: Hard
+        289. Generalized Floor Sum of Arithmetic Progression - Importance: ★☆☆ | Difficulty: Very Hard
+    Fibonacci Numbers
+        290. Fibonacci Numbers - Importance: ★★★ | Difficulty: Easy
+        291. [Problem] LCM of Fibonacci Numbers - Importance: ★☆☆ | Difficulty: Medium
+        292. Pisano Period - Importance: ★★☆ | Difficulty: Medium
+        293. Phi Field - Importance: ★☆☆ | Difficulty: Hard
+    Miscellaneous (Number Theory)
+        294. Pythagorean Triplets - Importance: ★★☆ | Difficulty: Easy
+        295. [Problem] Min of Mod of Arithmetic Progression - Importance: ★☆☆ | Difficulty: Hard
+        296. Sqrt Decomposition of Mod of Arithmetic Progression - Importance: ★☆☆ | Difficulty: Very Hard
+        297. Factorial Number System - Importance: ★☆☆ | Difficulty: Easy
+        298. Stern-Brocot Tree and Rational Approximation - Importance: ★★☆ | Difficulty: Hard
+        299. [Problem] Number of a * x mod p in a Range - Importance: ★☆☆ | Difficulty: Hard
+        300. [Problem] Smallest Nonnegative Integer x s.t. l ≤ a * x mod p ≤ r - Importance: ★☆☆ | Difficulty: Hard
+
+Combinatorics
+    Techniques
+        301. Contribution Technique - Importance: ★★★ | Difficulty: Easy
+        302. Product Trick - Importance: ★★☆ | Difficulty: Easy
+    Catalan
+        303. Catalan Numbers - Importance: ★★★ | Difficulty: Medium
+        304. Catalan Convolution - Importance: ★★☆ | Difficulty: Hard
+    Inclusion Exclusion
+        305. Principle of Inclusion and Exclusion (PIE) - Importance: ★★★ | Difficulty: Medium
+        306. Derangements - Importance: ★★★ | Difficulty: Easy
+        307. Inclusion Exclusion on Multiples - Importance: ★★☆ | Difficulty: Medium
+    Factorials and Binomial Coefficients (nCr)
+        308. Lucas Theorem - Importance: ★★★ | Difficulty: Medium
+        309. nCr Modulo Any Mod - Importance: ★★★ | Difficulty: Hard
+        310. Large Factorials and Binomial Coefficients - Importance: ★★★ | Difficulty: Easy
+        311. Legendre's Formula - Importance: ★★★ | Difficulty: Easy
+        312. Prefix Sum Queries of Binomial Coefficients - Importance: ★★☆ | Difficulty: Medium
+        313. Prefix Sum of Binomial Coefficients for a Fixed Large N - Importance: ★☆☆ | Difficulty: Hard
+        314. Sum of nCr Over a Fixed Congruence Class - Importance: ★★☆ | Difficulty: Hard
+        315. [Problem] Sum of nCr(a[i], K) for each K from 1 to N - Importance: ★☆☆ | Difficulty: Hard
+    Stirling Numbers
+        316. Stirling Numbers (Basic) - Importance: ★★★ | Difficulty: Medium
+        317. Stirling Number of the First Kind for Fixed N - Importance: ★★☆ | Difficulty: Hard
+        318. Stirling Number of the First Kind for Fixed K - Importance: ★☆☆ | Difficulty: Hard
+        319. Stirling Number of the Second Kind for Fixed N - Importance: ★★☆ | Difficulty: Hard
+        320. Stirling Number of the Second Kind for Fixed K - Importance: ★☆☆ | Difficulty: Hard
+    Partitions
+        321. Partitions of an Integer, Partition Function and Pentagonal Number Theorem - Importance: ★★☆ | Difficulty: Hard
+        322. Partitions of a Set / Bell Number - Importance: ★★☆ | Difficulty: Medium
+    Miscellaneous (Combinatorics)
+        323. Burnside's Lemma / Polya Enumeration Theorem - Importance: ★★★ | Difficulty: Hard
+        324. Bertrand's Ballot Theorem - Importance: ★☆☆ | Difficulty: Medium
+        325. Young Tableaus and the Hook Length Formula - Importance: ★☆☆ | Difficulty: Very Hard
+
+Math
+    Convolution
+        326. Fast Fourier Transform (FFT) - Importance: ★★★ | Difficulty: Hard
+        327. Number Theoretic Transform (NTT) - Importance: ★★★ | Difficulty: Hard
+        328. 2D FFT / NTT - Importance: ★☆☆ | Difficulty: Very Hard
+        329. Online FFT / NTT - Importance: ★★☆ | Difficulty: Very Hard
+        330. Fast Walsh Hadamard Transform (FWHT) and its Variations - Importance: ★★★ | Difficulty: Hard
+        331. GCD Convolution - Importance: ★★☆ | Difficulty: Hard
+        332. LCM Convolution - Importance: ★☆☆ | Difficulty: Hard
+    Polynomial
+        333. Generating Functions - Importance: ★★★ | Difficulty: Hard
+        334. Polynomial Inverse - Importance: ★★★ | Difficulty: Hard
+        335. Polynomial Exp - Importance: ★★☆ | Difficulty: Very Hard
+        336. Polynomial Log - Importance: ★★☆ | Difficulty: Very Hard
+        337. Polynomial Pow - Importance: ★☆☆ | Difficulty: Very Hard
+        338. Polynomial Sqrt - Importance: ★☆☆ | Difficulty: Very Hard
+        339. Polynomial Composition - Importance: ★☆☆ | Difficulty: Very Hard
+        340. Multipoint Evaluation - Importance: ★☆☆ | Difficulty: Very Hard
+        341. Chirp Z Transform - Importance: ★☆☆ | Difficulty: Very Hard
+        342. Polynomial Interpolation - Importance: ★★☆ | Difficulty: Hard
+        343. Polynomial Shift - Importance: ★☆☆ | Difficulty: Very Hard
+        344. Shift of Sampling Points of Polynomial - Importance: ★☆☆ | Difficulty: Very Hard
+        345. Polynomial Division and Remainder - Importance: ★★☆ | Difficulty: Hard
+        346. Polynomial Roots Under a Modulo - Importance: ★☆☆ | Difficulty: Very Hard
+        347. Resultant of Two Polynomials and Half-GCD Algorithm - Importance: ★☆☆ | Difficulty: Very Hard
+        348. Lagrange Interpolation - Importance: ★★★ | Difficulty: Hard
+        349. [Problem] Sum of r^i * poly(i) - Importance: ★☆☆ | Difficulty: Hard
+        350. Polynomial with Binomial Coefficients - Importance: ★☆☆ | Difficulty: Hard
+        351. Subset Sum Problem using Generating Functions - Importance: ★★☆ | Difficulty: Hard
+        352. Polynomial Factorization of (x^n - 1) and Cyclotomic Polynomials - Importance: ★☆☆ | Difficulty: Very Hard
+        353. Schwartz–Zippel Lemma - Importance: ★★☆ | Difficulty: Medium
+        354. Lagrange Inversion Theorem - Importance: ★☆☆ | Difficulty: Very Hard
+    Matrices
+        355. Matrix Exponentiation - Importance: ★★★ | Difficulty: Medium
+        356. Permanent of a Matrix - Importance: ★☆☆ | Difficulty: Very Hard
+        357. Freivald's Algorithm - Importance: ★☆☆ | Difficulty: Easy
+        358. Vandermonde Matrix - Importance: ★☆☆ | Difficulty: Hard
+        359. Hafnian of a Matrix / Number of Perfect Matchings in a Graph - Importance: ★☆☆ | Difficulty: Very Hard
+        360. Frobenius Form of a Matrix and Fast Matrix Power - Importance: ★☆☆ | Difficulty: Very Hard
+    Linear Recurrence
+        361. Linear Recurrence Relations - Importance: ★★★ | Difficulty: Medium
+        362. Linear Recurrence using Cayley-Hamilton Theorem - Importance: ★★☆ | Difficulty: Hard
+        363. Linear Recurrence using Generating Functions - Importance: ★★☆ | Difficulty: Hard
+        364. Linear Recurrence with Polynomial Coefficients - Importance: ★☆☆ | Difficulty: Very Hard
+        365. Linear Recurrence on Matrices - Importance: ★★☆ | Difficulty: Hard
+        366. Generating Function of a Linear Recurrence - Importance: ★★☆ | Difficulty: Hard
+        367. Berlekamp Massey - Importance: ★★★ | Difficulty: Very Hard
+        368. Reeds-Sloane Algorithm - Importance: ★☆☆ | Difficulty: Very Hard
+    Linear Algebra
+        369. Gaussian Elimination - Importance: ★★★ | Difficulty: Medium
+        370. Gaussian Elimination Modulo 2 - Importance: ★★★ | Difficulty: Medium
+        371. Determinant of a Matrix - Importance: ★★★ | Difficulty: Medium
+        372. Determinant under Composite Modulo - Importance: ★★☆ | Difficulty: Hard
+        373. Characteristic Polynomial and Hesserberg Matrix - Importance: ★☆☆ | Difficulty: Very Hard
+        374. [Problem] Determinant of Product Matrix - Importance: ★☆☆ | Difficulty: Hard
+        375. Determinant of Sparse Matrix and Black Box Linear Algebra - Importance: ★☆☆ | Difficulty: Very Hard
+        376. [Problem] Determinant of Permutant and Circulant Matrix - Importance: ★☆☆ | Difficulty: Hard
+        377. GCD Determinant / Smith's Determinant - Importance: ★☆☆ | Difficulty: Hard
+        378. Cauchy–Binet formula - Importance: ★☆☆ | Difficulty: Hard
+        379. Inverse of a Matrix - Importance: ★★☆ | Difficulty: Medium
+        380. Inverse of a Matrix modulo 2 - Importance: ★★☆ | Difficulty: Medium
+        381. Thomas Algorithm - Importance: ★☆☆ | Difficulty: Medium
+        382. Vector Space and XOR Basis - Importance: ★★★ | Difficulty: Medium
+        383. [Technique] XOR Basis ft Reduced Row Echelon Form - Importance: ★★☆ | Difficulty: Hard
+        384. [Technique] XOR Basis ft Lexicographically Largest Basis - Importance: ★★☆ | Difficulty: Hard
+        385. XOR Basis with Deletions (Online) - Importance: ★☆☆ | Difficulty: Very Hard
+        386. q Binomial - Importance: ★☆☆ | Difficulty: Very Hard
+    Formulas
+        387. Gauss's Eureka Theorem - Importance: ★☆☆ | Difficulty: Easy
+        388. Titu's Lemma - Importance: ★☆☆ | Difficulty: Easy
+        389. Lifting-the-exponent(LTE) Lemma - Importance: ★★☆ | Difficulty: Medium
+        390. Faulhaber's Formula and Bernoulli Numbers - Importance: ★★☆ | Difficulty: Hard
+    Calculus
+        391. Differentiation and Integration - Importance: ★★☆ | Difficulty: Medium
+        392. Line Integral - Importance: ★☆☆ | Difficulty: Hard
+    Probabilities and Expected Values
+        393. Probabilities and Expected Values - Importance: ★★★ | Difficulty: Medium
+        394. Expected Value Powers Technique - Importance: ★★☆ | Difficulty: Hard
+        395. The Slime Trick - Importance: ★★☆ | Difficulty: Hard
+        396. Expected Occurrence Time as Substring - Importance: ★★☆ | Difficulty: Hard
+        397. Gambler's Ruin - Importance: ★☆☆ | Difficulty: Medium
+        398. Martingale - Importance: ★☆☆ | Difficulty: Hard
+    Mathematical Optimization
+        399. Lagrange Multiplier - Importance: ★☆☆ | Difficulty: Hard
+        400. Linear Programming / Simplex Algorithm - Importance: ★★☆ | Difficulty: Hard
+        401. Duality in Linear Programming (LP <> Flow) - Importance: ★★☆ | Difficulty: Hard
+        402. Dinkelbach Algorithm - Importance: ★★☆ | Difficulty: Hard
+    Miscellaneous (Math)
+        403. Continued Fractions - Importance: ★★☆ | Difficulty: Hard
+        404. Polynomial Real Roots - Importance: ★☆☆ | Difficulty: Very Hard
+        405. Finite Field Arithmetic Binary - Importance: ★☆☆ | Difficulty: Hard
+
+Strings
+    String Matching
+        406. Knuth Morris Pratt (KMP) and Prefix Automaton - Importance: ★★★ | Difficulty: Easy
+        407. Z Algorithm - Importance: ★★★ | Difficulty: Easy
+        408. String Matching using Bitsets - Importance: ★★☆ | Difficulty: Medium
+        409. String Matching with FFT ft Wildcard Matching - Importance: ★★☆ | Difficulty: Very Hard
+    Hashing
+        410. String Hashing - Importance: ★★★ | Difficulty: Easy
+        411. 2D String Hashing - Importance: ★★☆ | Difficulty: Medium
+        412. XOR Hashing - Importance: ★★☆ | Difficulty: Medium
+        413. Multiset Hashing - Importance: ★☆☆ | Difficulty: Medium
+    Aho Corasick
+        414. Aho Corasick - Importance: ★★★ | Difficulty: Hard
+        415. Dynamic Aho Corasick - Importance: ★☆☆ | Difficulty: Very Hard
+    Suffix Structures
+        416. Suffix Array - Importance: ★★★ | Difficulty: Hard
+        417. Isomorphic Suffix Array - Importance: ★☆☆ | Difficulty: Very Hard
+        418. Dynamic Suffix Array - Importance: ★☆☆ | Difficulty: Very Hard
+        419. Suffix Automaton - Importance: ★★★ | Difficulty: Very Hard
+        420. [Problem] Distinct Substring Queries in Range - Importance: ★☆☆ | Difficulty: Very Hard
+        421. Suffix Tree - Importance: ★★☆ | Difficulty: Very Hard
+    Palindromes
+        422. Palindromic Tree / Eertree - Importance: ★★☆ | Difficulty: Hard
+        423. Persistent Palindromic Tree - Importance: ★☆☆ | Difficulty: Very Hard
+        424. Manachers Algorithm - Importance: ★★★ | Difficulty: Easy
+        425. [Problem] Minimum Palindrome Factorization - Importance: ★☆☆ | Difficulty: Hard
+        426. [Problem] Number of Palindromes in Range - Importance: ★☆☆ | Difficulty: Hard
+    Longest Common Subsequence (LCS)
+        427. Longest Common Subsequence (LCS) - Importance: ★★★ | Difficulty: Easy
+        428. All Substring Longest Common Subsequence - Importance: ★☆☆ | Difficulty: Hard
+        429. Bit LCS - Importance: ★★☆ | Difficulty: Hard
+        430. Cyclic LCS - Importance: ★☆☆ | Difficulty: Medium
+        431. LCS on RLE compressed string - Importance: ★☆☆ | Difficulty: Hard
+    Miscellaneous (Strings)
+        432. Balanced Brackets - Importance: ★★☆ | Difficulty: Very Easy

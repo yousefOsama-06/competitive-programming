@@ -1,32 +1,29 @@
+// Topological Sort (Kahn's Algorithm) - O(V + E)
 struct TopoSort {
     int n;
     vector<vector<int>> adj;
-    vector<int> in_degree, order;
+    vector<int> deg, order;
 
-    TopoSort(int n) : n(n), adj(n + 1), in_degree(n + 1, 0) {}
+    TopoSort(int n = 0) : n(n), adj(n + 1), deg(n + 1, 0) {}
 
     void add_edge(int u, int v) {
-        adj[u].push_back(v);
-        in_degree[v]++;
+        adj[u].pb(v);
+        deg[v]++;
     }
 
     bool solve() {
         queue<int> q;
-        for (int i = 1; i <= n; ++i) {
-            if (in_degree[i] == 0) q.push(i);
+        for (int i = 1; i <= n; i++) {
+            if (!deg[i]) q.push(i);
         }
-
         while (!q.empty()) {
             int u = q.front();
             q.pop();
-            order.push_back(u);
-
+            order.pb(u);
             for (int v : adj[u]) {
-                if (--in_degree[v] == 0) {
-                    q.push(v);
-                }
+                if (!--deg[v]) q.push(v);
             }
         }
-        return order.size() == n; // Returns false if there is a cycle
+        return (int)order.size() == n; // false if graph has cycles
     }
 };

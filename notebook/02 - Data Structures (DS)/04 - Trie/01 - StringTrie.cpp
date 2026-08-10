@@ -1,41 +1,40 @@
+// Prefix Trie for Strings
+// Time: O(L) per insert/query, Space: O(N * L * Alphabet)
 struct Trie {
-    vector<vector<int>> trie;
-    vector<int> cnt;
-    //    vector<int>leaves;
-    int m, sz;
+    vector<vector<int>> nxt;
+    vector<int> cnt, end_cnt;
+    int alpha;
 
-    int addNode() {
-        trie.emplace_back(m, -1);
-        cnt.emplace_back();
-        // leaves.emplace_back();
-        sz++;
-        return sz - 1;
+    Trie(int alpha = 26) : alpha(alpha) {
+        add_node();
     }
 
-    Trie(int m = 26) : m(m), sz(0) {
-        addNode();
-    };
-
-    // insert or remove
-    void insert(string &s, int type = 1) {
-        int cur = 0;
-        for (auto c: s) {
-            if (trie[cur][c - 'a'] == -1)
-                trie[cur][c - 'a'] = addNode();
-            cur = trie[cur][c - 'a'];
-            cnt[cur] += type;
-        }
-        // leaves[cur] += type;
+    int add_node() {
+        nxt.emplace_back(alpha, -1);
+        cnt.emplace_back(0);
+        end_cnt.emplace_back(0);
+        return nxt.size() - 1;
     }
 
-
-    int query(string &s) {
-        int cur = 0;
-        for (auto c: s) {
-            if (trie[cur][c - 'a'] == -1)
-                return 0;
-            cur = trie[cur][c - 'a'];
+    void insert(const string& s, int val = 1) {
+        int u = 0;
+        cnt[u] += val;
+        for (char c : s) {
+            int ch = c - 'a';
+            if (nxt[u][ch] == -1) nxt[u][ch] = add_node();
+            u = nxt[u][ch];
+            cnt[u] += val;
         }
-        return cnt[cur];
+        end_cnt[u] += val;
+    }
+
+    int count_prefix(const string& s) {
+        int u = 0;
+        for (char c : s) {
+            int ch = c - 'a';
+            if (nxt[u][ch] == -1) return 0;
+            u = nxt[u][ch];
+        }
+        return cnt[u];
     }
 };

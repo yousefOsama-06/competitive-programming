@@ -1,7 +1,5 @@
-template<class T>
-int sgn(T x) { return (x > 0) - (x < 0); }
-
-template<class T>
+// 2D Point / Vector Primitive
+template <typename T = double>
 struct Point {
     typedef Point P;
     T x, y;
@@ -67,19 +65,15 @@ struct Point {
 
     // Project point c onto line segment through a and b (assuming a != b).
     P projectOnSegment(const P &a, const P &b) const {
-        P &c = (P &) *this;
-        P ab = a.getVector(b);
-        P ac = a.getVector(c);
-
+        P ab = b - a, ac = *this - a;
         long double r = ac.dot(ab), d = a.dist2(b);
         if (r < 0) return a;
         if (r > d) return b;
-
         return a + ab * r / d;
     }
 
     P reflectAroundLine(const P &a, const P &b) const {
-        return projectOnLine(a, b) * 2 - (*this);
+        return projectOnLine(a, b) * 2 - *this;
     }
 };
 

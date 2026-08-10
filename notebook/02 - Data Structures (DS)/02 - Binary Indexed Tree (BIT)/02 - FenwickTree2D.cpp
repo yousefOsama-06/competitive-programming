@@ -1,65 +1,37 @@
-template<typename T>
-class FenwickTree2D {
-public:
-    vector<vector<T>> tree;
+// 2D Fenwick Tree - 0-based indexing
+// Space: O(N * M), Time: O(log N * log M) per update/query
+template<typename T = ll>
+struct FenwickTree2D {
     int n, m;
+    vector<vector<T>> tree;
 
-    // Default constructor
-    FenwickTree2D() : n(0), m(0) {}
+    FenwickTree2D(int n = 0, int m = 0) : n(n), m(m), tree(n + 1, vector<T>(m + 1, 0)) {}
 
-    // Constructor with dimensions
-    FenwickTree2D(int n, int m) {
-        init(n, m);
-    }
-
-    void init(int n, int m) {
-        this->n = n;
-        this->m = m;
-        // 1-based indexing needs sizes n + 1 and m + 1. Padding by 2 is safe.
-        tree.assign(n + 2, vector<T>(m + 2, 0)); 
-    }
-
-    // Point update: Adds 'val' to the cell (x, y)
-    void update(int x, int y, T val) {
-        x++; y++; // Convert 0-based to 1-based
-        for (int i = x; i <= n; i += i & -i) {
-            for (int j = y; j <= m; j += j & -j) {
+    void add(int x, int y, T val) {
+        for (int i = x + 1; i <= n; i += i & -i) {
+            for (int j = y + 1; j <= m; j += j & -j) {
                 tree[i][j] += val;
             }
         }
     }
 
-    // Point assignment: Sets the cell (x, y) to 'val'
-    void assign(int x, int y, T val) {
-        update(x, y, val - getRange(x, y, x, y));
+    void set(int x, int y, T val) {
+        add(x, y, val - query(x, y, x, y));
     }
 
-    // 2D Prefix sum: Returns the sum of the subgrid from (0, 0) to (x, y)
-    T getPrefix(int x, int y) {
-        x++; y++; // Convert 0-based to 1-based
-        if (x <= 0 || y <= 0) return 0;
-        
-        // Clamp to maximum dimensions if queries exceed bounds
-        x = min(x, n);
-        y = min(y, m);
-        
-        T ret = 0;
-        for (int i = x; i > 0; i -= i & -i) {
-            for (int j = y; j > 0; j -= j & -j) {
-                ret += tree[i][j];
+    T query(int x, int y) {
+        T sum = 0;
+        for (int i = min(x + 1, n); i > 0; i -= i & -i) {
+            for (int j = min(y + 1, m); j > 0; j -= j & -j) {
+                sum += tree[i][j];
             }
         }
-        return ret;
+        return sum;
     }
 
-    // 2D Range sum: Returns the sum of the subgrid from top-left (x1, y1) to bottom-right (x2, y2)
-    T getRange(int x1, int y1, int x2, int y2) {
+    // 2D Subgrid Range Sum from (x1, y1) to (x2, y2) inclusive
+    T query(int x1, int y1, int x2, int y2) {
         if (x1 > x2 || y1 > y2) return 0;
-        
-        // Inclusion-Exclusion Principle
-        return getPrefix(x2, y2) 
-             - getPrefix(x1 - 1, y2) 
-             - getPrefix(x2, y1 - 1) 
-             + getPrefix(x1 - 1, y1 - 1);
+        return query(x2, y2) - query(x1 - 1, y2) - query(x2, y1 - 1) + query(x1 - 1, y1 - 1);
     }
 };

@@ -1,9 +1,10 @@
+// Floyd-Warshall All-Pairs Shortest Path - O(V^3)
 struct FloydWarshall {
     int n;
     vector<vector<ll>> dist;
 
-    FloydWarshall(int n) : n(n), dist(n + 1, vector<ll>(n + 1, llinf)) {
-        for (int i = 0; i <= n; ++i) dist[i][i] = 0;
+    FloydWarshall(int n = 0) : n(n), dist(n + 1, vector<ll>(n + 1, llinf)) {
+        for (int i = 0; i <= n; i++) dist[i][i] = 0;
     }
 
     void add_edge(int u, int v, ll w, bool directed = false) {
@@ -12,9 +13,9 @@ struct FloydWarshall {
     }
 
     void solve() {
-        for (int k = 1; k <= n; ++k) {
-            for (int i = 1; i <= n; ++i) {
-                for (int j = 1; j <= n; ++j) {
+        for (int k = 1; k <= n; k++) {
+            for (int i = 1; i <= n; i++) {
+                for (int j = 1; j <= n; j++) {
                     if (dist[i][k] < llinf && dist[k][j] < llinf) {
                         dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j]);
                     }
