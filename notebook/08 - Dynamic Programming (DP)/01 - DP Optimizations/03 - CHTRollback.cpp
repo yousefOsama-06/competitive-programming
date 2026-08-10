@@ -1,3 +1,5 @@
+// Rollback Convex Hull Trick - Space: O(N), Add: O(log N), Query: O(log N), Rollback: O(1)
+// Supports inserting monotonic lines with history stack rollback for tree/dsu DP
 // Template parameters:
 // IS_MAX: Set to true for Maximum queries, false for Minimum queries.
 // IS_INC: Set to true if slopes added are strictly Increasing, false for Decreasing.

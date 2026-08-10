@@ -1,3 +1,6 @@
+// Divide & Conquer DP Optimization - Time: O(K * N log N), Space: O(N)
+// Applies when DP transition is dp[k][i] = min_{j < i} (dp[k-1][j] + cost(j+1, i))
+// Condition: opt(i, j) <= opt(i, j + 1) (Monotonicity of optimal split points)
 int a[N];
 ll curCost;
 int curL = 0, curR = -1, freq[N];

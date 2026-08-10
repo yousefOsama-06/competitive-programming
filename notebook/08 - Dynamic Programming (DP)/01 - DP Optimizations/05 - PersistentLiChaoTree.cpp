@@ -1,3 +1,5 @@
+// Persistent Li Chao Tree - Space: O(N log X), Insert Line: O(log X), Query: O(log X)
+// Version-persistent Li Chao Segment Tree for tree / history DP queries
 const ll maxN = 1e7 + 5;
 
 struct Line {

@@ -1,3 +1,5 @@
+// Li Chao Tree - Space: O(N log X), Insert Line: O(log X), Query: O(log X)
+// Dynamic segment tree evaluating line functions y = m * x + b for arbitrary queries x
 // To get an instance : node *root = EMPTY;
 typedef pair<long long, long long> line;
 int start_x, end_x;
