@@ -1,4 +1,4 @@
-// Iterative (Non-Recursive) Segment Tree - Space: O(N), Update: O(1), Query: O(log N)
+// Iterative (Non-Recursive) Segment Tree - Space: O(N), Update: O(log N), Query: O(log N)
 // Fast, cache-friendly implementation for point update and range query
 template<typename T = ll>
 struct IterativeSegTree {
