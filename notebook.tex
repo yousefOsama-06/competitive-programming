@@ -286,6 +286,31 @@ struct custom_hash {
 #pragma GCC target("avx2,bmi,bmi2,lzcnt,popcnt")
 \end{lstlisting}
 
+\subsection{int128}
+\begin{lstlisting}
+// __int128 Stream Operators Helper
+typedef __int128_t int128;
+typedef __uint128_t uint128;
+
+ostream &operator<<(ostream &os, int128 n) {
+    if (n == 0) return os << "0";
+    if (n < 0) { os << "-"; n = -n; }
+    string s;
+    while (n > 0) { s += (char)('0' + (n % 10)); n /= 10; }
+    reverse(all(s));
+    return os << s;
+}
+
+istream &operator>>(istream &is, int128 &n) {
+    string s; is >> s;
+    n = 0; int i = 0, sign = 1;
+    if (!s.empty() && s[0] == '-') { sign = -1; i = 1; }
+    for (; i < (int)s.size(); i++) n = n * 10 + (s[i] - '0');
+    n *= sign;
+    return is;
+}
+\end{lstlisting}
+
 \section{Data Structures (DS)}
 
 \subsection{Segment Tree}
@@ -882,6 +907,199 @@ struct SegTree {
 };
 \end{lstlisting}
 
+\subsubsection{DynamicSegTree}
+\begin{lstlisting}
+// Dynamic (Implicit) Segment Tree - Space: O(Q log N) per query
+// Allocates nodes on demand for ranges up to 1e9 or 1e18
+template<typename T = ll>
+struct DynamicSegTree {
+    struct Node {
+        T val = 0;
+        int lc = -1, rc = -1;
+    };
+
+    vector<Node> tree;
+    ll L, R;
+
+    DynamicSegTree(ll L = 0, ll R = 1e9) : L(L), R(R) {
+        add_node();
+    }
+
+    int add_node() {
+        tree.pb(Node());
+        return tree.size() - 1;
+    }
+
+    void update(int node, ll l, ll r, ll pos, T val) {
+        tree[node].val += val;
+        if (l == r) return;
+        ll mid = l + (r - l) / 2;
+        if (pos <= mid) {
+            if (tree[node].lc == -1) {
+                int nxt = add_node();
+                tree[node].lc = nxt;
+            }
+            update(tree[node].lc, l, mid, pos, val);
+        } else {
+            if (tree[node].rc == -1) {
+                int nxt = add_node();
+                tree[node].rc = nxt;
+            }
+            update(tree[node].rc, mid + 1, r, pos, val);
+        }
+    }
+
+    void update(ll pos, T val) {
+        update(0, L, R, pos, val);
+    }
+
+    T query(int node, ll l, ll r, ll ql, ll qr) {
+        if (node == -1 || ql > r || qr < l) return 0;
+        if (ql <= l && r <= qr) return tree[node].val;
+        ll mid = l + (r - l) / 2;
+        return query(tree[node].lc, l, mid, ql, qr) + query(tree[node].rc, mid + 1, r, ql, qr);
+    }
+
+    T query(ll ql, ll qr) {
+        return query(0, L, R, ql, qr);
+    }
+};
+\end{lstlisting}
+
+\subsubsection{MergeSortTree}
+\begin{lstlisting}
+// Merge Sort Tree - Space: O(N log N), Build: O(N log N), Query: O(log^2 N)
+// Stores sorted elements in each node to answer 2D range count queries
+template<typename T = int>
+struct MergeSortTree {
+    int n;
+    vector<vector<T>> tree;
+
+    MergeSortTree(const vector<T>& a) : n(a.size()), tree(4 * n) {
+        build(1, 0, n - 1, a);
+    }
+
+    void build(int node, int l, int r, const vector<T>& a) {
+        if (l == r) {
+            tree[node] = {a[l]};
+            return;
+        }
+        int mid = (l + r) / 2;
+        build(2 * node, l, mid, a);
+        build(2 * node + 1, mid + 1, r, a);
+        merge(all(tree[2 * node]), all(tree[2 * node + 1]), back_inserter(tree[node]));
+    }
+
+    // Returns number of elements <= k in index range [ql, qr]
+    int query_count_le(int node, int l, int r, int ql, int qr, T k) {
+        if (ql > r || qr < l) return 0;
+        if (ql <= l && r <= qr) {
+            return upper_bound(all(tree[node]), k) - tree[node].begin();
+        }
+        int mid = (l + r) / 2;
+        return query_count_le(2 * node, l, mid, ql, qr, k) + query_count_le(2 * node + 1, mid + 1, r, ql, qr, k);
+    }
+
+    int query_count_le(int ql, int qr, T k) {
+        return query_count_le(1, 0, n - 1, ql, qr, k);
+    }
+};
+\end{lstlisting}
+
+\subsubsection{IterativeSegTree}
+\begin{lstlisting}
+// Iterative (Non-Recursive) Segment Tree - Space: O(N), Update: O(log N), Query: O(log N)
+// Fast, cache-friendly implementation for point update and range query
+template<typename T = ll>
+struct IterativeSegTree {
+    int n;
+    vector<T> tree;
+    T neutral;
+    function<T(T, T)> combine;
+
+    IterativeSegTree(int n = 0, T neutral = 0, function<T(T, T)> combine = [](T a, T b) { return a + b; })
+        : n(n), tree(2 * n, neutral), neutral(neutral), combine(combine) {}
+
+    IterativeSegTree(const vector<T>& a, T neutral = 0, function<T(T, T)> combine = [](T a, T b) { return a + b; })
+        : n(a.size()), tree(2 * a.size(), neutral), neutral(neutral), combine(combine) {
+        for (int i = 0; i < n; i++) tree[n + i] = a[i];
+        for (int i = n - 1; i > 0; i--) tree[i] = combine(tree[i << 1], tree[i << 1 | 1]);
+    }
+
+    void update(int p, T val) {
+        for (tree[p += n] = val; p > 1; p >>= 1) {
+            tree[p >> 1] = combine(tree[p], tree[p ^ 1]);
+        }
+    }
+
+    // Range query on [l, r] inclusive
+    T query(int l, int r) {
+        T resl = neutral, resr = neutral;
+        for (l += n, r += n + 1; l < r; l >>= 1, r >>= 1) {
+            if (l & 1) resl = combine(resl, tree[l++]);
+            if (r & 1) resr = combine(tree[--r], resr);
+        }
+        return combine(resl, resr);
+    }
+};
+\end{lstlisting}
+
+\subsubsection{SegTree2D}
+\begin{lstlisting}
+// 2D Segment Tree - Space: O(N * M), Update: O(log N * log M), Query: O(log N * log M)
+// Supports point updates and 2D subgrid range sum queries
+template<typename T = ll>
+struct SegTree2D {
+    int n, m;
+    vector<vector<T>> tree;
+
+    SegTree2D(int n = 0, int m = 0) : n(n), m(m), tree(4 * n, vector<T>(4 * m, 0)) {}
+
+    void update_y(int vx, int lx, int rx, int vy, int ly, int ry, int x, int y, T val) {
+        if (ly == ry) {
+            if (lx == rx) tree[vx][vy] += val;
+            else tree[vx][vy] = tree[2 * vx][vy] + tree[2 * vx + 1][vy];
+            return;
+        }
+        int my = (ly + ry) / 2;
+        if (y <= my) update_y(vx, lx, rx, 2 * vy, ly, my, x, y, val);
+        else update_y(vx, lx, rx, 2 * vy + 1, my + 1, ry, x, y, val);
+        tree[vx][vy] = tree[vx][2 * vy] + tree[vx][2 * vy + 1];
+    }
+
+    void update_x(int vx, int lx, int rx, int x, int y, T val) {
+        if (lx != rx) {
+            int mx = (lx + rx) / 2;
+            if (x <= mx) update_x(2 * vx, lx, mx, x, y, val);
+            else update_x(2 * vx + 1, mx + 1, rx, x, y, val);
+        }
+        update_y(vx, lx, rx, 1, 0, m - 1, x, y, val);
+    }
+
+    void add(int x, int y, T val) {
+        update_x(1, 0, n - 1, x, y, val);
+    }
+
+    T query_y(int vx, int vy, int ly, int ry, int qy1, int qy2) {
+        if (qy1 > ry || qy2 < ly) return 0;
+        if (qy1 <= ly && ry <= qy2) return tree[vx][vy];
+        int my = (ly + ry) / 2;
+        return query_y(vx, 2 * vy, ly, my, qy1, qy2) + query_y(vx, 2 * vy + 1, my + 1, ry, qy1, qy2);
+    }
+
+    T query_x(int vx, int lx, int rx, int qx1, int qx2, int qy1, int qy2) {
+        if (qx1 > rx || qx2 < lx) return 0;
+        if (qx1 <= lx && rx <= qx2) return query_y(vx, 1, 0, m - 1, qy1, qy2);
+        int mx = (lx + rx) / 2;
+        return query_x(2 * vx, lx, mx, qx1, qx2, qy1, qy2) + query_x(2 * vx + 1, mx + 1, rx, qx1, qx2, qy1, qy2);
+    }
+
+    T query(int x1, int y1, int x2, int y2) {
+        return query_x(1, 0, n - 1, x1, x2, y1, y2);
+    }
+};
+\end{lstlisting}
+
 \subsection{Binary Indexed Tree (BIT)}
 
 \subsubsection{FenwickTree}
@@ -1243,6 +1461,77 @@ struct BinaryTrie {
                 u = nxt[u][want];
             } else {
                 u = nxt[u][b];
+            }
+        }
+        return res;
+    }
+};
+\end{lstlisting}
+
+\subsubsection{PersistentTrie}
+\begin{lstlisting}
+// Persistent Binary Trie - Space: O(N * BITS), Time: O(BITS) per insert/query
+// Supports versioning and range max XOR queries between versions [l_ver, r_ver]
+struct PersistentTrie {
+    struct Node {
+        int cnt = 0;
+        array<int, 2> nxt = {-1, -1};
+    };
+
+    vector<Node> tree;
+    vector<int> roots;
+    int max_bit;
+
+    PersistentTrie(int max_bit = 30) : max_bit(max_bit) {
+        roots.pb(add_node());
+    }
+
+    int add_node(int old_node = -1) {
+        if (old_node != -1) {
+            tree.pb(tree[old_node]);
+        } else {
+            tree.pb(Node());
+        }
+        return tree.size() - 1;
+    }
+
+    // Inserts x starting from prev_root and returns the new version root
+    int insert(int prev_root, ll x) {
+        int new_root = add_node(prev_root);
+        int u = new_root, prev_u = prev_root;
+        tree[u].cnt++;
+
+        for (int i = max_bit; i >= 0; i--) {
+            int b = (x >> i) & 1;
+            int prev_child = (prev_u != -1) ? tree[prev_u].nxt[b] : -1;
+            tree[u].nxt[b] = add_node(prev_child);
+            u = tree[u].nxt[b];
+            if (prev_u != -1) prev_u = tree[prev_u].nxt[b];
+            tree[u].cnt++;
+        }
+        roots.pb(new_root);
+        return new_root;
+    }
+
+    // Returns max (x ^ val) over elements inserted in version range [l_ver, r_ver]
+    ll max_xor(int l_ver, int r_ver, ll x) const {
+        int u_r = roots[r_ver], u_l = (l_ver > 0) ? roots[l_ver - 1] : -1;
+        ll res = 0;
+
+        for (int i = max_bit; i >= 0; i--) {
+            int b = (x >> i) & 1;
+            int want = b ^ 1;
+
+            int count_r = (u_r != -1 && tree[u_r].nxt[want] != -1) ? tree[tree[u_r].nxt[want]].cnt : 0;
+            int count_l = (u_l != -1 && tree[u_l].nxt[want] != -1) ? tree[tree[u_l].nxt[want]].cnt : 0;
+
+            if (count_r - count_l > 0) {
+                res |= (1LL << i);
+                u_r = tree[u_r].nxt[want];
+                u_l = (u_l != -1 && tree[u_l].nxt[want] != -1) ? tree[u_l].nxt[want] : -1;
+            } else {
+                u_r = (u_r != -1 && tree[u_r].nxt[b] != -1) ? tree[u_r].nxt[b] : -1;
+                u_l = (u_l != -1 && tree[u_l].nxt[b] != -1) ? tree[u_l].nxt[b] : -1;
             }
         }
         return res;
@@ -2087,42 +2376,87 @@ using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statisti
 
 \subsection{Monotonic Data Structures}
 
+\subsubsection{MonotonicStack}
+\begin{lstlisting}
+// Monotonic Stack - Time: O(N), Space: O(N)
+// Computes Next/Previous Smaller and Greater element indices for all positions
+template<typename T = ll>
+struct MonotonicStack {
+    int n;
+    vector<T> a;
+    vector<int> prev_less, next_less;
+    vector<int> prev_greater, next_greater;
+
+    MonotonicStack(const vector<T>& arr) : n(arr.size()), a(arr),
+        prev_less(n, -1), next_less(n, n),
+        prev_greater(n, -1), next_greater(n, n) {
+        
+        vector<int> st;
+        // Next Less & Previous Less
+        for (int i = 0; i < n; i++) {
+            while (!st.empty() && a[st.back()] >= a[i]) {
+                next_less[st.back()] = i;
+                st.pop_back();
+            }
+            if (!st.empty()) prev_less[i] = st.back();
+            st.pb(i);
+        }
+
+        st.clear();
+        // Next Greater & Previous Greater
+        for (int i = 0; i < n; i++) {
+            while (!st.empty() && a[st.back()] <= a[i]) {
+                next_greater[st.back()] = i;
+                st.pop_back();
+            }
+            if (!st.empty()) prev_greater[i] = st.back();
+            st.pb(i);
+        }
+    }
+};
+\end{lstlisting}
+
 \subsubsection{TwoStackQueue}
 \begin{lstlisting}
+// Monotonic Queue via Two Stacks (Sliding Window Min/Max)
+// Space: O(N), Time: O(1) amortized per push/pop/get
 struct TwoStackQ {
     struct Node {
         ll mx = -llinf, mn = llinf, val;
 
-        Node(): val(0) {
-        }
-
-        Node(ll x): mx(x), mn(x), val(x) {
-        }
+        Node() : val(0) {}
+        Node(ll x) : mx(x), mn(x), val(x) {}
     };
 
     stack<Node> a, b;
 
-    int size() { return a.size() + b.size(); }
+    int size() {
+        return a.size() + b.size();
+    }
 
-    void mrg(Node& a, Node& b) {
+    void mrg(Node &a, Node &b) {
         a.mn = min(a.mn, b.mn);
         a.mx = max(a.mx, b.mx);
     }
 
+    // Pushes value into the queue
     void push(ll val) {
         auto nd = Node(val);
         if (!a.empty()) mrg(nd, a.top());
         a.push(nd);
     }
 
+    // Transfers elements from stack a to stack b when b is empty
     void move() {
         while (!a.empty()) {
             auto nd = Node(a.top().val);
             if (!b.empty()) mrg(nd, b.top());
-            b.push(nd), a.pop();
+            b.push(nd);
+            a.pop();
         }
     }
 
+    // Returns min/max of all current elements in the queue in O(1)
     Node get() {
         Node res;
         if (!b.empty()) mrg(res, b.top());
@@ -2130,9 +2464,52 @@ struct TwoStackQ {
         return res;
     }
 
+    // Removes the oldest element from the queue
     void pop() {
         if (b.empty()) move();
         if (!b.empty()) b.pop();
+    }
+};
+\end{lstlisting}
+
+\subsubsection{MonotonicQueue2D}
+\begin{lstlisting}
+// 2D Monotonic Queue (Sliding Window 2D Min/Max) - Time: O(N * M), Space: O(N * M)
+// Computes min in every K x L subgrid of an N x M matrix
+template<typename T = ll>
+struct MonotonicQueue2D {
+    int n, m;
+
+    // Returns a matrix res where res[i][j] is the min in subgrid [i..i+K-1][j..j+L-1]
+    vector<vector<T>> sliding_window_2d(const vector<vector<T>>& grid, int K, int L) {
+        n = grid.size();
+        m = grid[0].size();
+
+        // 1. Sliding window min horizontally along each row
+        vector<vector<T>> row_min(n, vector<T>(m - L + 1));
+        for (int i = 0; i < n; i++) {
+            deque<int> dq;
+            for (int j = 0; j < m; j++) {
+                while (!dq.empty() && grid[i][dq.back()] >= grid[i][j]) dq.pop_back();
+                dq.pb(j);
+                if (dq.front() <= j - L) dq.pop_front();
+                if (j >= L - 1) row_min[i][j - L + 1] = grid[i][dq.front()];
+            }
+        }
+
+        // 2. Sliding window min vertically down each column of row_min
+        vector<vector<T>> res(n - K + 1, vector<T>(m - L + 1));
+        for (int j = 0; j < m - L + 1; j++) {
+            deque<int> dq;
+            for (int i = 0; i < n; i++) {
+                while (!dq.empty() && row_min[dq.back()][j] >= row_min[i][j]) dq.pop_back();
+                dq.pb(i);
+                if (dq.front() <= i - K) dq.pop_front();
+                if (i >= K - 1) res[i - K + 1][j] = row_min[dq.front()][j];
+            }
+        }
+
+        return res;
     }
 };
 \end{lstlisting}
@@ -2243,6 +2620,54 @@ struct FloydWarshall {
                 }
             }
         }
+    }
+};
+\end{lstlisting}
+
+\subsubsection{BellmanFord}
+\begin{lstlisting}
+// Bellman-Ford Shortest Path with Negative Cycle Detection - O(V * E)
+struct Edge {
+    int u, v;
+    ll w;
+};
+
+struct BellmanFord {
+    int n;
+    vector<Edge> edges;
+    vector<ll> dist;
+    vector<int> par;
+
+    BellmanFord(int n = 0) : n(n), dist(n + 1, llinf), par(n + 1, -1) {}
+
+    void add_edge(int u, int v, ll w) {
+        edges.pb({u, v, w});
+    }
+
+    // Returns false if a negative cycle is reachable from src
+    bool solve(int src) {
+        fill(all(dist), llinf);
+        fill(all(par), -1);
+        dist[src] = 0;
+
+        for (int i = 0; i < n - 1; i++) {
+            bool relaxed = false;
+            for (const auto& e : edges) {
+                if (dist[e.u] < llinf && dist[e.u] + e.w < dist[e.v]) {
+                    dist[e.v] = dist[e.u] + e.w;
+                    par[e.v] = e.u;
+                    relaxed = true;
+                }
+            }
+            if (!relaxed) break;
+        }
+
+        for (const auto& e : edges) {
+            if (dist[e.u] < llinf && dist[e.u] + e.w < dist[e.v]) {
+                return false; // Negative cycle detected
+            }
+        }
+        return true;
     }
 };
 \end{lstlisting}
@@ -2487,24 +2912,28 @@ struct TwoSat {
 
 \subsubsection{EulerianPath}
 \begin{lstlisting}
+// Hierholzer's Algorithm for Eulerian Path / Circuit - O(V + E)
+// Works for both Directed and Undirected graphs
 struct EulerianPath {
-    int n;
-    vector<vector<pair<int, int>>> adj; // {neighbor, edge_index}
+    int n, m;
+    vector<vector<pair<int, int>>> adj; // {neighbor, edge_id}
     vector<bool> used_edge;
-    vector<int> in_deg, out_deg;
-    vector<int> path;
+    vector<int> in_deg, out_deg, path;
 
-    EulerianPath(int n, int m) : n(n), adj(n + 1), used_edge(m, false), in_deg(n + 1, 0), out_deg(n + 1, 0) {}
+    EulerianPath(int n = 0, int m = 0) : n(n), m(m), adj(n + 1), used_edge(m, false), in_deg(n + 1, 0), out_deg(n + 1, 0) {}
 
-    void add_edge(int u, int v, int edge_idx, bool directed = true) {
-        adj[u].push_back({v, edge_idx});
-        out_deg[u]++; in_deg[v]++;
+    void add_edge(int u, int v, int edge_id, bool directed = true) {
+        adj[u].pb({v, edge_id});
+        out_deg[u]++;
+        in_deg[v]++;
         if (!directed) {
-            adj[v].push_back({u, edge_idx});
-            out_deg[v]++; in_deg[u]++;
+            adj[v].pb({u, edge_id});
+            out_deg[v]++;
+            in_deg[u]++;
         }
     }
 
+    // Finds Eulerian path starting at start_node. Returns false if graph is not Eulerian
     bool solve(int start_node) {
         vector<int> ptr(n + 1, 0);
         stack<int> st;
@@ -2519,15 +2948,15 @@ struct EulerianPath {
                     st.push(v);
                 }
             } else {
-                path.push_back(u);
+                path.pb(u);
                 st.pop();
             }
         }
-        reverse(path.begin(), path.end());
-        
-        // Check if all edges were visited
+        reverse(all(path));
+
+        // Verify that every edge was traversed
         for (bool used : used_edge) {
-            if (!used) return false; 
+            if (!used) return false;
         }
         return true;
     }
@@ -2747,20 +3176,6 @@ struct HopcroftKarp {
 
 \subsection{Euclidean Algorithm}
 
-\subsubsection{GCD\_LCM}
-\begin{lstlisting}
-ll gcd(ll a, ll b) {
- if (b == 0)
-    return a;
- return gcd(b, a % b);
-//    return __gcd(a, b);
-}
-
-ll lcm(ll a, ll b) {
-    return (a / gcd(a, b)) * b;
-}
-\end{lstlisting}
-
 \subsubsection{ExtendedEuclid}
 \begin{lstlisting}
 long long extGCD(long long a, long long b, long long &x, long long &y) {
@@ -2783,87 +3198,204 @@ long long modInverse(long long a, long long m) {
 }
 \end{lstlisting}
 
+\subsubsection{LinearDiophantine}
+\begin{lstlisting}
+// Linear Diophantine Equations (2 Variables & N Variables)
+// 1. Solves a * x + b * y = c (Particular solution & GCD check)
+// 2. Solves a_1*x_1 + a_2*x_2 + ... + a_n*x_n = c for N variables
+struct LinearDiophantine {
+    static ll ext_gcd(ll a, ll b, ll &x, ll &y) {
+        if (b == 0) {
+            x = 1; y = 0;
+            return a;
+        }
+        ll x1, y1;
+        ll d = ext_gcd(b, a % b, x1, y1);
+        x = y1;
+        y = x1 - y1 * (a / b);
+        return d;
+    }
+
+    // Solves a * x + b * y = c. Returns false if no solution exists
+    static bool solve_2var(ll a, ll b, ll c, ll &x, ll &y, ll &g) {
+        if (a == 0 && b == 0) {
+            if (c == 0) { x = y = g = 0; return true; }
+            return false;
+        }
+        g = ext_gcd(abs(a), abs(b), x, y);
+        if (c % g != 0) return false;
+        x *= c / g;
+        y *= c / g;
+        if (a < 0) x = -x;
+        if (b < 0) y = -y;
+        return true;
+    }
+
+    // Solves a_1*x_1 + a_2*x_2 + ... + a_n*x_n = c for N variables.
+    // Returns true if a solution exists and populates x vector
+    static bool solve_nvar(const vector<ll>& a, ll c, vector<ll>& x) {
+        int n = a.size();
+        if (n == 0) return c == 0;
+        x.assign(n, 0);
+
+        vector<ll> prefix_g(n);
+        prefix_g[0] = abs(a[0]);
+        for (int i = 1; i < n; i++) prefix_g[i] = std::gcd(prefix_g[i - 1], a[i]);
+
+        if (prefix_g.back() == 0) return c == 0;
+        if (c % prefix_g.back() != 0) return false;
+
+        ll cur_c = c;
+        for (int i = n - 1; i > 0; i--) {
+            ll x_prev, y_curr, g;
+            solve_2var(prefix_g[i - 1], a[i], cur_c, x_prev, y_curr, g);
+            x[i] = y_curr;
+            cur_c = prefix_g[i - 1] * x_prev;
+        }
+        x[0] = cur_c / a[0];
+        return true;
+    }
+};
+\end{lstlisting}
+
 \subsection{Primes and Divisors}
 
 \subsubsection{Sieve}
 \begin{lstlisting}
-bool isPrime[N];
+// Linear Sieve & Smallest Prime Factor (SPF) - Time: O(N), Space: O(N)
+// Computes primes list, SPF array, primality test, and O(log N) prime factorization
+struct Sieve {
+    int n;
+    vector<int> primes;
+    vector<int> spf;
 
-void seive(int n = N) {
-//complexity: n*log(log(n))
-    memset(isPrime, true, sizeof isPrime);
-    isPrime[0] = false;
-    isPrime[1] = false;
-    for (int i = 2; i * i < n; i++) {
-        if (isPrime[i]) {
-            for (int j = i * i; j < n; j += i) {
-                isPrime[j] = false;
+    Sieve(int n = 1e7) : n(n), spf(n + 1, 0) {
+        for (int i = 2; i <= n; i++) {
+            if (spf[i] == 0) {
+                spf[i] = i;
+                primes.pb(i);
+            }
+            for (int p : primes) {
+                if (p > spf[i] || (ll)i * p > n) break;
+                spf[i * p] = p;
             }
         }
     }
-}
-\end{lstlisting}
 
-\subsubsection{SPF}
-\begin{lstlisting}
-vector<int> spf;
+    bool is_prime(int x) const {
+        return x >= 2 && x <= n && spf[x] == x;
+    }
 
-void seive(int n = N) {
-    //complexity: n*log(log(n))
-    spf.resize(n);
-    iota(all(spf), 0);
-    for (int i = 2; i * i < n; i++) {
-        if (spf[i] == i) {
-            for (int j = i * i; j < n; j += i) {
-                spf[j] = min(spf[j], i);
-            }
+    // O(log N) prime factorization using precomputed SPF array
+    vector<int> get_prime_factors(int x) const {
+        vector<int> factors;
+        while (x > 1) {
+            factors.pb(spf[x]);
+            x /= spf[x];
         }
+        return factors;
     }
-}
-
-vector<int> getPrimeFactors(int n) {
-    //complexity: log(n)
-    vector<int> ans;
-    while (n != 1) {
-        ans.pb(spf[n]);
-        n /= spf[n];
-    }
-    return ans;
-}
-\end{lstlisting}
-
-\subsubsection{Divisors}
-\begin{lstlisting}
-template <typename T>
-vector<T> getDivisors(T n) {
-    //complexity: sqrt(n)
-    vector<T> vec;
-    for (ll i = 1; i * i <= n; i++) {
-        if (n % i == 0) {
-            vec.push_back(i);
-            if (n / i != i)
-                vec.push_back(n / i);
-        }
-    }
-    return vec;
-}
+};
 \end{lstlisting}
 
 \subsubsection{Factorization}
 \begin{lstlisting}
-template <typename T>
-vector<T> getPrimeFactors(T n) {
-    //complexity: sqrt(n)
-    vector<T> vec;
-    for (ll i = 2; i * i <= n; i++) {
-        while (n % i == 0) {
-            vec.push_back(i);
-            n /= i;
+// Trial Division Prime Factorization - Time: O(sqrt(N))
+template <typename T = ll>
+struct Factorization {
+    static vector<T> get_prime_factors(T n) {
+        vector<T> factors;
+        for (T i = 2; i * i <= n; i++) {
+            while (n % i == 0) {
+                factors.pb(i);
+                n /= i;
+            }
+        }
+        if (n > 1) factors.pb(n);
+        return factors;
+    }
+};
+\end{lstlisting}
+
+\subsubsection{Divisors}
+\begin{lstlisting}
+// Trial Division Divisor Generation - Time: O(sqrt(N))
+template <typename T = ll>
+struct Divisors {
+    static vector<T> get_divisors(T n) {
+        vector<T> divs;
+        for (T i = 1; i * i <= n; i++) {
+            if (n % i == 0) {
+                divs.pb(i);
+                if (n / i != i) divs.pb(n / i);
+            }
+        }
+        return divs;
+    }
+};
+\end{lstlisting}
+
+\subsubsection{Sieve1e9}
+\begin{lstlisting}
+// Fast Bitset Sieve up to N = 10^9 - Time: ~0.3s for 10^9, Space: N / 16 bytes (~60MB)
+// Stores odd numbers only (index i represents number 2*i + 1)
+template <int MAXPR = (int)1e9>
+struct Sieve1e9 {
+    bitset<MAXPR / 2> is_prime_odd;
+
+    Sieve1e9(int n = MAXPR) {
+        is_prime_odd.set();
+        is_prime_odd[0] = 0; // 1 is not prime
+        for (int i = 1; (2 * i + 1) * (2 * i + 1) <= n; i++) {
+            if (is_prime_odd[i]) {
+                int p = 2 * i + 1;
+                for (int j = 2 * i * (i + 1); j <= n / 2; j += p) {
+                    is_prime_odd[j] = 0;
+                }
+            }
         }
     }
-    if (n != 1) vec.push_back(n);
-    return vec;
-}
+
+    bool is_prime(int x) const {
+        if (x == 2) return true;
+        if (x < 2 || x % 2 == 0) return false;
+        return is_prime_odd[x / 2];
+    }
+};
+\end{lstlisting}
+
+\subsubsection{SegmentedSieve}
+\begin{lstlisting}
+// Segmented Sieve for Range [L, R] - Time: O(sqrt(R) + (R - L) log log R), Space: O(sqrt(R) + R - L)
+// Computes all prime numbers in range [L, R] where R <= 1e12 and (R - L) <= 1e7
+struct SegmentedSieve {
+    static vector<ll> get_primes_in_range(ll L, ll R) {
+        ll limit = sqrt(R);
+        vector<bool> is_prime_small(limit + 1, true);
+        vector<ll> primes;
+        for (ll i = 2; i <= limit; i++) {
+            if (is_prime_small[i]) {
+                primes.pb(i);
+                for (ll j = i * i; j <= limit; j += i) is_prime_small[j] = false;
+            }
+        }
+
+        vector<bool> is_prime_range(R - L + 1, true);
+        for (ll p : primes) {
+            ll start = max(p * p, (L + p - 1) / p * p);
+            for (ll j = start; j <= R; j += p) {
+                is_prime_range[j - L] = false;
+            }
+        }
+        if (L == 1) is_prime_range[0] = false;
+
+        vector<ll> result;
+        for (ll i = 0; i <= R - L; i++) {
+            if (is_prime_range[i]) result.pb(L + i);
+        }
+        return result;
+    }
+};
 \end{lstlisting}
 
 \subsection{Modular Arithmetic}
@@ -2900,7 +3432,95 @@ pair<long long, long long> CRT(const vector<long long>& a, const vector<long lon
 }
 \end{lstlisting}
 
+\subsubsection{FloorSum}
+\begin{lstlisting}
+// Floor Sum - Time: O(log m), Space: O(log m)
+// Computes sum_{i=0}^{n-1} floor((a * i + b) / m)
+// Valid for 0 <= n, 0 < m, 0 <= a, 0 <= b
+ll floor_sum(ll n, ll m, ll a, ll b) {
+    ll ans = 0;
+    if (a >= m) {
+        ans += (n - 1) * n / 2 * (a / m);
+        a %= m;
+    }
+    if (b >= m) {
+        ans += n * (b / m);
+        b %= m;
+    }
+
+    ll y_max = (a * n + b) / m;
+    ll x_max = y_max * m - b;
+    if (y_max == 0) return ans;
+    ans += (n - (x_max + a - 1) / a) * y_max;
+    ans += floor_sum(y_max, a, m, (a - x_max % a) % a);
+    return ans;
+}
+\end{lstlisting}
+
 \section{Combinatorics}
+
+\subsection{StarsAndBars}
+\begin{lstlisting}
+// Stars and Bars (Number of Solutions to x_1 + x_2 + ... + x_k = n) - O(1)
+// 1. Non-negative integer solutions (x_i >= 0): C(n + k - 1, k - 1)
+// 2. Positive integer solutions (x_i >= 1): C(n - 1, k - 1)
+struct StarsAndBars {
+    // Requires precomputed Combination C(n, k)
+    static ll count_non_negative(ll n, ll k, function<ll(ll, ll)> nCr) {
+        if (n < 0 || k <= 0) return 0;
+        return nCr(n + k - 1, k - 1);
+    }
+
+    static ll count_positive(ll n, ll k, function<ll(ll, ll)> nCr) {
+        if (n < k || k <= 0) return 0;
+        return nCr(n - 1, k - 1);
+    }
+};
+\end{lstlisting}
+
+\subsection{BurnsideLemma}
+\begin{lstlisting}
+// Burnside's Lemma & Pólya Enumeration Theorem - Time: O(N)
+// Counts distinct colorings under symmetry group G
+// Formula: Number of orbits = (1 / |G|) * sum_{g in G} (k ^ number_of_cycles(g))
+struct BurnsideLemma {
+    // Calculates number of distinct necklets of length n with k colors under rotations
+    static ll necklace(int n, int k) {
+        ll total = 0;
+        for (int i = 0; i < n; i++) {
+            total += fast_pow(k, std::gcd(i, n));
+        }
+        return total / n;
+    }
+
+    // Calculates number of distinct bracelets of length n with k colors under rotation + reflection
+    static ll bracelet(int n, int k) {
+        ll total = 0;
+        // Rotations
+        for (int i = 0; i < n; i++) {
+            total += fast_pow(k, std::gcd(i, n));
+        }
+        // Reflections
+        if (n & 1) {
+            total += (ll)n * fast_pow(k, (n + 1) / 2);
+        } else {
+            total += (ll)(n / 2) * fast_pow(k, n / 2) + (ll)(n / 2) * fast_pow(k, n / 2 + 1);
+        }
+        return total / (2 * n);
+    }
+
+private:
+    static ll fast_pow(ll base, ll exp) {
+        ll res = 1;
+        while (exp > 0) {
+            if (exp & 1) res *= base;
+            base *= base;
+            exp >>= 1;
+        }
+        return res;
+    }
+};
+\end{lstlisting}
 
 \section{Math}
 
@@ -3079,6 +3699,41 @@ void calculatePhi() {
         if (phi[i] == i)
             for (int j = i; j < N; j += i) phi[j] -= phi[j] / i;
 }
+\end{lstlisting}
+
+\subsubsection{MobiusFunction}
+\begin{lstlisting}
+// Mobius Function μ(n) Sieve - Time: O(N), Space: O(N)
+// μ(n) = 1 if n is square-free with an even number of prime factors
+// μ(n) = -1 if n is square-free with an odd number of prime factors
+// μ(n) = 0 if n has a squared prime factor
+struct Mobius {
+    int n;
+    vector<int> mu, primes;
+    vector<bool> is_prime;
+
+    Mobius(int n = 1e7) : n(n), mu(n + 1, 0), is_prime(n + 1, true) {
+        is_prime[0] = is_prime[1] = false;
+        mu[1] = 1;
+
+        for (int i = 2; i <= n; i++) {
+            if (is_prime[i]) {
+                primes.pb(i);
+                mu[i] = -1;
+            }
+            for (int p : primes) {
+                if ((ll)i * p > n) break;
+                is_prime[i * p] = false;
+                if (i % p == 0) {
+                    mu[i * p] = 0;
+                    break;
+                } else {
+                    mu[i * p] = -mu[i];
+                }
+            }
+        }
+    }
+};
 \end{lstlisting}
 
 \subsection{Matrices}
@@ -3332,6 +3987,127 @@ void ntt(vector<long long>& a, bool invert) {
         for (long long& x : a) x = (x * n_inv) % MOD;
     }
 }
+\end{lstlisting}
+
+\subsubsection{FWHT}
+\begin{lstlisting}
+// Fast Walsh-Hadamard Transform (FWHT) - Time: O(N log N)
+// Computes Bitwise Convolutions: XOR, AND, OR for array of size N = 2^k
+struct FWHT {
+    enum Type { XOR, AND, OR };
+
+    static void transform(vector<ll>& a, bool invert, Type type = XOR) {
+        int n = a.size();
+        for (int len = 1; 2 * len <= n; len <<= 1) {
+            for (int i = 0; i < n; i += 2 * len) {
+                for (int j = 0; j < len; j++) {
+                    ll u = a[i + j], v = a[i + len + j];
+                    if (type == XOR) {
+                        a[i + j] = u + v;
+                        a[i + len + j] = u - v;
+                    } else if (type == AND) {
+                        a[i + j] = invert ? u - v : u + v;
+                    } else if (type == OR) {
+                        a[i + len + j] = invert ? v - u : u + v;
+                    }
+                }
+            }
+        }
+        if (type == XOR && invert) {
+            for (ll &x : a) x /= n;
+        }
+    }
+
+    // Computes C[k] = sum_{i op j = k} (A[i] * B[j]) where op in {XOR, AND, OR}
+    static vector<ll> multiply(vector<ll> a, vector<ll> b, Type type = XOR) {
+        int n = 1;
+        while (n < max(a.size(), b.size())) n <<= 1;
+        a.resize(n); b.resize(n);
+
+        transform(a, false, type);
+        transform(b, false, type);
+        for (int i = 0; i < n; i++) a[i] *= b[i];
+        transform(a, true, type);
+        return a;
+    }
+};
+\end{lstlisting}
+
+\subsubsection{GeneratingFunctions}
+\begin{lstlisting}
+// Formal Power Series (FPS) / Generating Functions - Time: O(N log N)
+// Operations: Derivative, Integral, Polynomial Inverse, Logarithm ln(F(x))
+template<int MOD = 998244353>
+struct PolynomialFPS {
+    typedef vector<ll> Poly;
+
+    static Poly deriv(const Poly& f) {
+        int n = f.size();
+        if (n <= 1) return {0};
+        Poly g(n - 1);
+        for (int i = 1; i < n; i++) g[i - 1] = f[i] * i % MOD;
+        return g;
+    }
+
+    static Poly integ(const Poly& f) {
+        int n = f.size();
+        Poly g(n + 1);
+        for (int i = 0; i < n; i++) g[i + 1] = f[i] * modInverse(i + 1, MOD) % MOD;
+        return g;
+    }
+
+    // Polynomial Inverse mod x^deg - O(N log N) via Newton's Method
+    static Poly inv(const Poly& f, int deg) {
+        if (deg == 1) return {modInverse(f[0], MOD)};
+        Poly g = inv(f, (deg + 1) / 2);
+        Poly f_cut(f.begin(), f.begin() + min((int)f.size(), deg));
+        
+        // g_new = g * (2 - f * g) mod x^deg
+        Poly fg = multiply(f_cut, g);
+        fg.resize(deg);
+        for (int i = 0; i < deg; i++) {
+            fg[i] = (i == 0 ? 2 : 0) - fg[i];
+            if (fg[i] < 0) fg[i] += MOD;
+        }
+        Poly res = multiply(g, fg);
+        res.resize(deg);
+        return res;
+    }
+
+    // Polynomial Logarithm ln(F(x)) mod x^deg - O(N log N) (requires F[0] == 1)
+    static Poly log(const Poly& f, int deg) {
+        Poly g = integ(multiply(deriv(f), inv(f, deg)));
+        g.resize(deg);
+        return g;
+    }
+
+private:
+    static Poly multiply(Poly a, Poly b) {
+        // Basic NTT polynomial multiplication helper
+        int n = 1;
+        while (n < a.size() + b.size()) n <<= 1;
+        Poly res(a.size() + b.size() - 1, 0);
+        for (int i = 0; i < a.size(); i++) {
+            for (int j = 0; j < b.size(); j++) {
+                res[i + j] = (res[i + j] + a[i] * b[j]) % MOD;
+            }
+        }
+        return res;
+    }
+
+    static ll modInverse(ll a, ll m) {
+        ll x, y;
+        ext_gcd(a, m, x, y);
+        return (x % m + m) % m;
+    }
+
+    static ll ext_gcd(ll a, ll b, ll &x, ll &y) {
+        if (b == 0) { x = 1; y = 0; return a; }
+        ll x1, y1, d = ext_gcd(b, a % b, x1, y1);
+        x = y1; y = x1 - y1 * (a / b);
+        return d;
+    }
+};
 \end{lstlisting}
 
 \section{Strings}
@@ -3782,6 +4558,9 @@ struct Manacher {
 
 \subsubsection{DivideAndConquerDP}
 \begin{lstlisting}
+// Divide & Conquer DP Optimization - Time: O(K * N log N), Space: O(N)
+// Applies when DP transition is dp[k][i] = min_{j < i} (dp[k-1][j] + cost(j+1, i))
+// Condition: opt(i, j) <= opt(i, j + 1) (Monotonicity of optimal split points)
 int a[N];
 ll curCost;
 int curL = 0, curR = -1, freq[N];
@@ -3888,6 +4667,8 @@ struct HullDynamic : public multiset<Line, less<>> {
 
 \subsubsection{CHTRollback}
 \begin{lstlisting}
+// Rollback Convex Hull Trick - Space: O(N), Add: O(log N), Query: O(log N), Rollback: O(1)
+// Supports inserting monotonic lines with history stack rollback for tree/dsu DP
 // Template parameters:
 // IS_MAX: Set to true for Maximum queries, false for Minimum queries.
 // IS_INC: Set to true if slopes added are strictly Increasing, false for Decreasing.
@@ -3982,6 +4763,8 @@ struct RollbackCHT {
 
 \subsubsection{LiChaoTree}
 \begin{lstlisting}
+// Li Chao Tree - Space: O(N log X), Insert Line: O(log X), Query: O(log X)
+// Dynamic segment tree evaluating line functions y = m * x + b for arbitrary queries x
 // To get an instance : node *root = EMPTY;
 typedef pair<long long, long long> line;
 int start_x, end_x;
@@ -4055,6 +4838,8 @@ ll query(ll x, node *cur, ll ns = start_x, ll ne = end_x) {
 
 \subsubsection{PersistentLiChaoTree}
 \begin{lstlisting}
+// Persistent Li Chao Tree - Space: O(N log X), Insert Line: O(log X), Query: O(log X)
+// Version-persistent Li Chao Segment Tree for tree / history DP queries
 const ll maxN = 1e7 + 5;
 
 struct Line {
@@ -4151,6 +4936,72 @@ struct Node {
 };
 
 Node *tree[N];
+\end{lstlisting}
+
+\subsubsection{KnuthDP}
+\begin{lstlisting}
+// Knuth's DP Optimization - Time: O(N^2), Space: O(N^2)
+// Optimizes interval DP: dp[i][j] = min_{i <= k < j} (dp[i][k] + dp[k+1][j]) + cost(i, j)
+// Applicable when opt[i][j-1] <= opt[i][j] <= opt[i+1][j]
+struct KnuthDP {
+    int n;
+    vector<vector<ll>> dp;
+    vector<vector<int>> opt;
+
+    KnuthDP(int n = 0) : n(n), dp(n + 2, vector<ll>(n + 2, 0)), opt(n + 2, vector<int>(n + 2, 0)) {}
+
+    // User-defined cost function cost(i, j)
+    ll solve(function<ll(int, int)> cost) {
+        for (int i = 1; i <= n; i++) {
+            opt[i][i] = i;
+        }
+
+        for (int len = 2; len <= n; len++) {
+            for (int i = 1; i + len - 1 <= n; i++) {
+                int j = i + len - 1;
+                dp[i][j] = llinf;
+                int L = opt[i][j - 1], R = opt[i + 1][j];
+                for (int k = L; k <= min(R, j - 1); k++) {
+                    ll cur = dp[i][k] + dp[k + 1][j] + cost(i, j);
+                    if (cur < dp[i][j]) {
+                        dp[i][j] = cur;
+                        opt[i][j] = k;
+                    }
+                }
+            }
+        }
+        return dp[1][n];
+    }
+};
+\end{lstlisting}
+
+\subsubsection{AliensTrick}
+\begin{lstlisting}
+// Alien's Trick (WNS / Penalty Binary Search) - Time: O(N log(PENALTY_RANGE))
+// Solves exact K-element selection / partition DP when cost function f(k) is strictly convex
+// Adds a penalty lambda per selected item to drop the k constraint
+struct AliensTrick {
+    // Binary searches optimal penalty lambda to choose exactly K items
+    // Returns minimum cost to choose exactly K items
+    static ll solve(int n, int k, ll min_penalty, ll max_penalty, function<pair<ll, int>(ll)> dp_solver) {
+        ll l = min_penalty, r = max_penalty, best_lambda = 0;
+
+        while (l <= r) {
+            ll mid = l + (r - l) / 2;
+            auto [cost, count] = dp_solver(mid);
+            if (count >= k) {
+                best_lambda = mid;
+                l = mid + 1; // Increase penalty if we used too many items
+            } else {
+                r = mid - 1; // Decrease penalty if we used too few items
+            }
+        }
+
+        // True cost = cost_with_penalty - (k * best_lambda)
+        auto [cost, count] = dp_solver(best_lambda);
+        return cost - (ll)k * best_lambda;
+    }
+};
 \end{lstlisting}
 
 \subsection{Bitmask DP}
@@ -4519,6 +5370,109 @@ public:
     // Returns the parent of a node in the centroid tree
     int get_centroid_parent(int u) const {
         return par[u];
+    }
+};
+\end{lstlisting}
+
+\subsection{Tree Diameter}
+
+\subsubsection{TreeDiameter}
+\begin{lstlisting}
+// Tree Diameter via 2-BFS - Time: O(V + E), Space: O(V + E)
+// Computes diameter length, endpoints (u, v), and the full diameter path
+struct TreeDiameter {
+    int n;
+    vector<vector<int>> adj;
+    vector<int> dist, par;
+
+    TreeDiameter(int n = 0) : n(n), adj(n + 1), dist(n + 1), par(n + 1) {}
+
+    void add_edge(int u, int v) {
+        adj[u].pb(v);
+        adj[v].pb(u);
+    }
+
+    int bfs(int src) {
+        fill(all(dist), -1);
+        queue<int> q;
+        q.push(src);
+        dist[src] = 0;
+        par[src] = -1;
+
+        int farthest = src;
+        while (!q.empty()) {
+            int u = q.front();
+            q.pop();
+            if (dist[u] > dist[farthest]) farthest = u;
+
+            for (int v : adj[u]) {
+                if (dist[v] == -1) {
+                    dist[v] = dist[u] + 1;
+                    par[v] = u;
+                    q.push(v);
+                }
+            }
+        }
+        return farthest;
+    }
+
+    // Returns {diameter_length, {endpoint_u, endpoint_v}}
+    pair<int, pair<int, int>> get_diameter() {
+        int u = bfs(1);
+        int v = bfs(u);
+        return {dist[v], {u, v}};
+    }
+
+    // Returns the sequence of vertices on the diameter path from u to v
+    vector<int> get_path() {
+        auto [len, endpoints] = get_diameter();
+        auto [u, v] = endpoints;
+        vector<int> path;
+        for (int curr = v; curr != -1; curr = par[curr]) {
+            path.pb(curr);
+        }
+        reverse(all(path));
+        return path;
+    }
+};
+\end{lstlisting}
+
+\subsection{Euler Tour}
+
+\subsubsection{EulerTour}
+\begin{lstlisting}
+// Euler Tour Technique (Tree Flattening into 1D Array Intervals) - O(V + E)
+// Subtree of node u corresponds to contiguous range [in_time[u], out_time[u]] in flat_tree
+struct EulerTour {
+    int n, timer = 0;
+    vector<vector<int>> adj;
+    vector<int> in_time, out_time, flat_tree;
+
+    EulerTour(int n = 0) : n(n), adj(n + 1), in_time(n + 1), out_time(n + 1) {}
+
+    void add_edge(int u, int v) {
+        adj[u].pb(v);
+        adj[v].pb(u);
+    }
+
+    void dfs(int u, int p = -1) {
+        in_time[u] = ++timer;
+        flat_tree.pb(u);
+        for (int v : adj[u]) {
+            if (v != p) dfs(v, u);
+        }
+        out_time[u] = timer;
+    }
+
+    void build(int root = 1) {
+        timer = 0;
+        flat_tree.clear();
+        dfs(root);
+    }
+
+    // Returns [L, R] 1-based index range for subtree queries on node u
+    pair<int, int> get_subtree_range(int u) const {
+        return {in_time[u], out_time[u]};
     }
 };
 \end{lstlisting}
