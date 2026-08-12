@@ -1,0 +1,151 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+using ll = long long;
+const ll INF = 1e18;
+
+struct Edge { int u, v; ll w, id; };
+
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+
+    int n, m, q;
+    cin >> n >> m >> q;
+
+    vector<Edge> E(m);
+    vector<vector<pair<int, int>>> adj(n + 1);
+    
+    for (int i = 0; i <= n; i++) adj[i].reserve(4);
+
+    for (int i = 0; i < m; i++) {
+        cin >> E[i].u >> E[i].v >> E[i].w;
+        E[i].id = i;
+        adj[E[i].u].push_back({E[i].v, i});
+        adj[E[i].v].push_back({E[i].u, i});
+    }
+
+    vector<ll> ds(n + 1, INF);
+    vector<int> ps(n + 1, -1), pe(n + 1, -1), ord_s;
+    ord_s.reserve(n);
+    
+    priority_queue<pair<ll, int>, vector<pair<ll, int>>, greater<>> pq;
+
+    ds[1] = 0; pq.push({0, 1});
+    while (pq.size()) {
+        auto [d, u] = pq.top(); pq.pop();
+        if (d > ds[u]) continue;
+        ord_s.push_back(u);
+        
+        for (auto& [v, id] : adj[u]) {
+            ll w = E[id].w;
+            if (ds[u] + w < ds[v]) {
+                ds[v] = ds[u] + w;
+                ps[v] = u; pe[v] = id;
+                pq.push({ds[v], v});
+            }
+        }
+    }
+
+    ll base = ds[n];
+    
+    vector<int> path_n, path_e;
+    int cur = n;
+    while (cur != 1) {
+        path_n.push_back(cur);
+        path_e.push_back(pe[cur]);
+        cur = ps[cur];
+    }
+    path_n.push_back(1);
+    
+    reverse(path_n.begin(), path_n.end());
+    reverse(path_e.begin(), path_e.end());
+
+    int k = path_e.size();
+    vector<bool> in_pn(n + 1, 0), in_pe(m, 0);
+    vector<int> p_pos(m, -1);
+
+    for (int i = 0; i <= k; i++) in_pn[path_n[i]] = 1;
+    for (int i = 0; i < k; i++) {
+        in_pe[path_e[i]] = 1; 
+        p_pos[path_e[i]] = i;
+    }
+
+    vector<ll> dt(n + 1, INF);
+    vector<int> ord_t;
+    ord_t.reserve(n);
+    
+    dt[n] = 0; pq.push({0, n});
+    while (pq.size()) {
+        auto [d, u] = pq.top(); pq.pop();
+        if (d > dt[u]) continue;
+        ord_t.push_back(u);
+        
+        for (auto& [v, id] : adj[u]) {
+            ll w = E[id].w;
+            if (dt[u] + w < dt[v]) {
+                dt[v] = dt[u] + w;
+                pq.push({dt[v], v});
+            }
+        }
+    }
+
+    vector<int> L(n + 1, 0), R(n + 1, k);
+    for (int i = 0; i <= k; i++) L[path_n[i]] = R[path_n[i]] = i;
+
+    for (int u : ord_s) {
+        for (auto& [v, id] : adj[u]) {
+            if (ds[v] == ds[u] + E[id].w && !in_pn[v]) {
+                L[v] = max(L[v], L[u]);
+            }
+        }
+    }
+
+    for (int u : ord_t) {
+        for (auto& [v, id] : adj[u]) {
+            if (dt[v] == dt[u] + E[id].w && !in_pn[v]) {
+                R[v] = min(R[v], R[u]);
+            }
+        }
+    }
+
+    // Sweep-line logic replaces the segment tree here
+    vector<vector<pair<ll, int>>> events(k);
+
+    for (int i = 0; i < m; i++) {
+        if (in_pe[i]) continue;
+        int u = E[i].u, v = E[i].v; 
+        ll w = E[i].w;
+        
+        if (L[u] < R[v]) events[L[u]].push_back({ds[u] + w + dt[v], R[v]});
+        if (L[v] < R[u]) events[L[v]].push_back({ds[v] + w + dt[u], R[u]});
+    }
+
+    vector<ll> ans(k, INF);
+    priority_queue<pair<ll, int>, vector<pair<ll, int>>, greater<>> sweep;
+
+    for (int i = 0; i < k; i++) {
+        for (auto& ev : events[i]) sweep.push(ev);
+        while (sweep.size() && sweep.top().second <= i) sweep.pop();
+        if (sweep.size()) ans[i] = sweep.top().first;
+    }
+
+    while (q--) {
+        int id; ll x; 
+        cin >> id >> x; id--;
+        ll w = E[id].w;
+
+        if (in_pe[id]) {
+            if (x <= w) {
+                cout << base - w + x << '\n';
+            } else {
+                cout << min(base - w + x, ans[p_pos[id]]) << '\n';
+            }
+        } else {
+            ll r1 = ds[E[id].u] + x + dt[E[id].v];
+            ll r2 = ds[E[id].v] + x + dt[E[id].u];
+            cout << min({base, r1, r2}) << '\n';
+        }
+    }
+
+    return 0;
+}
