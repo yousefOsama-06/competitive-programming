@@ -1,0 +1,287 @@
+struct TwoSat {
+    int n;
+    vector<vector<int> > adj, adj_t;
+    vector<int> order, comp;
+    vector<bool> used, assignment;
+
+    // Initialize for 'n' 0-indexed boolean variables
+    TwoSat(int _n) : n(_n), adj(2 * n), adj_t(2 * n), comp(2 * n, -1), used(2 * n, false), assignment(n) {
+    }
+
+    // Maps variable 'i' and its desired boolean state to a unique node ID.
+    // Node 2*i represents (X_i == false)
+    // Node 2*i + 1 represents (X_i == true)
+    inline int node(int i, bool is_true) {
+        return 2 * i + is_true;
+    }
+
+    // Adds the directed edge representing: (u == u_val) => (v == v_val)
+    void add_implication(int u, bool u_val, int v, bool v_val) {
+        int from = node(u, u_val);
+        int to = node(v, v_val);
+        adj[from].push_back(to);
+        adj_t[to].push_back(from);
+    }
+
+    // Adds the standard CNF clause: (u == u_val) OR (v == v_val)
+    void add_clause(int u, bool u_val, int v, bool v_val) {
+        // ~u => v
+        add_implication(u, !u_val, v, v_val);
+        // ~v => u
+        add_implication(v, !v_val, u, u_val);
+    }
+
+    // Forces a variable to take a specific truth value
+    void force_value(int u, bool u_val) {
+        // ~u => u (If it is not the value, it implies it must be the value)
+        add_implication(u, !u_val, u, u_val);
+    }
+
+    // Adds an XOR constraint: u ^ v == 1 (They must have different values)
+    void add_xor(int u, int v) {
+        add_clause(u, true, v, true); // u OR v
+        add_clause(u, false, v, false); // ~u OR ~v
+    }
+
+    // Adds an XNOR constraint: u ^ v == 0 (They must have the same value)
+    void add_xnor(int u, int v) {
+        add_implication(u, true, v, true); // u => v
+        add_implication(u, false, v, false); // ~u => ~v
+        add_implication(v, true, u, true); // v => u
+        add_implication(v, false, u, false); // ~v => ~u
+    }
+
+    void dfs1(int u) {
+        used[u] = true;
+        for (int v: adj[u]) {
+            if (!used[v]) dfs1(v);
+        }
+        order.push_back(u);
+    }
+
+    void dfs2(int u, int id) {
+        comp[u] = id;
+        for (int v: adj_t[u]) {
+            if (comp[v] == -1) dfs2(v, id);
+        }
+    }
+
+    // Runs Kosaraju's SCC algorithm and assigns valid truth values.
+    // Returns true if satisfiable, false otherwise.
+    bool satisfiable() {
+        order.clear();
+        for (int i = 0; i < 2 * n; ++i) {
+            if (!used[i]) dfs1(i);
+        }
+
+        int id = 0;
+        // Process in reverse topological order of the DFS tree
+        for (int i = 2 * n - 1; i >= 0; --i) {
+            int u = order[i];
+            if (comp[u] == -1) dfs2(u, id++);
+        }
+
+        for (int i = 0; i < n; ++i) {
+            // If X and ~X belong to the same SCC, it's a contradiction
+            if (comp[node(i, false)] == comp[node(i, true)]) {
+                return false;
+            }
+            // Kosaraju assigns component IDs in topological order.
+            assignment[i] = comp[node(i, true)] > comp[node(i, false)];
+        }
+        return true;
+    }
+};
+_________________________________________________________
+struct PrefixTwoSat {
+    int n; // Tracks the CURRENT total variables (Base + Dynamically added Prefixes)
+    vector<vector<int>> adj, adj_t;
+    vector<int> order, comp;
+    vector<bool> used, assignment;
+
+    // Initialize with the number of base variables.
+    PrefixTwoSat(int base_n) : n(base_n), adj(2 * base_n), adj_t(2 * base_n) {}
+
+    // Dynamically creates a new variable in the graph. Returns its index.
+    int add_var() {
+        int v = n++; // Assign ID, then increment total count
+        adj.resize(2 * n);
+        adj_t.resize(2 * n);
+        return v;
+    }
+
+    inline int lit(int i, bool is_true) { return 2 * i + is_true; }
+    inline int neg(int l) { return l ^ 1; }
+
+    void add_impl_lit(int u_lit, int v_lit) {
+        adj[u_lit].push_back(v_lit);
+        adj_t[v_lit].push_back(u_lit);
+        adj[neg(v_lit)].push_back(neg(u_lit));
+        adj_t[neg(u_lit)].push_back(neg(v_lit));
+    }
+
+    void add_clause(int u, bool u_val, int v, bool v_val) { add_impl_lit(lit(u, !u_val), lit(v, v_val)); }
+
+    // ---------------------------------------------------------
+    // THE PREFIX TRICK (O(K) edges instead of O(K^2))
+    // ---------------------------------------------------------
+    // Takes an array of LITERALS. Forces that AT MOST ONE can be True.
+    void at_most_one(const vector<int>& lits) {
+        if (lits.size() <= 1) return; // 0 or 1 item trivially satisfies "at most one"
+
+        int prev_prefix = -1;
+        for (int cur_lit : lits) {
+            // Create an auxiliary lightbulb (prefix) variable for this position
+            int cur_prefix = lit(add_var(), true);
+
+            // Rule 1: If I am chosen, my lightbulb turns ON.
+            add_impl_lit(cur_lit, cur_prefix);
+
+            if (prev_prefix != -1) {
+                // Rule 2: If the lightbulb to my left is ON, my lightbulb turns ON.
+                // (This carries the signal all the way to the right side of the array)
+                add_impl_lit(prev_prefix, cur_prefix);
+
+                // Rule 3 (The Kill Switch): If I am chosen, the lightbulb to my left MUST be OFF.
+                // Because if it were ON, it would mean someone before me was already chosen!
+                add_impl_lit(cur_lit, neg(prev_prefix));
+            }
+            prev_prefix = cur_prefix; // Step forward
+        }
+    }
+
+    // Kosaraju Solver (Identical to classic)
+    void dfs1(int u) {
+        used[u] = true;
+        for (int v : adj[u]) if (!used[v]) dfs1(v);
+        order.push_back(u);
+    }
+    void dfs2(int u, int id) {
+        comp[u] = id;
+        for (int v : adj_t[u]) if (comp[v] == -1) dfs2(v, id);
+    }
+    bool satisfiable() {
+        used.assign(2 * n, false);
+        comp.assign(2 * n, -1);
+        assignment.assign(n, false); // assignment array sizes to 'n' (base + prefix)
+        order.clear();
+        for (int i = 0; i < 2 * n; ++i) if (!used[i]) dfs1(i);
+        int id = 0;
+        for (int i = 2 * n - 1; i >= 0; --i) if (comp[order[i]] == -1) dfs2(order[i], id++);
+        for (int i = 0; i < n; ++i) {
+            if (comp[lit(i, false)] == comp[lit(i, true)]) return false;
+            assignment[i] = comp[lit(i, true)] > comp[lit(i, false)];
+        }
+        return true; // Note: Only check the base variables (0 to base_n - 1) in your main code!
+    }
+};
+________________________________________________________________________-
+struct SegTreeTwoSat {
+    int n, base_n;
+    vector<vector<int>> adj, adj_t;
+
+    // We need TWO segment trees to avoid cyclic logic traps:
+    // tree_in: Edges flow UP (Child => Parent). Used for "Range implies X"
+    // tree_out: Edges flow DOWN (Parent => Child). Used for "X implies Range"
+    vector<int> tree_in, tree_out;
+
+    vector<int> order, comp;
+    vector<bool> used, assignment;
+
+    SegTreeTwoSat(int _base_n) : n(_base_n), base_n(_base_n), adj(2 * _base_n), adj_t(2 * _base_n) {
+        tree_in.resize(4 * base_n);
+        tree_out.resize(4 * base_n);
+        if(base_n > 0) build(1, 0, base_n - 1);
+    }
+
+    int add_var() {
+        int v = n++;
+        adj.resize(2 * n);
+        adj_t.resize(2 * n);
+        return v;
+    }
+
+    inline int lit(int i, bool is_true) { return 2 * i + is_true; }
+    inline int neg(int l) { return l ^ 1; }
+
+    void add_impl_lit(int u_lit, int v_lit) {
+        adj[u_lit].push_back(v_lit);
+        adj_t[v_lit].push_back(u_lit);
+        adj[neg(v_lit)].push_back(neg(u_lit));
+        adj_t[neg(u_lit)].push_back(neg(v_lit));
+    }
+
+    void add_clause(int u, bool u_val, int v, bool v_val) { add_impl_lit(lit(u, !u_val), lit(v, v_val)); }
+
+    // ---------------------------------------------------------
+    // SEGMENT TREE BUILDER
+    // ---------------------------------------------------------
+    void build(int node, int l, int r) {
+        if (l == r) {
+            // Leaf nodes map directly to the actual base variables
+            tree_in[node] = tree_out[node] = lit(l, true);
+            return;
+        }
+        int mid = (l + r) / 2, lc = 2 * node, rc = 2 * node + 1;
+        build(lc, l, mid);
+        build(rc, mid + 1, r);
+
+        // Every internal node gets its own dummy variable to represent the segment
+        tree_in[node] = lit(add_var(), true);
+        tree_out[node] = lit(add_var(), true);
+
+        // Tree In (UP): If either child is True, the parent segment is True
+        add_impl_lit(tree_in[lc], tree_in[node]);
+        add_impl_lit(tree_in[rc], tree_in[node]);
+
+        // Tree Out (DOWN): If the parent segment is True, BOTH children MUST be True
+        add_impl_lit(tree_out[node], tree_out[lc]);
+        add_impl_lit(tree_out[node], tree_out[rc]);
+    }
+
+    // ---------------------------------------------------------
+    // RANGE QUERY (Internal)
+    // ---------------------------------------------------------
+    void _u_impl_range(int node, int tl, int tr, int l, int r, int u_lit) {
+        if (l > r) return;
+        // When we find a perfect segment match, link 'u' to the DOWN-flowing tree
+        if (l == tl && r == tr) return add_impl_lit(u_lit, tree_out[node]);
+
+        int tm = (tl + tr) / 2;
+        _u_impl_range(node * 2, tl, tm, l, min(r, tm), u_lit);
+        _u_impl_range(node * 2 + 1, tm + 1, tr, max(l, tm + 1), r, u_lit);
+    }
+
+    // Public API: "If literal u_lit is True, EVERY element from L to R must be True"
+    // (This uses O(log N) edges instead of O(N) edges)
+    void u_implies_range(int u_lit, int L, int R) {
+        _u_impl_range(1, 0, base_n - 1, L, R, u_lit);
+    }
+
+    // Kosaraju Solver
+    void dfs1(int u) {
+        used[u] = true;
+        for (int v : adj[u]) if (!used[v]) dfs1(v);
+        order.push_back(u);
+    }
+    void dfs2(int u, int id) {
+        comp[u] = id;
+        for (int v : adj_t[u]) if (comp[v] == -1) dfs2(v, id);
+    }
+    bool satisfiable() {
+        used.assign(2 * n, false);
+        comp.assign(2 * n, -1);
+        assignment.assign(n, false);
+        order.clear();
+        for (int i = 0; i < 2 * n; ++i) if (!used[i]) dfs1(i);
+        int id = 0;
+        for (int i = 2 * n - 1; i >= 0; --i) if (comp[order[i]] == -1) dfs2(order[i], id++);
+
+        // Only check base variables for contradictions! Auxiliary variables are just logic pipes.
+        for (int i = 0; i < base_n; ++i) {
+            if (comp[lit(i, false)] == comp[lit(i, true)]) return false;
+            assignment[i] = comp[lit(i, true)] > comp[lit(i, false)];
+        }
+        return true;
+    }
+};
