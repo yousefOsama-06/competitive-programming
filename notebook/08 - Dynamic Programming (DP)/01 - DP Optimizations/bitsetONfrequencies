@@ -1,0 +1,28 @@
+const int MAX_W = 100005;
+bitset<MAX_W> dp;
+
+void multiset_bitset_dp() {
+    // Example: We have 13 items, each with weight 5
+    int count = 13;
+    int weight = 5;
+    
+    vector<int> bundled_weights;
+    
+    // Binary grouping logic
+    int current_power = 1;
+    while (count >= current_power) {
+        bundled_weights.push_back(current_power * weight);
+        count -= current_power;
+        current_power *= 2;
+    }
+    // Add whatever is left over
+    if (count > 0) {
+        bundled_weights.push_back(count * weight);
+    }
+    
+    // Now run the ultra-fast Bitset DP on the bundles
+    dp[0] = 1;
+    for (int bundle_w : bundled_weights) {
+        dp |= (dp << bundle_w);
+    }
+}
