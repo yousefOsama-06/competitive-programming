@@ -133,6 +133,9 @@ categories:
           - file: "02 - SparseTable2D.cpp"
             title: "SparseTable2D"
             path: "notebook/02 - Data Structures (DS)/03 - Sparse Table/02 - SparseTable2D.cpp"
+          - file: "03 - SquareSparseTable.cpp"
+            title: "SquareSparseTable"
+            path: "notebook/02 - Data Structures (DS)/03 - Sparse Table/03 - SquareSparseTable.cpp"
       - name: "04 - Trie"
         title: "Trie"
         files:
@@ -157,6 +160,9 @@ categories:
           - file: "03 - WeightedDSU.cpp"
             title: "WeightedDSU"
             path: "notebook/02 - Data Structures (DS)/05 - Disjoint Set Union (DSU)/03 - WeightedDSU.cpp"
+          - file: "04 - RangeParallelDSU.cpp"
+            title: "RangeParallelDSU"
+            path: "notebook/02 - Data Structures (DS)/05 - Disjoint Set Union (DSU)/04 - RangeParallelDSU.cpp"
       - name: "06 - Square Root Decomposition"
         title: "Square Root Decomposition"
         files:

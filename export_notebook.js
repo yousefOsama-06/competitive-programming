@@ -86,7 +86,7 @@ function blurbLine(code) {
 
 let latex = `\\UseRawInputEncoding
 \\documentclass[9pt,a4paper,twocolumn]{extarticle}
-\\usepackage[left=0.5cm,right=0.5cm,top=0.7cm,bottom=0.7cm]{geometry}
+\\usepackage[left=0.6cm,right=0.6cm,top=0.8cm,bottom=0.7cm,includeheadfoot,headsep=4pt,footskip=12pt]{geometry}
 \\usepackage{listings}
 \\usepackage{xcolor}
 \\usepackage{titlesec}
@@ -111,14 +111,14 @@ let latex = `\\UseRawInputEncoding
 
 \\definecolor{codeframe}{HTML}{B8BEC8}
 \\definecolor{keyword}{HTML}{00248F}
-\\definecolor{comment}{HTML}{006400}
+\\definecolor{comment}{HTML}{4A5A45}
 \\definecolor{string}{HTML}{8B1A1A}
 \\definecolor{blurb}{HTML}{333333}
 \\definecolor{secbar}{HTML}{1F2933}
 
 \\lstset{
     language=C++,
-    basicstyle=\\ttfamily\\fontsize{7.8}{9.0}\\selectfont,
+    basicstyle=\\ttfamily\\fontsize{7.6}{8.8}\\selectfont,
     keywordstyle=\\color{keyword}\\bfseries,
     commentstyle=\\color{comment}\\itshape,
     stringstyle=\\color{string},
@@ -126,7 +126,9 @@ let latex = `\\UseRawInputEncoding
     framerule=0.5pt,
     rulecolor=\\color{codeframe},
     breaklines=true,
-    breakatwhitespace=false,
+    breakatwhitespace=true,
+    breakindent=1.2em,
+    postbreak=\\mbox{\\textcolor{codeframe}{$\\hookrightarrow$}\\space},
     tabsize=2,
     showstringspaces=false,
     numbers=none,
@@ -152,9 +154,9 @@ let latex = `\\UseRawInputEncoding
   [\\vspace{-0.75\\baselineskip}\\rule{\\linewidth}{0.4pt}]
 \\titleformat{\\subsubsection}{\\small\\bfseries\\sffamily}{\\thesubsubsection}{0.25em}{}
 
-\\titlespacing*{\\section}{0pt}{0.5em}{0.2em}
-\\titlespacing*{\\subsection}{0pt}{0.4em}{0.1em}
-\\titlespacing*{\\subsubsection}{0pt}{0.3em}{0.1em}
+\\titlespacing*{\\section}{0pt}{0.6em}{0.35em}
+\\titlespacing*{\\subsection}{0pt}{0.9em}{0.25em}
+\\titlespacing*{\\subsubsection}{0pt}{0.8em}{0.15em}
 
 \\setlength{\\columnseprule}{0.3pt}
 \\setlength{\\columnsep}{0.7cm}

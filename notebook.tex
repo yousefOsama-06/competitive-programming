@@ -1,6 +1,6 @@
 \UseRawInputEncoding
 \documentclass[9pt,a4paper,twocolumn]{extarticle}
-\usepackage[left=0.5cm,right=0.5cm,top=0.7cm,bottom=0.7cm]{geometry}
+\usepackage[left=0.6cm,right=0.6cm,top=0.8cm,bottom=0.7cm,includeheadfoot,headsep=4pt,footskip=12pt]{geometry}
 \usepackage{listings}
 \usepackage{xcolor}
 \usepackage{titlesec}
@@ -25,14 +25,14 @@
 
 \definecolor{codeframe}{HTML}{B8BEC8}
 \definecolor{keyword}{HTML}{00248F}
-\definecolor{comment}{HTML}{006400}
+\definecolor{comment}{HTML}{4A5A45}
 \definecolor{string}{HTML}{8B1A1A}
 \definecolor{blurb}{HTML}{333333}
 \definecolor{secbar}{HTML}{1F2933}
 
 \lstset{
     language=C++,
-    basicstyle=\ttfamily\fontsize{7.8}{9.0}\selectfont,
+    basicstyle=\ttfamily\fontsize{7.6}{8.8}\selectfont,
     keywordstyle=\color{keyword}\bfseries,
     commentstyle=\color{comment}\itshape,
     stringstyle=\color{string},
@@ -40,7 +40,9 @@
     framerule=0.5pt,
     rulecolor=\color{codeframe},
     breaklines=true,
-    breakatwhitespace=false,
+    breakatwhitespace=true,
+    breakindent=1.2em,
+    postbreak=\mbox{\textcolor{codeframe}{$\hookrightarrow$}\space},
     tabsize=2,
     showstringspaces=false,
     numbers=none,
@@ -66,9 +68,9 @@
   [\vspace{-0.75\baselineskip}\rule{\linewidth}{0.4pt}]
 \titleformat{\subsubsection}{\small\bfseries\sffamily}{\thesubsubsection}{0.25em}{}
 
-\titlespacing*{\section}{0pt}{0.5em}{0.2em}
-\titlespacing*{\subsection}{0pt}{0.4em}{0.1em}
-\titlespacing*{\subsubsection}{0pt}{0.3em}{0.1em}
+\titlespacing*{\section}{0pt}{0.6em}{0.35em}
+\titlespacing*{\subsection}{0pt}{0.9em}{0.25em}
+\titlespacing*{\subsubsection}{0pt}{0.8em}{0.15em}
 
 \setlength{\columnseprule}{0.3pt}
 \setlength{\columnsep}{0.7cm}
@@ -2332,6 +2334,61 @@ struct SparseTable2D {
 };
 \end{lstlisting}
 
+\filbreak
+\subsubsection{SquareSparseTable}\index{SquareSparseTable}
+\nopagebreak{\footnotesize\sffamily\color{blurb} SQUARE SPARSE TABLE - O(1) query for any SQUARE sub-grid, O(N*M*log(min(N,M))) build.\par}\nopagebreak
+\begin{lstlisting}
+// The 2D sparse table (02 - SparseTable2D.cpp) stores one table per (row-power, col-power) pair,
+// so it costs log(N)*log(M) memory. If every query is a SQUARE - "best k x k block", "does some
+// k x k window contain only ones", template matching on a grid - you only ever need the diagonal
+// of that table, which is a factor of log cheaper in both time and memory.
+// Query a k x k square: cover it with four overlapping 2^t x 2^t squares, t = floor(log2 k).
+// The operation must be IDEMPOTENT (min/max/gcd/and/or) because those four squares overlap.
+template<typename T = ll>
+struct SquareSparseTable {
+    int n, m;
+    // jmp[k][i][j] = max of 2^k x 2^k square starting at (i, j)
+    vector<vector<vector<T>>> jmp;
+
+    SquareSparseTable(const vector<vector<T>>& grid) {
+        n = grid.size();
+        if (!n) return;
+        m = grid[0].size();
+        if (!m) return;
+
+        int log_max = __lg(min(n, m)) + 1;
+        jmp.assign(log_max, vector<vector<T>>(n, vector<T>(m)));
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                jmp[0][i][j] = grid[i][j];
+            }
+        }
+
+        for (int k = 1; k < log_max; k++) {
+            int pw = 1 << (k - 1);
+            for (int i = 0; i + (pw * 2) <= n; i++) {
+                for (int j = 0; j + (pw * 2) <= m; j++) {
+                    jmp[k][i][j] = max({jmp[k - 1][i][j],
+                                        jmp[k - 1][i][j + pw],
+                                        jmp[k - 1][i + pw][j],
+                                        jmp[k - 1][i + pw][j + pw]});
+                }
+            }
+        }
+    }
+
+    // Queries max in square subgrid from (r1, c1) to (r2, c2)
+    T query(int r1, int c1, int r2, int c2) const {
+        int k = __lg(r2 - r1 + 1), pw = 1 << k;
+        return max({jmp[k][r1][c1],
+                    jmp[k][r1][c2 - pw + 1],
+                    jmp[k][r2 - pw + 1][c1],
+                    jmp[k][r2 - pw + 1][c2 - pw + 1]});
+    }
+};
+\end{lstlisting}
+
 \subsection{Trie}
 
 \filbreak
@@ -2639,6 +2696,63 @@ struct WDSU {
 };
 // BIPARTITENESS under edge additions: use XOR potentials with w = 1 per edge; join() returning
 // false means an odd cycle appeared. Same structure answers "are u and v the same colour".
+\end{lstlisting}
+
+\filbreak
+\subsubsection{RangeParallelDSU}\index{RangeDSU}
+\nopagebreak{\footnotesize\sffamily\color{blurb} RANGE-PARALLEL DSU ("DSU on a sparse table") - merge two whole RANGES elementwise in O(log n).\par}\nopagebreak
+\begin{lstlisting}
+// The operation is: "a[u..u+len-1] must equal a[v..v+len-1] elementwise", i.e. union u+i with v+i
+// for every i < len. Doing that naively is O(len) per constraint; this does it in O(log n).
+// IDEA: keep LOGN separate DSUs. par[k] answers "these two blocks of length 2^k are identical".
+// A range constraint of length len is covered by TWO blocks of length 2^k (k = floor(log2 len)),
+// exactly like a sparse-table query - so one union at level k, twice. Afterwards, PUSH DOWN:
+// if two blocks of length 2^k are equal then their two halves of length 2^(k-1) are equal too.
+// After the push-down, level 0 holds the true elementwise DSU.
+// USES: "count the strings/arrays satisfying these equal-substring constraints" (the answer is
+// alphabet^(#components at level 0)), grid/string pattern unification, and any problem that says
+// "these two intervals must match".
+struct RangeDSU {
+    int n, LOG;
+    vector<vector<int>> par;
+    RangeDSU(int n) : n(n), LOG(__lg(max(n, 1)) + 1), par(LOG, vector<int>(n)) {
+        for (int k = 0; k < LOG; k++) iota(all(par[k]), 0);
+    }
+    int find(int k, int u) { return par[k][u] == u ? u : par[k][u] = find(k, par[k][u]); }
+    void join(int k, int u, int v) {
+        u = find(k, u), v = find(k, v);
+        if (u != v) par[k][u] = v;
+    }
+    // a[u .. u+len-1] equals a[v .. v+len-1], elementwise. O(log n) amortised.
+    void equalRanges(int u, int v, int len) {
+        if (len <= 0) return;
+        int k = __lg(len);
+        join(k, u, v);
+        join(k, u + len - (1 << k), v + len - (1 << k));
+    }
+    // Call ONCE after all the constraints. Then find(0, i) is the real elementwise component.
+    void pushDown() {
+        for (int k = LOG - 1; k > 0; k--) {
+            int half = 1 << (k - 1);
+            for (int i = 0; i + (1 << k) <= n; i++) {
+                int j = find(k, i);
+                if (j == i) continue;
+                join(k - 1, i, j);                                 // both halves inherit it
+                join(k - 1, i + half, j + half);
+            }
+        }
+    }
+    int components() {                                             // at level 0, after pushDown
+        int c = 0;
+        for (int i = 0; i < n; i++) if (find(0, i) == i) c++;
+        return c;
+    }
+};
+// The same "cover a range with two power-of-two blocks, then push down" trick works for any
+// idempotent relation, not just equality - it is the DSU analogue of a sparse table.
+// If instead you need to union a range of CONSECUTIVE elements to each other ("a[l..r] all equal"),
+// that is much simpler: a "next unvisited pointer" DSU where find(i) jumps to the next index not
+// yet merged, giving O(n alpha) total over all range-unions.
 \end{lstlisting}
 
 \subsection{Square Root Decomposition}
