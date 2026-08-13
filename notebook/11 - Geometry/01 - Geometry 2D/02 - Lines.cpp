@@ -62,8 +62,12 @@ template <class P> ld segSegDist(P a, P b, P c, P d) {
 }
 
 // RAY from s through e.
-template <class P> bool onRay(P p, P s, P e) { return s.cross(e, p) == 0 && (p - s).dot(e - s) >= 0; }
-template <class P> ld rayDist(P p, P s, P e) { return (p - s).dot(e - s) <= 0 ? (p - s).dist() : lineDist(p, s, e); }
+template <class P> bool onRay(P p, P s, P e) {
+    return s.cross(e, p) == 0 && (p - s).dot(e - s) >= 0;
+}
+template <class P> ld rayDist(P p, P s, P e) {
+    return (p - s).dot(e - s) <= 0 ? (p - s).dist() : lineDist(p, s, e);
+}
 
 // Perpendicular bisector of ab, returned as two points on it.
 // FLOATING P ONLY: (a+b)/2 truncates on P<ll> and returns a DIFFERENT line (for a=(0,0),

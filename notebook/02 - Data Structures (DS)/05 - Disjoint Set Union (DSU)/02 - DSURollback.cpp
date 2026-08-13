@@ -1,7 +1,7 @@
 // DSU with Rollback - No path compression to allow backtracking
 // Time: O(log N) per operation, O(1) rollback
 struct DSURollback {
-    vector<int> par, sz;
+    vector<int> par, siz;
     vector<pair<int, int>> history; // {child_node, old_parent_size}
 
     DSURollback(int n = 0) : par(n), sz(n, 1) {
@@ -23,15 +23,15 @@ struct DSURollback {
             history.eb(-1, -1);
             return false;
         }
-        if (sz[x] < sz[y]) swap(x, y);
-        history.eb(y, sz[x]);
-        sz[x] += sz[y];
+        if (siz[x] < siz[y]) swap(x, y);
+        history.eb(y, siz[x]);
+        siz[x] += siz[y];
         par[y] = x;
         return true;
     }
 
     int size(int x) {
-        return sz[find(x)];
+        return siz[find(x)];
     }
 
     void rollback() {
@@ -39,7 +39,7 @@ struct DSURollback {
         auto [y, old_sz_x] = history.back();
         history.pop_back();
         if (y != -1) {
-            sz[par[y]] = old_sz_x;
+            siz[par[y]] = old_sz_x;
             par[y] = y;
         }
     }

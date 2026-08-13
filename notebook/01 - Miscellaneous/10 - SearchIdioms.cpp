@@ -33,7 +33,8 @@ template <class F> ll ternaryInt(ll lo, ll hi, F f) {          // returns argmin
     return best;
 }
 template <class F> ld ternaryReal(ld lo, ld hi, F f, int it = 200) {
-    while (it--) { ld m1 = lo + (hi - lo) / 3, m2 = hi - (hi - lo) / 3; f(m1) < f(m2) ? hi = m2 : lo = m1; }
+    while (it--) { ld m1 = lo + (hi - lo) / 3, m2 = hi - (hi - lo) / 3;
+                   f(m1) < f(m2) ? hi = m2 : lo = m1; }
     return (lo + hi) / 2;
 }
 // If f is only WEAKLY unimodal (has flat regions), ternary search is WRONG: one comparison
@@ -46,12 +47,23 @@ template <class F> ll convexArgmin(ll lo, ll hi, F f) {
 
 // NEWTON'S METHOD for roots of a smooth f (quadratic convergence; needs a decent start).
 template <class F, class DF> ld newton(ld x, F f, DF df, int it = 60) {
-    while (it--) { ld d = f(x) / df(x); x -= d; if (fabsl(d) < 1e-15L * max((ld)1, fabsl(x))) break; }
+    while (it--) { ld d = f(x) / df(x); x -= d;
+                   if (fabsl(d) < 1e-15L * max((ld)1, fabsl(x))) break; }
     return x;
 }
 // Integer sqrt / cbrt with correction - NEVER trust sqrt() alone near 1e18.
-ll isqrt(ll n) { ll r = (ll)sqrtl((ld)n); while (r > 0 && r * r > n) r--; while ((r + 1) * (r + 1) <= n) r++; return r; }
-ll icbrt(ll n) { ll r = (ll)cbrtl((ld)n); while (r > 0 && r * r * r > n) r--; while ((r + 1) * (r + 1) * (r + 1) <= n) r++; return r; }
+ll isqrt(ll n) {
+    ll r = (ll)sqrtl((ld)n);
+    while (r > 0 && r * r > n) r--;
+    while ((r + 1) * (r + 1) <= n) r++;
+    return r;
+}
+ll icbrt(ll n) {
+    ll r = (ll)cbrtl((ld)n);
+    while (r > 0 && r * r * r > n) r--;
+    while ((r + 1) * (r + 1) * (r + 1) <= n) r++;
+    return r;
+}
 
 // BINARY SEARCH ON THE ANSWER - the pattern, not the code:
 //   "minimise the maximum X" / "maximise the minimum X" / "can we finish within T"

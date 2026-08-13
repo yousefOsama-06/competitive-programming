@@ -23,7 +23,7 @@ template <class P> P scaleAbout(P p, P c, ld k) { return c + (p - c) * k; }
 // Reflect p across the POINT c (a 180-degree rotation):
 template <class P> P reflPoint(P p, P c) { return c * 2 - p; }
 // --- SIGNED AREA OF A TRIANGLE, and the barycentric coordinates of p in a-b-c. ---
-template <class P> auto triArea2(P a, P b, P c) { return a.cross(b, c); }               // 2 * signed
+template <class P> auto triArea2(P a, P b, P c) { return a.cross(b, c); }         // 2 * signed
 template <class P> array<ld, 3> barycentric(P a, P b, P c, P p) {
     ld s = a.cross(b, c);
     return {(ld)p.cross(b, c) / s, (ld)a.cross(p, c) / s, (ld)a.cross(b, p) / s};
@@ -49,6 +49,17 @@ template <class P> vector<P> circlesThrough(P a, P b, ld r) {
     P m = (a + b) / 2, dir = (b - a).perp().unit() * sqrtl(h2);
     return h2 < eps ? vector<P>{m} : vector<P>{m - dir, m + dir};
 }
+// --- CIRCLE OF RADIUS r THROUGH p AND TANGENT TO THE LINE a-b. Its centre is at distance r from
+// the line, so on one of the two PARALLELS at offset r, and at distance r from p, so on the
+// circle (p, r). Intersect the two: 0, 1 or 2 centres. With d = distance from p to the line,
+// there are 2 for d < 2r (both, tangentially, when d == 0), 1 when d == 2r, and none beyond.
+template <class P> vector<P> circleTangentLine(P a, P b, P p, ld r) {
+    vector<P> res;
+    P n = (b - a).perp().unit() * r;
+    for (int s = -1; s <= 1; s += 2)
+        for (P c : circleLine(p, r, a + n * s, b + n * s)) res.push_back(c);
+    return res;
+}
 // --- APOLLONIUS CIRCLE: the locus of p with |pa| / |pb| = k (k != 1) is a circle whose diameter
 // endpoints are the two points dividing ab internally and externally in ratio k : 1.
 template <class P> pair<P, ld> apollonius(P a, P b, ld k) {
@@ -61,7 +72,8 @@ template <class P> int inCircle(P a, P b, P c, P d) {
     auto f = [&](P p) { return (__int128)(p - d).dist2(); };
     __int128 det = (__int128)(a.x - d.x) * ((b.y - d.y) * f(c) - (c.y - d.y) * f(b))
                  - (__int128)(a.y - d.y) * ((b.x - d.x) * f(c) - (c.x - d.x) * f(b))
-                 + f(a) * ((__int128)(b.x - d.x) * (c.y - d.y) - (__int128)(c.x - d.x) * (b.y - d.y));
+                 + f(a) * ((__int128)(b.x - d.x) * (c.y - d.y)
+                         - (__int128)(c.x - d.x) * (b.y - d.y));
     return (det > 0) - (det < 0);
 }
 // --- MAXIMUM POINTS COVERED BY A CIRCLE OF RADIUS r, O(n^2 log n). ---

@@ -114,7 +114,8 @@ template <class P> vector<P> minkowski(vector<P> A, vector<P> B) {
     if (area2(A) < 0) reverse(all(A));
     if (area2(B) < 0) reverse(all(B));
     auto low = [](vector<P>& v) {
-        rotate(v.begin(), min_element(all(v), [](P a, P b) { return tie(a.y, a.x) < tie(b.y, b.x); }), v.end());
+        auto lo = [](P a, P b) { return tie(a.y, a.x) < tie(b.y, b.x); };
+        rotate(v.begin(), min_element(all(v), lo), v.end());
     };
     low(A); low(B);
     A.push_back(A[0]); A.push_back(A[1]);

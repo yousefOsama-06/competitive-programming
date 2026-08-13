@@ -7,6 +7,7 @@
 // USES: Turning Corners (turn the 4 corners of a rectangle) has g(x,y) = x (*) y, and the TARTAN
 // THEOREM says the 2-D product of two coin-turning games has g(x,y) = g1(x) (*) g2(y). Also
 // CF 1310F, which asks you to solve a^(*)x = b in the nimber field of size 2^64.
+typedef unsigned long long u64;                            // nimbers are UNSIGNED, always
 map<pair<u64, u64>, u64> nmMemo;
 u64 nimMul(u64 a, u64 b) {
     if (a < b) swap(a, b);

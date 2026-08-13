@@ -3,6 +3,7 @@ using namespace std;
 
 //#define int long long
 #define ll long long
+#define lll __int128                            // used unnamed by CHT, BigInt, PrimeCounting
 #define ld long double
 #define fi first
 #define se second
@@ -27,13 +28,18 @@ const ld eps = 1e-9, PI = acosl(-1.0L);        // ld, not double: geometry needs
 template <class T> void _p(const T& x);
 void _p(const string& s) { cerr << '"' << s << '"'; }
 void _p(char c) { cerr << '\'' << c << '\''; }
-template <class A, class B> void _p(const pair<A, B>& p) { cerr << '('; _p(p.fi); cerr << ", "; _p(p.se); cerr << ')'; }
+template <class A, class B> void _p(const pair<A, B>& p) {
+    cerr << '('; _p(p.fi); cerr << ", "; _p(p.se); cerr << ')';
+}
 template <class T> void _p(const T& x) {
     if constexpr (is_arithmetic_v<T>) cerr << x;
-    else { cerr << '{'; int f = 1; for (auto& e : x) { if (!f) cerr << ", "; f = 0; _p(e); } cerr << '}'; }
+    else { cerr << '{'; int f = 1;
+           for (auto& e : x) { if (!f) cerr << ", "; f = 0; _p(e); } cerr << '}'; }
 }
 void _pr() { cerr << "\n"; }
-template <class H, class... T> void _pr(const H& h, const T&... t) { _p(h); if (sizeof...(t)) cerr << " | "; _pr(t...); }
+template <class H, class... T> void _pr(const H& h, const T&... t) {
+    _p(h); if (sizeof...(t)) cerr << " | "; _pr(t...);
+}
 #define dbg(...) (cerr << "[" << #__VA_ARGS__ << "] = ", _pr(__VA_ARGS__))
 #else
 #define dbg(...)

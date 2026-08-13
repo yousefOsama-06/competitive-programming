@@ -29,7 +29,56 @@ vector<int> permUnrank(int n, ll k) {                          // k-th permutati
 // NEXT PERMUTATION in place is std::next_permutation, O(n) - use it unless you need the rank.
 // COMBINATIONS: rank of a k-subset {c_1<...<c_k} of [n] is sum C(c_i, i); unrank greedily by
 // finding the largest c with C(c, i) <= remaining. Same shape, C instead of factorials.
-// BALANCED BRACKET SEQUENCES rank/unrank with the ballot numbers; GRAY CODE is g = i ^ (i >> 1).
+// GRAY CODE is g = i ^ (i >> 1) (06 - grayCode.cpp).
+
+// --- BALANCED BRACKET SEQUENCES: rank, unrank, and the next one in lexicographic order, with
+// '(' < ')'. The counting table is the BALLOT NUMBERS: f[i][j] = number of ways to finish when i
+// characters remain and j brackets are still open. f[n][0] is the Catalan number C_{n/2}.
+// USES: "the k-th valid bracket sequence", "how many valid sequences are smaller than this one",
+// iterating all sequences of length 2m without generating and filtering. Same skeleton works for
+// any object counted by a DP: the rank is a walk that adds the subtree sizes you skip over.
+// O(n^2) to build the table, O(n) per rank / unrank / next. Overflows for n > 60 - use __int128
+// or a modulus if you only need the count.
+vector<vector<ll>> ballot(int n) {                             // n = total length, must be even
+    vector<vector<ll>> f(n + 1, vector<ll>(n + 2, 0));
+    f[0][0] = 1;
+    for (int i = 1; i <= n; i++)
+        for (int j = 0; j <= i; j++)
+            f[i][j] = f[i - 1][j + 1] + (j ? f[i - 1][j - 1] : 0);   // place '(' then ')'
+    return f;
+}
+ll bracketRank(const string& s, const vector<vector<ll>>& f) {  // 0-indexed rank, s must be valid
+    int n = s.size(), j = 0;
+    ll r = 0;
+    for (int i = 0; i < n; i++) {
+        if (s[i] == ')') r += f[n - i - 1][j + 1];              // skip every sequence with '(' here
+        j += s[i] == '(' ? 1 : -1;
+    }
+    return r;
+}
+string bracketUnrank(int n, ll k, const vector<vector<ll>>& f) {
+    string s;
+    int j = 0;
+    for (int i = 0; i < n; i++) {
+        ll c = f[n - i - 1][j + 1];                             // completions starting with '('
+        if (k < c) s += '(', j++;
+        else k -= c, s += ')', j--;
+    }
+    return s;
+}
+bool nextBracket(string& s) {                                  // in place; false if s is the last
+    int n = s.size(), d = 0;
+    for (int i = n - 1; i >= 0; i--) {
+        d += s[i] == '(' ? -1 : 1;
+        if (s[i] == '(' && d > 0) {                             // flip it to ')' and reset the rest
+            d--;
+            int open = (n - i - 1 - d) / 2;
+            s = s.substr(0, i) + ')' + string(open, '(') + string(n - i - 1 - open, ')');
+            return true;
+        }
+    }
+    return false;
+}
 
 // --- JULIAN DAY NUMBER: date <-> integer, closed form, no loops, correct for the Gregorian
 // calendar including every leap rule. Date differences, "what weekday", and "add 1000 days" all

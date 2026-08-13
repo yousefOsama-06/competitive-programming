@@ -32,7 +32,8 @@ struct MHeap {
 // TO GET A MAX-HEAP: negate the keys, or flip the comparison in merge.
 // LEFTIST HEAP is the same interface with a stored `dist` (null-path length) and the rule "keep the
 // larger dist on the left"; it gives WORST-CASE O(log n) instead of amortised. Skew is shorter and
-// fine unless you need the worst-case bound inside another amortised argument.
+// fine unless you need the worst-case bound inside another amortised argument. 24 - PersistentHeap
+// is that leftist version, made persistent (meld without destroying either input).
 // PAIRING HEAP has O(1) merge and decrease-key in practice and is what you want if you need
 // decrease-key (Dijkstra on very dense graphs); in contests a binary heap with lazy deletion wins.
 // LAZY DELETION is usually enough: push (key, id), and pop until the top is still valid. That

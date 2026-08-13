@@ -192,8 +192,18 @@ Geometry: \\texttt{P\\textless ll\\textgreater} for every decision, \\texttt{P\\
 }}
 \\vspace{0.8em}
 
-{\\small\\sffamily
-\\setcounter{tocdepth}{1}
+{\\footnotesize\\sffamily
+\\setcounter{tocdepth}{2}
+\\makeatletter
+% tight, dotted, two-level contents: section in bold, subsection indented under it
+\\renewcommand*\\l@section[2]{%
+  \\addpenalty{-\\@highpenalty}\\vskip 1.2ex \\@plus\\p@
+  \\setlength\\@tempdima{2.0em}\\begingroup
+  \\parindent\\z@ \\rightskip\\@pnumwidth \\parfillskip-\\@pnumwidth
+  \\leavevmode\\bfseries #1\\nobreak\\hfil\\nobreak\\hb@xt@\\@pnumwidth{\\hss #2}\\par
+  \\endgroup}
+\\renewcommand*\\l@subsection{\\@dottedtocline{2}{1.2em}{2.4em}}
+\\makeatother
 \\tableofcontents
 }
 \\vspace{0.6em}
@@ -216,17 +226,33 @@ if (skipped.length) {
 // Process top-level directories (sections)
 const sections = getSortedEntries(notebookDir).filter(e => e.isDir);
 
+let secNo = 0;
 for (const section of sections) {
     const sectionName = cleanName(section.name);
-    latex += `\\section{${escapeLatex(sectionName)}}\n\n`;
+    secNo++;
+    latex += `\\section{${escapeLatex(sectionName)}}\n`;
 
     const entries = getSortedEntries(section.fullPath);
+
+    // A one-paragraph map of the section with page numbers: the fastest way to find a topic
+    // once you know roughly where it lives.
+    const topics = entries
+        .filter(e => e.isDir || e.name.endsWith('.cpp'))
+        .map(e => cleanName(e.isDir ? e.name : path.basename(e.name, '.cpp')));
+    if (topics.length > 1) {
+        const links = topics.map((t, i) =>
+            `${escapeLatex(t)}~\\pageref{sec:${secNo}:${i}}`).join(' \\textperiodcentered\\ ');
+        latex += `\\nopagebreak{\\footnotesize\\sffamily\\color{blurb} ${links}\\par}\\nopagebreak\n`;
+    }
+    latex += `\n`;
+    let topicNo = -1;
 
     // Process entries (files and subdirectories) together in sorted order
     for (const entry of entries) {
         if (entry.isDir) {
             const subdirName = cleanName(entry.name);
-            latex += `\\subsection{${escapeLatex(subdirName)}}\n\n`;
+            topicNo++;
+            latex += `\\subsection{${escapeLatex(subdirName)}}\\label{sec:${secNo}:${topicNo}}\n\n`;
 
             const subFiles = getSortedEntries(entry.fullPath).filter(e => !e.isDir && e.name.endsWith('.cpp'));
             for (const file of subFiles) {
@@ -241,7 +267,8 @@ for (const section of sections) {
             const fileName = cleanName(path.basename(entry.name, '.cpp'));
             const code = fs.readFileSync(entry.fullPath, 'utf-8').trimEnd();
             latex += `\\filbreak\n`;
-            latex += `\\subsection{${escapeLatex(fileName)}}${indexEntries(code)}\n`;
+            topicNo++;
+            latex += `\\subsection{${escapeLatex(fileName)}}\\label{sec:${secNo}:${topicNo}}${indexEntries(code)}\n`;
             latex += blurbLine(code);
             latex += `\\begin{lstlisting}\n${trimBlurbLine(code)}\n\\end{lstlisting}\n\n`;
         }

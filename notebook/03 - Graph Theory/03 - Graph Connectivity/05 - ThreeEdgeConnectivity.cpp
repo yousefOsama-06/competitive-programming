@@ -30,7 +30,8 @@ vector<vector<int>> threeEdgeCC(const vector<vector<int>>& g) {
                     else {                                     // back edge to a descendant
                         deg[v]--;
                         int u = path[v];
-                        while (u != n && in[u] <= in[w] && in[w] < out[u]) absorb(v, u), u = path[u];
+                        while (u != n && in[u] <= in[w] && in[w] < out[u])
+                            absorb(v, u), u = path[u];
                         path[v] = u;
                     }
                     continue;

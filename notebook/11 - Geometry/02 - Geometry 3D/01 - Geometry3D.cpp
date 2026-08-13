@@ -51,8 +51,8 @@ template <class P> pair<P, P> planePlane(const Plane<P>& A, const Plane<P>& B) {
     return {p, dir};
 }
 
-// VOLUME of the tetrahedron abcd (signed; x6 form is exact on P3<ll> only up to |coordinate| ~ 5.7e5 (|vol6| <= 48*C^3);
-// above that make the return type __int128).
+// VOLUME of the tetrahedron abcd, signed. The x6 form is exact on P3<ll> only up to
+// |coordinate| ~ 5.7e5, since |vol6| <= 48 * C^3; above that make the return type __int128.
 template <class P> auto vol6(P a, P b, P c, P d) { return (b - a).cross(c - a).dot(d - a); }
 template <class P> ld tetraVolume(P a, P b, P c, P d) { return fabsl((ld)vol6(a, b, c, d)) / 6; }
 

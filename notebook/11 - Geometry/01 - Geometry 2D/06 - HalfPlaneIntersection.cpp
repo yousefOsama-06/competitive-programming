@@ -23,7 +23,8 @@ vector<Pd> halfPlaneInter(vector<HP> h, ld BOX = 1e9) {
     });
     deque<HP> dq;
     for (auto& x : h) {
-        if (!dq.empty() && fabsl(dq.back().d.cross(x.d)) <= eps && dq.back().d.dot(x.d) > 0) continue;
+        if (!dq.empty() && fabsl(dq.back().d.cross(x.d)) <= eps &&
+            dq.back().d.dot(x.d) > 0) continue;
         while (dq.size() > 1 && x.out(hpInter(dq[dq.size() - 1], dq[dq.size() - 2]))) dq.pop_back();
         while (dq.size() > 1 && x.out(hpInter(dq[0], dq[1]))) dq.pop_front();
         dq.push_back(x);
@@ -35,5 +36,6 @@ vector<Pd> halfPlaneInter(vector<HP> h, ld BOX = 1e9) {
     for (size_t i = 0; i < dq.size(); i++) r.push_back(hpInter(dq[i], dq[(i + 1) % dq.size()]));
     return r;
 }
+// If the constraints arrive ONLINE, or you must report after each one, use 21 - DynamicHalfPlane.
 // If you only have a handful of half-planes, repeated cut() (03 - Polygon.cpp) on a big box is
 // shorter to retype and just as correct - O(n^2) but n is small.

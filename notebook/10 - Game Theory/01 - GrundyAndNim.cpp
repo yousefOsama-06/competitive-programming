@@ -1,7 +1,8 @@
 /* SPRAGUE-GRUNDY.  Every FINITE, ACYCLIC (progressively bounded) IMPARTIAL game under normal
    play (last to move wins) is equivalent to a nim pile of size grundy(position).
    ACYCLIC IS A HYPOTHESIS, NOT A DETAIL: on a graph with cycles the mex recursion is not
-   well-founded and grundy() below returns silently wrong values - use retrograde BFS instead.  grundy(p) = mex{ grundy(q) : q reachable from p }.
+   well-founded and grundy() below returns silently wrong values - use retrograde BFS instead.
+   grundy(p) = mex{ grundy(q) : q reachable from p }.
    A position is LOSING for the player to move  iff  grundy = 0.
    SUM of independent games: grundy = XOR of the parts.                                    */
 int mex(const vector<int>& v) {
@@ -47,7 +48,8 @@ int grundy(int u, const vector<vector<int>>& nxt) {
 // RETROGRADE ANALYSIS - when the game graph HAS CYCLES (draws possible) or the game is partisan,
 // Grundy does not apply. BFS backwards from terminal positions counting out-degrees.
 // win[u] = 1 first player to move wins, 0 loses, -1 draw.
-vector<int> retrograde(int n, const vector<vector<int>>& radj, vector<int> deg, const vector<int>& terminalLose) {
+vector<int> retrograde(int n, const vector<vector<int>>& radj, vector<int> deg,
+                       const vector<int>& terminalLose) {
     vector<int> res(n, -1);
     queue<int> q;
     for (int u : terminalLose) res[u] = 0, q.push(u);

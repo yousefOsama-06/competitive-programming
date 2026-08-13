@@ -41,22 +41,22 @@ struct PArray {
 // The catch that makes it work: NO PATH COMPRESSION (that would mutate an old version), so you
 // MUST union by size/rank to keep the height O(log n).
 struct PDSU {
-    PArray par, sz;
+    PArray par, siz;
     PDSU(int n) : par(n), sz(n) {}
     pair<int, int> init(int n) {                               // returns {parRoot, szRoot}
         vector<ll> p(n), s(n, 1);
         iota(all(p), 0);
-        return {par.build(p), sz.build(s)};
+        return {par.build(p), siz.build(s)};
     }
     int find(int pr, int x) { ll p = par.get(pr, x); return p == x ? x : find(pr, p); }
     pair<int, int> join(int pr, int sr, int a, int b) {
         a = find(pr, a), b = find(pr, b);
         if (a == b) return {pr, sr};
-        if (sz.get(sr, a) < sz.get(sr, b)) swap(a, b);
-        return {par.set(pr, b, a), sz.set(sr, a, sz.get(sr, a) + sz.get(sr, b))};
+        if (siz.get(sr, a) < siz.get(sr, b)) swap(a, b);
+        return {par.set(pr, b, a), siz.set(sr, a, siz.get(sr, a) + siz.get(sr, b))};
     }
 };
-/* THE OTHER TWO TIME-TRAVEL TRICKS, as recipes
+/* THE OTHER TWO TIME-TRAVEL TRICKS, as recipes (code: 21 - QueueUndoTrick, 25 - StaticToDynamic)
  QUEUE UNDO. You have a structure that supports only "undo the last op" (rollback DSU), but the
    deletions arrive in FIFO order (a sliding window). Keep the undo stack partitioned so the
    OLDEST element is near the top; when it is not, pop a prefix and re-push it in the other order,
@@ -68,7 +68,8 @@ struct PDSU {
    Insert becomes O(B(n)/n * log n) amortised and query O(Q(n) log n) (ask all instances).
    Use it to make a convex hull / a wavelet tree / an Aho-Corasick automaton accept insertions.
  PARTIALLY vs FULLY PERSISTENT: partially = you may query any past version but only modify the
-   latest (much cheaper - a version-stamped array often suffices); fully = you may modify any
-   version, branching the history into a tree. The code above is fully persistent.
+   latest - for a DSU that is 05 - DSU/05 - PartiallyPersistentDSU, O(n) memory instead of this
+   file's O(n log n); fully = you may modify any version, branching the history into a tree.
+   The code above is fully persistent.
  WHEN NOT TO BOTHER: if the problem is offline and only needs "delete", the segment tree over the
    timeline with a rollback DSU is shorter, faster, and has a smaller constant than any of this. */

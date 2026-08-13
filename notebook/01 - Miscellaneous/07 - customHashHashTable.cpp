@@ -1,6 +1,7 @@
 // UNORDERED_MAP THAT CANNOT BE HACKED. The default std::hash for integers is the identity, so an
 // adversary can force every key into one bucket and turn O(1) into O(n). splitmix64 + a clock seed
-// fixes that. gp_hash_table is ~3x faster than unordered_map; reserve() and max_load_factor help more.
+// fixes that. gp_hash_table is ~3x faster than unordered_map; reserve() and max_load_factor
+// help more.
 #include <ext/pb_ds/assoc_container.hpp>
 using namespace __gnu_pbds;
 

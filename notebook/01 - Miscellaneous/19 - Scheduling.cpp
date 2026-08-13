@@ -49,7 +49,8 @@ int maxOnTime(vector<pair<ll, ll>> jobs) {
 // Johnson's rule: optimal two-machine flow-shop order (returns the job indices).
 vector<int> johnson(const vector<pair<ll, ll>>& jobs) {     // {p on machine 1, p on machine 2}
     vector<int> A, B;
-    for (int i = 0; i < (int)jobs.size(); i++) (jobs[i].first < jobs[i].second ? A : B).push_back(i);
+    for (int i = 0; i < (int)jobs.size(); i++)
+        (jobs[i].first < jobs[i].second ? A : B).push_back(i);
     sort(all(A), [&](int x, int y) { return jobs[x].first < jobs[y].first; });
     sort(all(B), [&](int x, int y) { return jobs[x].second > jobs[y].second; });
     A.insert(A.end(), all(B));

@@ -16,7 +16,8 @@ template <class P> bool isSimple(const vector<P>& v) {
                 if (a == d || b == c) {                            // share the one common vertex
                     P sh = (a == d) ? v[a] : v[b];
                     for (P q : {v[a], v[b], v[c], v[d]})
-                        if (!(q == sh) && onSeg(q, v[a], v[b]) && onSeg(q, v[c], v[d])) return false;
+                        if (!(q == sh) && onSeg(q, v[a], v[b]) &&
+                            onSeg(q, v[c], v[d])) return false;
                 }
                 continue;
             }
@@ -31,7 +32,7 @@ template <class P> int windingNumber(const vector<P>& v, P p) {    // 0 = outsid
     int n = v.size(), w = 0;
     for (int i = 0; i < n; i++) {
         P a = v[i], b = v[(i + 1) % n];
-        if (onSeg(p, a, b)) return 0;                              // on the boundary: caller decides
+        if (onSeg(p, a, b)) return 0;                        // on the boundary: caller decides
         if (a.y <= p.y) { if (b.y > p.y && a.cross(b, p) > 0) w++; }
         else if (b.y <= p.y && a.cross(b, p) < 0) w--;
     }
@@ -46,9 +47,9 @@ template <class P> vector<P> clipByConvex(vector<P> subject, const vector<P>& wi
         subject = cut(subject, win[i], win[(i + 1) % m]);
     return subject;
 }
-// --- CONVEX intersect CONVEX in O(n + m) is the classic O'Rourke walk, but clipByConvex is O(nm) and
-// fits on one line - at contest sizes (n, m <= a few thousand) prefer it. Use halfPlaneInter
-// (06) when you have the polygons as half-plane constraints instead of vertex lists.
+// --- CONVEX intersect CONVEX in O(n + m) is the classic O'Rourke walk, but clipByConvex is
+// O(nm) and fits on one line - at contest sizes (n, m <= a few thousand) prefer it. Use
+// halfPlaneInter (06) when the polygons come as half-plane constraints, not vertex lists.
 
 // --- MINIMUM DISTANCE BETWEEN TWO CONVEX POLYGONS, O(n * m) as written. ---
 // 0 if they touch or overlap. The O(n+m) rotating-calipers version exists but this is 6 lines and
@@ -111,8 +112,8 @@ template <class P> pair<int, int> lineHull(const vector<P>& h, P a, P b) {
    Its area is (n/2) R^2 sin(2 pi/n); with INRADIUS r it is n r^2 tan(pi/n).
  SPLIT A POLYGON BY A LINE into both halves: cut(v, s, e) and cut(v, e, s).
  LARGEST INSCRIBED / SMALLEST ENCLOSING: smallest enclosing circle is mec (04 - Circles.cpp);
-   smallest enclosing rectangle is minRectArea; largest inscribed CIRCLE in a convex polygon is a
-   binary search on the radius plus a half-plane intersection of the inward-offset edges;
+   smallest enclosing rectangle is minRectArea; largest inscribed CIRCLE in a convex polygon is
+   the Chebyshev centre, 18 - InscribedCircle.cpp (a nested ternary search, no LP needed);
    largest inscribed AXIS-ALIGNED rectangle needs a sweep and is genuinely hard - do not improvise.
  OFFSET / BUFFER a convex polygon by d: push every edge outward by d along its normal and
    intersect the half-planes (06 - HalfPlaneIntersection.cpp). The exact offset of a NON-convex

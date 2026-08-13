@@ -1,5 +1,6 @@
 // KD-TREE over 2D points: nearest-neighbour and "count points in a rectangle".
-// Build O(n log n); NN query O(log n) expected, O(n) worst for NN; the O(sqrt n) bound is for RECTANGLE queries; rectangle count O(sqrt n + k).
+// Build O(n log n); NN query O(log n) expected, O(n) worst. The O(sqrt n) bound is for
+// RECTANGLE queries; a rectangle count costs O(sqrt n + k).
 // Use when coordinates are large/sparse and a grid or sort-sweep will not do.
 struct KD {
     struct Node {

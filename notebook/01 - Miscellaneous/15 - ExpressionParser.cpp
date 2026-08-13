@@ -50,7 +50,8 @@ struct Parser {
             } else {
                 if (c == '-' && wantOperand) c = '~';  // unary
                 while (!ops.empty() && ops.back() != '(' &&
-                       (prec(ops.back()) > prec(c) || (prec(ops.back()) == prec(c) && !rightAssoc(c))))
+                       (prec(ops.back()) > prec(c) ||
+                        (prec(ops.back()) == prec(c) && !rightAssoc(c))))
                     pop();
                 ops.push_back(c), wantOperand = (c != '~') || true;
             }

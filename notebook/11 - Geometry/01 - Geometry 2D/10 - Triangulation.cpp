@@ -36,9 +36,10 @@ vector<array<int, 3>> triangulate(const vector<P>& poly) {
 }
 // FASTER: monotone decomposition (sweep, O(n log n)) then triangulate each monotone piece in O(n).
 // Only worth writing for n beyond ~2000; ear clipping handles everything a contest throws at you.
-// DELAUNAY TRIANGULATION maximises the minimum angle. Cheap way to get one: lift each point to the
-// paraboloid (x, y, x^2+y^2) and take the LOWER hull of the 3D convex hull - its faces project to
-// the Delaunay triangles. The dual graph is the VORONOI DIAGRAM.
+// DELAUNAY TRIANGULATION (13 - Delaunay.cpp, O(n log n)) maximises the minimum angle instead, and
+// its dual is the VORONOI DIAGRAM (14 - Voronoi.cpp). Cheap derivation to remember: lift each
+// point to the paraboloid (x, y, x^2+y^2) and take the LOWER hull of the 3D convex hull - its
+// faces project to the Delaunay triangles.
 //   Delaunay contains: the Euclidean minimum spanning tree, the nearest-neighbour graph, and the
 //   closest pair. So "EMST of points in the plane" = Delaunay (O(n log n) edges) + Kruskal.
 //   In-circle test (a,b,c counter-clockwise): d is strictly inside the circumcircle of a,b,c iff

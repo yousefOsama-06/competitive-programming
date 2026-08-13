@@ -16,7 +16,8 @@ vector<int> parallelBinarySearch(int q, int T, Apply applyUpdate, Reset reset, T
     while (true) {
         vector<vector<int>> at(T + 1);
         bool active = false;
-        for (int i = 0; i < q; i++) if (lo[i] < hi[i]) at[(lo[i] + hi[i]) / 2].push_back(i), active = true;
+        for (int i = 0; i < q; i++)
+            if (lo[i] < hi[i]) at[(lo[i] + hi[i]) / 2].push_back(i), active = true;
         if (!active) break;
         reset();
         for (int t = 0; t <= T; t++) {

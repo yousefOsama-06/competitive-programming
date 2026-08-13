@@ -21,7 +21,9 @@ template <class P> pair<P, P> closestPair(vector<P> v) {
 // rects: {x1, y1, x2, y2} half-open [x1,x2) x [y1,y2). Sweep x, segment tree counts covered y.
 struct CoverTree {                                        // "count>0 length" segment tree
     int n; vector<int> cnt; vector<ll> len; vector<ll> ys;
-    CoverTree(vector<ll> y) : ys(y) { n = ys.size() - 1; cnt.assign(4 * n, 0); len.assign(4 * n, 0); }
+    CoverTree(vector<ll> y) : ys(y) {
+        n = ys.size() - 1, cnt.assign(4 * n, 0), len.assign(4 * n, 0);
+    }
     void upd(int v, int l, int r, int ql, int qr, int d) {
         if (qr <= l || r <= ql) return;
         if (ql <= l && r <= qr) cnt[v] += d;
@@ -73,7 +75,8 @@ template <class P> int maxOnLine(vector<P> p) {
 }
 
 // --- COUNT PAIRS OF INTERSECTING SEGMENTS, O(n^2) exact. ---
-// For O((n+k) log n) use Bentley-Ottmann; almost never needed in contests.
+// For "do ANY two of them cross", use Shamos-Hoey (17), which is O(n log n) and returns the pair.
+// For O((n+k) log n) reporting of ALL of them use Bentley-Ottmann; almost never needed.
 template <class P> ll countSegInter(vector<pair<P, P>> s) {
     ll c = 0;
     for (int i = 0; i < (int)s.size(); i++)
@@ -83,6 +86,8 @@ template <class P> ll countSegInter(vector<pair<P, P>> s) {
 }
 
 // --- CONVEX LAYERS (onion peeling): repeatedly strip the hull. O(n^2 log n) naive. ---
+// Fine to n ~ 3000; past that use the decremental hull in 22 - OnionDecomposition.cpp,
+// O(n log^2 n). Note this version DROPS points lying inside a hull edge, 22 keeps them.
 template <class P> vector<vector<P>> onion(vector<P> p) {
     vector<vector<P>> L;
     while (!p.empty()) {

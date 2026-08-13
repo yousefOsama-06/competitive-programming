@@ -47,14 +47,16 @@ ld circleUnion(vector<Pd> c, vector<ld> r) {
         for (int j = 0; j < n; j++) {
             if (i == j) continue;
             ld d = (c[i] - c[j]).dist();
-            if (d + r[i] <= r[j] + eps && (r[i] < r[j] || (fabsl(r[i] - r[j]) < eps && j < i))) { cover = -1; break; }
+            if (d + r[i] <= r[j] + eps &&
+                (r[i] < r[j] || (fabsl(r[i] - r[j]) < eps && j < i))) { cover = -1; break; }
             if (d >= r[i] + r[j] - eps || d + r[j] <= r[i] + eps) continue;
             ld a = (c[j] - c[i]).angle();
             ld w = acosl((d * d + r[i] * r[i] - r[j] * r[j]) / (2 * d * r[i]));
             ld L = a - w, R = a + w;
             if (L < -PI) L += 2 * PI;
             if (R > PI) R -= 2 * PI;
-            if (L > R) ev.push_back({L, 1}), ev.push_back({PI, -1}), ev.push_back({-PI, 1}), ev.push_back({R, -1});
+            if (L > R) ev.push_back({L, 1}), ev.push_back({PI, -1}),
+                       ev.push_back({-PI, 1}), ev.push_back({R, -1});
             else ev.push_back({L, 1}), ev.push_back({R, -1});
         }
         if (cover < 0) continue;
@@ -62,7 +64,7 @@ ld circleUnion(vector<Pd> c, vector<ld> r) {
         sort(all(ev));
         int cnt = 0; ld last = -PI;
         for (auto [a, t] : ev) {
-            if (!cnt && a > last) {                                // arc [last, a] is on the boundary
+            if (!cnt && a > last) {                          // arc [last, a] is on the boundary
                 Pd p1 = c[i] + Pd(cosl(last), sinl(last)) * r[i];
                 Pd p2 = c[i] + Pd(cosl(a), sinl(a)) * r[i];
                 total += p1.cross(p2) / 2 + r[i] * r[i] * ((a - last) - sinl(a - last)) / 2;
