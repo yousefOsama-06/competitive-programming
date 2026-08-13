@@ -4,7 +4,7 @@ struct DSURollback {
     vector<int> par, siz;
     vector<pair<int, int>> history; // {child_node, old_parent_size}
 
-    DSURollback(int n = 0) : par(n), sz(n, 1) {
+    DSURollback(int n = 0) : par(n), siz(n, 1) {
         iota(all(par), 0);
     }
 

@@ -1,0 +1,15 @@
+% makeindex style for the notebook's back index.
+% headings_flag 1 makes makeindex emit one heading per initial letter; \indexgroup (defined in
+% the preamble that export_notebook.js writes) renders it as an accent letter, which is what
+% turns an 850-entry index from a scan into a jump.
+% Overleaf runs makeindex WITHOUT -s, so it simply skips the headings - the index still builds.
+headings_flag 1
+heading_prefix "\\indexgroup{"
+heading_suffix "}"
+symhead_positive "Symbols"
+delim_0 ", "
+delim_1 ", "
+delim_2 ", "
+item_0 "\n\\item "
+indent_space ""
+indent_length 0

@@ -1,4 +1,6 @@
-# Competitive Programming Notebook
+# Baskot Temp
+
+*Husam Zaid (Baskot)* — ICPC team reference.
 
 Team reference for ICPC-style contests (ECPC / ACPC). Every template is written to be **short
 enough to retype from paper**, and the non-trivial ones have been **stress-tested against a
@@ -68,15 +70,29 @@ Files whose content is a reference page (formula sheets) are comment-only by des
 ## Exporting to PDF
 
 ```bash
-node export_notebook.js
+./build.sh          # points at the local TeX under ~/texlive, then runs the exporter
+node export_notebook.js            # same thing if pdflatex is already on your PATH
+node export_notebook.js --no-pdf   # regenerate notebook.tex and toc.yaml only
 ```
 
 Produces `notebook.tex`, `notebook.pdf` (A4, **portrait**, two columns, 9pt) and `toc.yaml`.
 The script **warns** about any file it skips — anything not ending in `.cpp` is excluded from
 the PDF, so watch that output.
 
-Requires Node.js 14+ and a LaTeX distribution providing `pdflatex` (MiKTeX on Windows, TeX Live
-elsewhere). On first run MiKTeX may ask to install `extarticle`, `listings`, `fancyhdr`, etc.
+The build is three `pdflatex` passes with `makeindex` between the first and second, and that
+count is not padding: pass 1 writes the `.aux`/`.toc`/`.idx`, pass 2 sets the contents and the
+index, pass 3 settles the `\pageref` in every per-section topic map.
+
+Requires Node.js 14+ and a LaTeX distribution providing `pdflatex` **and** `makeindex` (MiKTeX on
+Windows, TeX Live elsewhere). Packages used: `extarticle`, `listings`, `xcolor`, `titlesec`,
+`fancyhdr`, `multicol`, `makeidx`, `hyperref`, and — optionally, each guarded by `\IfFileExists`
+so a minimal install still compiles — `inconsolata`/`zi4`, `microtype`, `needspace`, `bookmark`.
+Inconsolata is the one worth installing: it is ~15% narrower than Latin Modern Typewriter, so
+noticeably fewer source lines wrap.
+
+**Overleaf:** upload `notebook.tex` alone and compile. Everything above is in the default image.
+The only thing you lose is the per-letter headings in the back index, because Overleaf runs
+`makeindex` without `-s notebook.ist`; the index itself still builds.
 
 ## Conventions
 

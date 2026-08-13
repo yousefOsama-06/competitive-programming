@@ -10,13 +10,14 @@
 // a sequence of neighbours where each one's free colour is used by the next - and either rotate the
 // fan (when some colour is free at both ends) or flip an alternating two-colour path and rotate.
 // C[u][c] = the neighbour joined to u by colour c (0 = none); X[u] = smallest free colour at u.
+// Vertices are shifted to 1..n inside, because 0 doubles as the "no such vertex" sentinel.
 vector<int> vizing(int n, const vector<pair<int, int>>& e) {
     int D = 0;
     vector<int> deg(n, 0);
     for (auto [u, v] : e) D = max({D, ++deg[u], ++deg[v]});
     int K = D + 2;                                             // colours 1..D+1, 0 = uncoloured
-    vector<vector<int>> C(n, vector<int>(K + 1, 0)), col(n, vector<int>(n, 0));
-    vector<int> X(n, 1);
+    vector<vector<int>> C(n + 1, vector<int>(K + 1, 0)), col(n + 1, vector<int>(n + 1, 0));
+    vector<int> X(n + 1, 1);
     auto update = [&](int u) { for (X[u] = 1; C[u][X[u]]; X[u]++); };
     auto color = [&](int u, int v, int c) {                    // give edge (u,v) colour c
         int p = col[u][v];
@@ -33,7 +34,7 @@ vector<int> vizing(int n, const vector<pair<int, int>>& e) {
         return p;
     };
     for (int t = 0; t < (int)e.size(); t++) {
-        int u = e[t].first, v0 = e[t].second, v = v0, c0 = X[u], c = c0, d = 0, a;
+        int u = e[t].first + 1, v0 = e[t].second + 1, v = v0, c0 = X[u], c = c0, d = 0, a;
         vector<pair<int, int>> L;                              // the fan: (neighbour, its free col)
         vector<char> vis(K + 1, 0);
         while (!col[u][v0]) {
@@ -53,7 +54,7 @@ vector<int> vizing(int n, const vector<pair<int, int>>& e) {
         }
     }
     vector<int> res(e.size());
-    for (int i = 0; i < (int)e.size(); i++) res[i] = col[e[i].first][e[i].second] - 1;
+    for (int i = 0; i < (int)e.size(); i++) res[i] = col[e[i].first + 1][e[i].second + 1] - 1;
     return res;                                                // res[i] in [0, D]
 }
 // D IS ENOUGH (class 1) for: bipartite graphs, every graph with a vertex of degree D that is not
