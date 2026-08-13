@@ -2,7 +2,9 @@
 // Computes all prime numbers in range [L, R] where R <= 1e12 and (R - L) <= 1e7
 struct SegmentedSieve {
     static vector<ll> get_primes_in_range(ll L, ll R) {
-        ll limit = sqrt(R);
+        ll limit = sqrtl((ld)R);
+        while (limit * limit > R) limit--;
+        while ((limit + 1) * (limit + 1) <= R) limit++;
         vector<bool> is_prime_small(limit + 1, true);
         vector<ll> primes;
         for (ll i = 2; i <= limit; i++) {
@@ -19,7 +21,7 @@ struct SegmentedSieve {
                 is_prime_range[j - L] = false;
             }
         }
-        if (L == 1) is_prime_range[0] = false;
+        for (ll x = L; x <= min(R, 1LL); x++) is_prime_range[x - L] = false;   // 0 and 1
 
         vector<ll> result;
         for (ll i = 0; i <= R - L; i++) {

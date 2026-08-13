@@ -1,93 +1,47 @@
-struct SEG {
-    ll sum = 0, lz = 0;
+// Lazy Segment Tree (range add, range sum) - build O(n), update/query O(log n)
+// 1-based node indices, 0-based positions, ALL recursions on [0, n-1].
+// To change the op: edit merge(), apply() and the identity in qry().
+struct LazySeg {
+    int n;
+    vector<ll> t, lz;
 
-    SEG() {
+    LazySeg(int n = 0) : n(n), t(4 * n, 0), lz(4 * n, 0) {}
+
+    ll merge(ll a, ll b) { return a + b; }
+    void apply(int v, int l, int r, ll x) { t[v] += x * (r - l + 1); lz[v] += x; }
+
+    void push(int v, int l, int r) {
+        if (!lz[v]) return;
+        int m = (l + r) / 2;
+        apply(2 * v, l, m, lz[v]);
+        apply(2 * v + 1, m + 1, r, lz[v]);
+        lz[v] = 0;
     }
 
-    SEG(ll x) {
-        sum = x;
+    void build(const vector<ll>& a, int v, int l, int r) {
+        if (l == r) { t[v] = a[l]; return; }
+        int m = (l + r) / 2;
+        build(a, 2 * v, l, m), build(a, 2 * v + 1, m + 1, r);
+        t[v] = merge(t[2 * v], t[2 * v + 1]);
     }
-};
+    void build(const vector<ll>& a) { if (n) build(a, 1, 0, n - 1); }
 
-struct segTree {
-    vector<SEG> seg;
-    int sz = 1, n;
-    ll NO_OP = 0;
-
-    segTree(int nn) {
-        n = nn;
-        while (sz < nn)
-            sz *= 2;
-        seg.assign(2 * sz, SEG());
+    void upd(int ql, int qr, ll x, int v, int l, int r) {
+        if (qr < l || r < ql) return;
+        if (ql <= l && r <= qr) return apply(v, l, r, x);
+        push(v, l, r);
+        int m = (l + r) / 2;
+        upd(ql, qr, x, 2 * v, l, m), upd(ql, qr, x, 2 * v + 1, m + 1, r);
+        t[v] = merge(t[2 * v], t[2 * v + 1]);
     }
+    void upd(int l, int r, ll x) { upd(l, r, x, 1, 0, n - 1); }
 
-    SEG merge(SEG seg1, SEG seg2) {
-        SEG ret;
-        ret.sum = seg1.sum + seg2.sum;
-        return ret;
+    ll qry(int ql, int qr, int v, int l, int r) {
+        if (qr < l || r < ql) return 0;                 // identity
+        if (ql <= l && r <= qr) return t[v];
+        push(v, l, r);
+        int m = (l + r) / 2;
+        return merge(qry(ql, qr, 2 * v, l, m), qry(ql, qr, 2 * v + 1, m + 1, r));
     }
-
-    void build(vector<int> &v, int x, int lx, int rx) {
-        if (lx == rx) {
-            seg[x] = SEG(v[lx]);
-            return;
-        }
-        int mid = (lx + rx) / 2;
-        int lf = 2 * x + 1, rt = 2 * x + 2;
-
-        build(v, lf, lx, mid);
-        build(v, rt, mid + 1, rx);
-        seg[x] = merge(seg[lf], seg[rt]);
-    }
-
-    void build(vector<int> &v) {
-        build(v, 0, 0, n - 1);
-    }
-
-    void push(int x, int lx, int rx) {
-        if (seg[x].lz != NO_OP) {
-            seg[x].sum += seg[x].lz * (rx - lx + 1);
-            int lf = 2 * x + 1, rt = 2 * x + 2;
-            if (lx != rx) {
-                seg[lf].lz += seg[x].lz;
-                seg[rt].lz += seg[x].lz;
-            }
-            seg[x].lz = NO_OP;
-        }
-    }
-
-    void update(int l, int r, ll val, int x, int lx, int rx) {
-        push(x, lx, rx);
-        if (l > rx || r < lx)
-            return;
-        if (l <= lx && r >= rx) {
-            seg[x].lz += val;
-            push(x, lx, rx);
-            return;
-        }
-        int mid = (lx + rx) / 2, lf = 2 * x + 1, rt = 2 * x + 2;
-        update(l, r, val, lf, lx, mid);
-        update(l, r, val, rt, mid + 1, rx);
-        seg[x] = merge(seg[lf], seg[rt]);
-    }
-
-    void update(int l, int r, ll val) {
-        update(l, r, val, 0, 0, sz - 1);
-    }
-
-    SEG query(int l, int r, int x, int lx, int rx) {
-        push(x, lx, rx);
-        if (l <= lx && r >= rx)
-            return seg[x];
-        if (l > rx || r < lx)
-            return SEG();
-
-        int mid = (lx + rx) / 2, lf = 2 * x + 1, rt = 2 * x + 2;
-
-        return merge(query(l, r, lf, lx, mid), query(l, r, rt, mid + 1, rx));
-    }
-
-    SEG query(int l, int r) {
-        return query(l, r, 0, 0, sz - 1);
-    }
+    ll qry(int l, int r) { return qry(l, r, 1, 0, n - 1); }
 };

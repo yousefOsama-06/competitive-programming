@@ -1,3 +1,7 @@
+// CENTROID DECOMPOSITION - recursively remove the centroid (the vertex whose largest remaining
+// component is <= n/2), giving a decomposition tree of depth O(log n). Every path in the original
+// tree passes through the centroid of some level, which turns path-counting problems into
+// "for each centroid, combine the distance lists of its components" in O(n log n).
 class CentroidDecomposition {
 private:
     int n;

@@ -1,3 +1,5 @@
+// KMP. pi[i] = length of the longest proper border of s[0..i] (prefix that is also a suffix).
+// Gives O(n+m) substring search, the period of a prefix (i+1 - pi[i]), and the automaton for DP.
 vector<int> compute_pi(const string &s) {
     int n = s.size();
     vector<int> pi(n);

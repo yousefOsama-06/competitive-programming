@@ -1,3 +1,5 @@
+// HAND-ROLLED FAST IO (fread/fwrite buffered). Use only when cin with sync off is measurably too
+// slow: >1e6 numbers to read, or heavy output. Otherwise prefer the template's ios::sync_with_stdio.
 const int MOD = 1e9 + 7;
 const int BUF_SZ = 1 << 15;
 

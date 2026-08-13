@@ -1,0 +1,58 @@
+Stirling numbers of the first kind : the number of permutations of n elements with k disjoint cycles
+S(n,k) = n * S(n-1,k) + S(n-1,k-1)
+Sum k = 0 -> n of S(n,k) = n!
+
+Stirling numbers of the second kind : the number of ways to partition a set of n elements into k nonempty subsets
+S(n,k) = k * S(n-1,k) + S(n-1,k-1)
+Sum k = 0 -> n of S(n,k) = Bn
+
+Bell numbers : the possible partitions of a set into nonempty subsets
+Sum k = 0 -> n-1 of n-1Ck * Bk = Bn
+
+Sum of first n even numbers : n*(n+1)
+Sum of first n odd numbers : n*n
+
+Sum of squares of first n numbers:
+n*(n+1)*(2*n+1)/6
+Sum of squares of first n even numbers:
+2*n*(n+1)*(2*n+1)/3
+Sum of squares of first n odd numbers:
+n*(2*n+1)*(2*n-1)/3
+
+Number of ways to pick equal number of elements from two sets : (n+m)C(m)
+
+Sum of phi(d) for all d | n is equal to n.
+Number of pairs (x, y) that satisfy x + y = n and gcd(x, y) = 1 is phi(n).
+
+
+Sum(nCk) for k [0,n] = 2^n
+Sum(mCk) for all m [0,n] = (n+1)C(k+1)
+Sum((n+k)Ck) for all k [0,m] = (n+m+1)C(m)
+Sum((nCk)^2) for all k [0,n] = (2*n)Cn
+Sum(i*nCi) for all i [1,n] = n*2^(n-1)
+Sum((n-i)Ci) for all i [0,n] = F(n+1)
+Number of arrays with size n and sum m = (n-1+m)C(m) = (n-1+m)C(n-1)
+
+P(A|B) is the probability of event A given that event B happened.
+P(A&B) is the probability of events A and B happening.
+
+P(A|B) = (P(B|A) * P(A) ) / P(B)
+P(A|B) = P(A&B) / P(B)
+
+
+Divisible by 2 if the rightmost digit is divisible by 2 
+Divisible by 3 if the sum of the digits is divisible by 3 
+Divisible by 4 if the number formed by the last two digits is divisible by 4 
+Divisible by 5 if the rightmost digit is 0 or 5
+Divisible by 6 if it's divisible by 2 and 3
+Divisible by 7 if {The number formed by all digits except the right-most digit - (2 * right-most digit) is divisible by 7
+Divisible by 8 if the number formed by the last 3 digits is divisible by 8
+Divisible by 9 if the sum of the digits is divisible by 9
+
+-Getting half of the binomial expansion (Only odd indices or only even indices) by using (a+b)^n and (a-b)^n and adding both of them
+
+To solve quadratic equation a*x^2 + b*x + c = 0
+x = -b (+-)sqrt(b^2-4*a*c) / (2 * a)
+
+-Sum of geometric series ar^i (i from 0 to n) = a(1 - r^n) / (1 - r)
+-Sum of geometric series ar^i (i from 0 to infinity) = a / (1 - r)

@@ -1,3 +1,5 @@
+// NOTE: 08 - Spanning Trees/01 - MST.cpp declares an identical `struct Edge`.
+//       If you paste both, keep only ONE copy of it.
 // Bellman-Ford Shortest Path with Negative Cycle Detection - O(V * E)
 struct Edge {
     int u, v;

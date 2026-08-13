@@ -1,3 +1,6 @@
+// MO'S ON SUBTREES - flatten the tree with an Euler tour so every subtree is a contiguous range,
+// then run plain Mo's on it. Same O((n + q) sqrt n). Use for "query over the subtree of v" when no
+// online structure fits (distinct colours in a subtree, k-th most frequent, etc.).
 class MoSubtree {
 private:
     struct Query {

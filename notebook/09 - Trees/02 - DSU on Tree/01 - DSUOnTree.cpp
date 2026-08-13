@@ -1,3 +1,6 @@
+// DSU ON TREE (small to large) - answers offline subtree queries in O(n log n) by keeping the heavy
+// child's data and re-adding only the light subtrees. Each vertex is added O(log n) times.
+// Use it for "most frequent colour in each subtree" style problems where merging maps would be O(n^2).
 class DSUOnTree {
 private:
     struct Query {
@@ -25,7 +28,7 @@ private:
         // Example: freq[c[u] - 'a']++;
 
         for (int v : adj[u]) {
-            if (v == p || big[v]) continue; // Skip parent and heavy child[cite: 4]
+            if (v == p || big[v]) continue; // Skip parent and heavy child
             add(v, u);
         }
     }
@@ -35,7 +38,7 @@ private:
         // Example: freq[c[u] - 'a']--;
 
         for (int v : adj[u]) {
-            if (v == p || big[v]) continue; // Skip parent and heavy child[cite: 4]
+            if (v == p || big[v]) continue; // Skip parent and heavy child
             remove(v, u);
         }
     }
@@ -52,14 +55,14 @@ private:
         for (int v : adj[u]) {
             if (v == p) continue;
             pre(v, u);
-            sz[u] += sz[v]; // Compute subtree size[cite: 4]
+            sz[u] += sz[v]; // Compute subtree size
         }
     }
 
     void dfs(int u, int p = 0, bool keep = false) {
         int mx = -1, bigChild = -1;
         
-        // Find the heavy child[cite: 4]
+        // Find the heavy child
         for (int v : adj[u]) {
             if (v == p) continue;
             if (sz[v] > mx) {
@@ -68,32 +71,32 @@ private:
             }
         }
 
-        // Process light children and clear them[cite: 4]
+        // Process light children and clear them
         for (int v : adj[u]) {
             if (v == p || v == bigChild) continue;
             dfs(v, u, false);
         }
 
-        // Process heavy child and keep it[cite: 4]
+        // Process heavy child and keep it
         if (bigChild != -1) {
             dfs(bigChild, u, true);
             big[bigChild] = true; 
         }
 
-        // Add current node and its light children[cite: 4]
+        // Add current node and its light children
         add(u, p);
         
-        // Answer all queries for the current node[cite: 4]
+        // Answer all queries for the current node
         for (const auto& q : queries[u]) {
             ans[q.idx] = get_answer(u, q.x);
         }
 
-        // Reset the big child flag[cite: 4]
+        // Reset the big child flag
         if (bigChild != -1) {
             big[bigChild] = false;
         }
 
-        // Clear state if this node is not meant to be kept[cite: 4]
+        // Clear state if this node is not meant to be kept
         if (!keep) {
             remove(u, p);
         }
@@ -121,8 +124,8 @@ public:
 
     vector<int> solve(int root, int num_queries) {
         ans.assign(num_queries, 0);
-        pre(root, 0); // Precalculate sizes and depths[cite: 4]
-        dfs(root, 0, false); // Run the sack algorithm[cite: 4]
+        pre(root, 0); // Precalculate sizes and depths
+        dfs(root, 0, false); // Run the sack algorithm
         return ans;
     }
 };

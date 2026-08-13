@@ -1,3 +1,7 @@
+// NOTE: 01 - Miscellaneous/04 - random.cpp declares the same `rng`. Keep one copy.
+// TREAP (keyed) - a BST by key and a heap by random priority, so it is balanced in expectation.
+// O(log n) insert/erase/find, plus split and merge, which is what makes it better than std::set:
+// you can cut the tree at a key, operate on a whole range, and glue it back.
 mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
 
 template <typename T>

@@ -1,0 +1,18 @@
+struct XOR_Basis {
+    vector<int> basis;
+    int sz;
+
+    XOR_Basis() {
+        sz = 0;
+    }
+
+    void insert_vector(int x) {
+        for (auto y: basis)x = min(x, x ^ y);
+        if (x)basis.push_back(x), sz++;
+    }
+
+    bool can_represent(int x) {
+        for (auto y: basis)x = min(x, x ^ y);
+        return x == 0;
+    }
+};

@@ -1,0 +1,9 @@
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz
+.DS_Store
+
+# reference clones of other teams notebooks, kept locally for comparison only
+temps/

@@ -1,0 +1,162 @@
+// PALINDROMIC TREE (eertree) - O(n) nodes, one per DISTINCT palindromic substring, built online in
+// O(n). Gives the count of distinct palindromes, occurrence counts, and the longest palindromic
+// suffix at every prefix - which is what palindromic-factorization DP needs.
+struct PalindromeTree {
+    int n, id, cur, tot;
+    vector<array<int, 26>> go;
+
+    // Core structural links
+    vector<int> suflink, len, cnt;
+
+    // Extentions for Hard DP (Palindrome Partitioning)
+    vector<int> diff;   // Difference in length to the suffix link
+    vector<int> slink;  // Series link (skips arithmetic progressions of suffix links)
+
+    // Extensions for counting
+    vector<int> num;    // Number of palindromic suffixes ending at this node
+    long long total_overlapping; // Running sum of total palindromes
+
+    PalindromeTree() {}
+
+    PalindromeTree(const string &s) {
+        build(s);
+    }
+
+    void init(int max_len) {
+        n = max_len;
+        go.assign(n + 2, {});
+        suflink.assign(n + 2, 0);
+        len.assign(n + 2, 0);
+        cnt.assign(n + 2, 0);
+        diff.assign(n + 2, 0);
+        slink.assign(n + 2, 0);
+        num.assign(n + 2, 0);
+
+        suflink[0] = suflink[1] = 1;
+        len[1] = -1;
+        id = 2;
+        cur = 0;
+        tot = 0;
+        total_overlapping = 0;
+    }
+
+    int get(const string &s, int i, int v) {
+        while (i - len[v] - 1 < 0 || s[i - len[v] - 1] != s[i]) {
+            v = suflink[v];
+        }
+        return v;
+    }
+
+    void add(const string &s, int i) {
+        int ch = s[i] - 'a';
+        cur = get(s, i, cur);
+
+        if (go[cur][ch] == 0) {
+            len[id] = 2 + len[cur];
+            suflink[id] = go[get(s, i, suflink[cur])][ch];
+
+            // 1. Number of palindromes ending exactly here
+            num[id] = num[suflink[id]] + 1;
+
+            // 2. Arithmetic Progression / Series Links for DP
+            diff[id] = len[id] - len[suflink[id]];
+            if (diff[id] == diff[suflink[id]]) {
+                slink[id] = slink[suflink[id]];
+            } else {
+                slink[id] = suflink[id];
+            }
+
+            tot++;
+            go[cur][ch] = id++;
+        }
+        cur = go[cur][ch];
+        cnt[cur]++;
+        total_overlapping += num[cur];
+    }
+
+    // Standard build
+    void build(const string &s) {
+        init(s.length());
+        for (int i = 0; i < n; i++) {
+            add(s, i);
+        }
+        countAll();
+    }
+
+    // Call this to push frequencies down the suffix links
+    void countAll() {
+        for (int i = id - 1; i >= 2; --i) {
+            cnt[suflink[i]] += cnt[i];
+        }
+    }
+
+    // --- Black-Box Solvers ---
+
+    // 1. Returns number of unique palindromes
+    int cntDistinct() {
+        return tot;
+    }
+
+    // 2. Returns total number of palindromes (including overlaps/duplicates)
+    long long cntTotal() {
+        return total_overlapping;
+    }
+
+    // 3. Solves Minimum Palindrome Partitioning in O(N log N)
+    // Rebuilds the tree internally to compute the DP concurrently.
+    int min_partitions(const string &s) {
+        init(s.length());
+        const int INF = 1e9;
+        vector<int> dp(s.length() + 1, INF);
+        vector<int> series_ans(s.length() + 2, INF);
+
+        dp[0] = 0;
+
+        for (int i = 0; i < s.length(); ++i) {
+            add(s, i);
+
+            for (int v = cur; v > 1; v = slink[v]) {
+                series_ans[v] = dp[i + 1 - (len[slink[v]] + diff[v])];
+
+                if (diff[v] == diff[suflink[v]]) {
+                    series_ans[v] = min(series_ans[v], series_ans[suflink[v]]);
+                }
+
+                dp[i + 1] = min(dp[i + 1], series_ans[v] + 1);
+            }
+        }
+        return dp[s.length()];
+    }
+
+    // 4. Returns an array of frequencies for string B's palindromes inside this tree (String A)
+    // Note: You must `build()` the tree with string A before calling this with B.
+    vector<int> count_string(const string& B) {
+        vector<int> out_cnt(id, 0);
+        int curr = 0;
+
+        for (int i = 0; i < B.length(); ++i) {
+            int ch = B[i] - 'a';
+
+            while (true) {
+                if (i - len[curr] - 1 >= 0 && B[i - len[curr] - 1] == B[i]) {
+                    if (go[curr][ch]) {
+                        curr = go[curr][ch];
+                        break;
+                    }
+                }
+                if (curr == 1) {
+                    curr = 0;
+                    break;
+                }
+                curr = suflink[curr];
+            }
+            out_cnt[curr]++;
+        }
+
+        for (int i = id - 1; i >= 2; --i) {
+            out_cnt[suflink[i]] += out_cnt[i];
+        }
+
+        return out_cnt;
+    }
+};

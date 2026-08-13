@@ -1,46 +1,61 @@
-#define rep(aa, bb, cc) for(int aa = bb; aa < cc;aa++)
-#define sz(a) (int)a.size()
+// FFT over complex doubles. conv() is exact while |result coefficient| < ~1e15.
+// Prefer NTT when the answer is taken modulo an NTT prime; use convMod for arbitrary moduli.
 typedef complex<double> C;
-typedef vector<double> vd;
 void fft(vector<C>& a) {
-    int n = sz(a), L = 31 - __builtin_clz(n);
+    int n = a.size(), L = 31 - __builtin_clz(n);
     static vector<complex<long double>> R(2, 1);
-    static vector<C> rt(2, 1);  // (^ 10% faster if double)
+    static vector<C> rt(2, 1);
     for (static int k = 2; k < n; k *= 2) {
-        R.resize(n); rt.resize(n);
-        auto x = polar(1.0L, acos(-1.0L) / k);
-        rep(i,k,2*k) rt[i] = R[i] = i&1 ? R[i/2] * x : R[i/2];
+        R.resize(n), rt.resize(n);
+        auto x = polar(1.0L, acosl(-1.0L) / k);
+        for (int i = k; i < 2 * k; i++) rt[i] = R[i] = i & 1 ? R[i / 2] * x : R[i / 2];
     }
-    vi rev(n);
-    rep(i,0,n) rev[i] = (rev[i / 2] | (i & 1) << L) / 2;
-    rep(i,0,n) if (i < rev[i]) swap(a[i], a[rev[i]]);
+    vector<int> rev(n);
+    for (int i = 0; i < n; i++) rev[i] = (rev[i / 2] | (i & 1) << L) / 2;
+    for (int i = 0; i < n; i++) if (i < rev[i]) swap(a[i], a[rev[i]]);
     for (int k = 1; k < n; k *= 2)
-        for (int i = 0; i < n; i += 2 * k) rep(j,0,k) {
-                // C z = rt[j+k] * a[i+j+k]; // (25% faster if hand-rolled)  /// include-line
-                auto x = (double *)&rt[j+k], y = (double *)&a[i+j+k];        /// exclude-line
-                C z(x[0]*y[0] - x[1]*y[1], x[0]*y[1] + x[1]*y[0]);           /// exclude-line
+        for (int i = 0; i < n; i += 2 * k)
+            for (int j = 0; j < k; j++) {
+                C z = rt[j + k] * a[i + j + k];
                 a[i + j + k] = a[i + j] - z;
                 a[i + j] += z;
             }
 }
- 
-template<int M> vi convMod(const vi &a, const vi &b) {
+// Real convolution. Result is rounded to the nearest integer.
+vector<ll> conv(const vector<ll>& a, const vector<ll>& b) {
     if (a.empty() || b.empty()) return {};
-    vi res(sz(a) + sz(b) - 1);
-    int B=32-__builtin_clz(sz(res)), n=1<<B, cut=int(sqrt(M));
-    vector<C> L(n), R(n), outs(n), outl(n);
-    rep(i,0,sz(a)) L[i] = C((int)a[i] / cut, (int)a[i] % cut);
-    rep(i,0,sz(b)) R[i] = C((int)b[i] / cut, (int)b[i] % cut);
+    int rs = a.size() + b.size() - 1, n = 1;
+    while (n < rs) n <<= 1;
+    vector<C> in(n), out(n);
+    for (size_t i = 0; i < a.size(); i++) in[i].real((double)a[i]);
+    for (size_t i = 0; i < b.size(); i++) in[i].imag((double)b[i]);
+    fft(in);
+    for (C& x : in) x *= x;                              // (a+bi)^2 = a^2-b^2 + 2abi
+    for (int i = 0; i < n; i++) out[i] = in[-i & (n - 1)] - conj(in[i]);
+    fft(out);
+    vector<ll> res(rs);
+    for (int i = 0; i < rs; i++) res[i] = llround(imag(out[i]) / (4 * n));
+    return res;
+}
+// Convolution modulo an ARBITRARY M, splitting coefficients at sqrt(M) to keep precision.
+vector<ll> convMod(const vector<ll>& a, const vector<ll>& b, ll M) {
+    if (a.empty() || b.empty()) return {};
+    int rs = a.size() + b.size() - 1, B = 32 - __builtin_clz(rs), n = 1 << B;
+    ll cut = (ll)sqrtl((ld)M);
+    vector<C> L(n), R(n), os(n), ol(n);
+    for (size_t i = 0; i < a.size(); i++) L[i] = C((double)(a[i] / cut), (double)(a[i] % cut));
+    for (size_t i = 0; i < b.size(); i++) R[i] = C((double)(b[i] / cut), (double)(b[i] % cut));
     fft(L), fft(R);
-    rep(i,0,n) {
+    for (int i = 0; i < n; i++) {
         int j = -i & (n - 1);
-        outl[j] = (L[i] + conj(L[j])) * R[i] / (2.0 * n);
-        outs[j] = (L[i] - conj(L[j])) * R[i] / (2.0 * n) / 1i;
+        ol[j] = (L[i] + conj(L[j])) * R[i] / (2.0 * n);
+        os[j] = (L[i] - conj(L[j])) * R[i] / (2.0 * n) / C(0, 1);
     }
-    fft(outl), fft(outs);
-    rep(i,0,sz(res)) {
-        ll av = ll(real(outl[i])+.5), cv = ll(imag(outs[i])+.5);
-        ll bv = ll(imag(outl[i])+.5) + ll(real(outs[i])+.5);
+    fft(ol), fft(os);
+    vector<ll> res(rs);
+    for (int i = 0; i < rs; i++) {
+        ll av = llround(real(ol[i])), cv = llround(imag(os[i]));
+        ll bv = llround(imag(ol[i])) + llround(real(os[i]));
         res[i] = ((av % M * cut + bv) % M * cut + cv) % M;
     }
     return res;

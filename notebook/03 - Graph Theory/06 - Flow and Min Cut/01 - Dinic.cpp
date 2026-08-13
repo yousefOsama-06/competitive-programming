@@ -1,3 +1,11 @@
+// DINIC MAX FLOW. O(V^2 E) in general, O(E sqrt(V)) on unit-capacity graphs, O(V^2 E) worst case but
+// fast in practice. After maxflow, vertices reachable from s in the residual graph form the min cut.
+// Scaling (start with big capacities) helps on dense graphs with large capacities.
+// DINIC MAX FLOW. O(V^2 E) general, O(E sqrt(E)) with unit capacities, O(E sqrt(V)) for bipartite
+// matching. This is the SCALING variant (big capacities first), so it stays fast on wide ranges.
+// addEdge(a, b, cap, rcap): pass rcap = cap for an UNDIRECTED edge. Edge::flow() recovers the flow
+// on each arc. After calc(s,t), leftOfMinCut(v) is true exactly for the SOURCE side of a minimum
+// cut - the cut edges are those from a left vertex to a right vertex. 0-indexed.
 struct Dinic {
     struct Edge {
         int to, rev;

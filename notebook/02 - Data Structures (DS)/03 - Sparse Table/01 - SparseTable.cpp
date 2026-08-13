@@ -1,4 +1,7 @@
-// Sparse Table (Range Minimum/Maximum Query) - O(N log N) build, O(1) query
+// SPARSE TABLE - O(1) range query after O(N log N) build, NO updates.
+// The operation must be IDEMPOTENT (min, max, gcd, and, or) because the two covering blocks
+// OVERLAP. For sum/product/xor - anything not idempotent - use 12 - DisjointSparseTable.cpp
+// (still O(1) query) or a Fenwick tree. Guard l <= r: __lg(0) is undefined.
 template<typename T, typename F = function<T(T, T)>>
 struct SparseTable {
     int n;

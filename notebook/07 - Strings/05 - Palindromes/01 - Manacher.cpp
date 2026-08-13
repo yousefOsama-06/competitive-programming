@@ -1,3 +1,5 @@
+// MANACHER - the radius of the longest palindrome centred at every position, in O(n).
+// Answers "is s[l..r] a palindrome" in O(1) and counts all palindromic substrings in one pass.
 struct Manacher {
     vector<int> p;
     

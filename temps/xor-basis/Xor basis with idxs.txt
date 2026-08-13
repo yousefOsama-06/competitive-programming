@@ -1,0 +1,49 @@
+const int LOG = 64;
+struct Basis {
+    ll basis[LOG];
+    int idxs[LOG];
+    bitset<LOG> masks[LOG];
+    int sz;
+
+    Basis() {
+        sz = 0;
+        for (int i = LOG - 1; i >= 0; --i) {
+            basis[i] = 0;
+            masks[i] = 0;
+            idxs[i] = -1;
+        }
+    }
+    void insert(ll x, int idx) {
+        bitset<LOG> curr;
+        for (int i = LOG - 1; i >= 0; --i) {
+            if ((x & (1ll << i)) == 0) continue;
+            if (!basis[i]) {
+                basis[i] = x;
+                idxs[i] = idx;
+                curr[i] = 1;
+                masks[i] = curr;
+                ++sz;
+                return;
+            }
+            x ^= basis[i];
+            curr ^= masks[i];
+        }
+    }
+    pair<bool, vector<ll>> can(ll x) {
+        bitset<LOG> curr;
+        for (int i = LOG - 1; i >= 0; --i) {
+            if(basis[i] && (x & (1ll<<i))) {
+                x ^= basis[i];
+                curr ^= masks[i];
+            }
+        }
+
+        if(x) return {0, {}};
+        vector<ll> ans;
+        for (int i = 0; i < LOG; ++i) {
+            if (curr[i]) ans.push_back(idxs[i]);
+        }
+
+        return {1, ans};
+    }
+};

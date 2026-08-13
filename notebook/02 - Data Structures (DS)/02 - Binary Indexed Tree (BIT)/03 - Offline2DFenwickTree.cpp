@@ -10,8 +10,8 @@ struct BIT2D {
         return upper_bound(all(v), x) - v.begin() - 1;
     }
 
-    // n: max row index, todo: all (r, c) update coordinates that will be called
-    BIT2D(int n, vector<array<int, 2>> todo) : n(n + 1), vals(n + 1), bit(n + 1) {
+    // mx: max row index, todo: all (r, c) update coordinates that will be called
+    BIT2D(int mx, vector<array<int, 2>> todo) : n(mx), vals(mx + 1), bit(mx + 1) {
         sort(all(todo), [](const auto& a, const auto& b) { return a[1] < b[1]; });
 
         for (int i = 0; i <= n; i++) vals[i].pb(INT_MIN);

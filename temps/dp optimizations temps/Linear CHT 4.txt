@@ -1,0 +1,105 @@
+/*
+  Convex Hull Trick (deque version) supporting:
+    - min or max queries (IS_MAX)
+    - slopes inserted in increasing or decreasing order (SLOPE_INC)
+
+  Usage:
+    // min query, slopes inserted in decreasing order, queries x non-decreasing:
+    ConvexHullTrick<false, false> cht;
+
+    // max query, slopes inserted in increasing order, queries x non-increasing:
+    ConvexHullTrick<true, true> cht2;
+
+  Methods:
+    add_line(m, c)    // add line y = m*x + c (m, c are long long)
+    query(x)          // returns best y at integer x (long long)
+*/
+template <bool IS_MAX = false, bool SLOPE_INC = false>
+struct ConvexHullTrick {
+    struct Line {
+        long long m, c;
+        long double intersect(const Line& o) const {
+            // intersection x-coordinate of this and o:
+            // (o.c - c) / (m - o.m)
+            return (long double)(o.c - c) / (long double)(m - o.m);
+        }
+        long long eval(long long x) const {
+            __int128 t = (__int128)m * (__int128)x + (__int128)c;
+            return (long long)t;
+        }
+    };
+
+    deque<Line> dq;
+
+    // add line y = m*x + c
+    void add_line(long long m, long long c) {
+        // convert max-queries into min-queries by negating values.
+        if constexpr (IS_MAX) {
+            m = -m; c = -c;
+        }
+
+        Line cur{m, c};
+
+        // handle duplicate slope: keep the better (smaller c for min).
+        if (!dq.empty() && dq.back().m == cur.m) {
+            if (dq.back().c <= cur.c) {
+                // existing line is better (we are doing canonical MIN), so ignore new
+                return;
+            } else {
+                // new is better
+                dq.pop_back();
+            }
+        }
+
+        // pop while the new line makes the previous line useless.
+        while (dq.size() >= 2) {
+            Line last = dq.back();
+            Line prev = dq[dq.size() - 2];
+            long double x1 = cur.intersect(last);
+            long double x2 = last.intersect(prev);
+            // For slopes increasing we pop when x1 >= x2
+            // For slopes decreasing we pop when x1 <= x2
+            if constexpr (SLOPE_INC) {
+                if (x1 >= x2) dq.pop_back();
+                else break;
+            } else {
+                if (x1 <= x2) dq.pop_back();
+                else break;
+            }
+        }
+        dq.push_back(cur);
+    }
+
+    // query at x. Note: queries must be monotonic in the correct direction:
+    //  - if SLOPE_INC == false (slopes decreasing) -> query x must be non-decreasing
+    //  - if SLOPE_INC == true  (slopes increasing) -> query x must be non-increasing
+    long long query(long long x) {
+        if (dq.empty()) {
+            // user should ensure hull not empty before query
+            throw runtime_error("CHT: query on empty hull");
+        }
+        while (dq.size() >= 2) {
+            long double ix = dq[0].intersect(dq[1]);
+            if constexpr (SLOPE_INC) {
+                // intersections are (non-)increasing in the opposite direction,
+                // so for SLOPE_INC true we want to pop while ix >= x (queries should be non-increasing)
+                if (ix >= (long double)x) dq.pop_front();
+                else break;
+            } else {
+                // SLOPE_INC == false: pop while ix <= x (queries non-decreasing)
+                if (ix <= (long double)x) dq.pop_front();
+                else break;
+            }
+        }
+        long long ans = dq.front().eval(x);
+        if constexpr (IS_MAX) {
+            // we negated values on insert for canonical min handling
+            return -ans;
+        } else {
+            return ans;
+        }
+    }
+
+    bool empty() const { return dq.empty(); }
+    void clear() { dq.clear(); }
+};

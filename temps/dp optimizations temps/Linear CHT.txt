@@ -1,0 +1,26 @@
+// Get min, Slope is decreasing
+
+struct Line {
+    long long m, c;
+    double intersect(Line other) {
+        return ((double) other.c - c) / (m - other.m);
+    }
+    long long eval(int x) {
+        return m * x + c;
+    }
+};
+ 
+void insertHull (deque<Line>& lines, long long m, long long c) {
+    Line cur = {m, c};
+    while (lines.size() >= 2 && cur.intersect(lines[lines.size() - 1]) <= cur.intersect(lines[lines.size() - 2])) {
+        lines.pop_back();
+    }
+    lines.push_back(cur);
+}
+ 
+long long getHull (deque<Line>& lines, int x) {
+    while (lines.size() >= 2 && lines[0].intersect(lines[1]) <= x) {
+        lines.pop_front();
+    }
+    return lines.front().eval(x);
+}

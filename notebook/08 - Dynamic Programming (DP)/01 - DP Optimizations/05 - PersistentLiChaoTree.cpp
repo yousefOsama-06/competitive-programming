@@ -45,7 +45,8 @@ struct Node {
     }
 
     Node *add(Line toAdd, int l, int r) {
-        int mid = (l + r) / 2;
+        int mid = l + (r - l) / 2;    // NOT (l+r)/2: that truncates toward ZERO, so on a negative
+                                      // interval the left child equals the parent -> infinite recursion
         Node *cur = copy(this);
         if (l == r) {
             if (sub(l, toAdd) < sub(l, cur->line))
@@ -72,7 +73,8 @@ struct Node {
     }
 
     ll query(ll x, int l, int r) {
-        int mid = (l + r) / 2;
+        int mid = l + (r - l) / 2;    // NOT (l+r)/2: that truncates toward ZERO, so on a negative
+                                      // interval the left child equals the parent -> infinite recursion
         if (l == r || left == NULL)
             return sub(x, line);
         extend(l, r);
@@ -95,4 +97,5 @@ struct Node {
     }
 };
 
+const int N = 200005;                            // #versions; also in 01 - Template.cpp
 Node *tree[N];

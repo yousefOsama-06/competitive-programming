@@ -1,3 +1,6 @@
+// SUFFIX ARRAY + LCP + sparse table for O(1) LCE. Build is O(n log n) (prefix doubling with a radix
+// sort), Kasai gives the LCP array in O(n). Everything you can ask about substrings reduces to a
+// range on this array - see 03 - SuffixArrayApplications.cpp.
 struct SuffixArray {
     string S;
     // sa is the suffix array with the empty suffix being sa[0]
@@ -44,26 +47,23 @@ struct SuffixArray {
         for (int i = 2; i < n + 5; ++i) {
             logs[i] = logs[i / 2] + 1;
         }
-        table = vector<vector<int>>(n, vector<int>(20));
-        for (int i = 0; i < n; ++i) {
-            table[i][0] = lcp[i];
-        }
-
-        for (int j = 1; j <= logs[n]; ++j) {
-            for (int i = 0; i <= n - (1 << j); ++i) {
-                table[i][j] = min(table[i][j - 1], table[i + (1 << (j - 1))][j - 1]);
-            }
-        }
+        // level-major: sized by logs[n], not a hard-coded 20 (which is OUT OF BOUNDS at
+        // |s| >= 2^20 - and Codeforces routinely gives |s| up to 1e6), and no dead columns.
+        table = vector<vector<int>>(logs[n] + 1, vector<int>(n));
+        for (int i = 0; i < n; ++i) table[0][i] = lcp[i];
+        for (int j = 1; j <= logs[n]; ++j)
+            for (int i = 0; i + (1 << j) <= n; ++i)
+                table[j][i] = min(table[j - 1][i], table[j - 1][i + (1 << (j - 1))]);
     }
 
+    // ARGUMENTS ARE SUFFIX-ARRAY INDICES, not string positions. For two string positions
+    // p and q use  lce(p, q)  below, which is what every application actually wants.
     int queryLcp(int i, int j) {
-//        if (i == j)return (int) S.size() - i;
-//        i = rank[i], j = rank[j];
-        if (i == j)return (int) S.size() - sa[i];
-        if (i > j)
-            swap(i, j);
+        if (i == j) return (int)S.size() - sa[i];
+        if (i > j) swap(i, j);
         i++;
         int len = logs[j - i + 1];
-        return min(table[i][len], table[j - (1 << len) + 1][len]);
+        return min(table[len][i], table[len][j - (1 << len) + 1]);
     }
+    int lce(int p, int q) { return queryLcp(rank[p], rank[q]); }   // longest common extension
 };

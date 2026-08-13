@@ -1,3 +1,6 @@
+// HEAVY-LIGHT DECOMPOSITION - splits the tree into chains so any root-to-node path crosses O(log n)
+// of them; combined with a segment tree it gives path update/query in O(log^2 n).
+// Subtrees are contiguous in tin[], so subtree queries are a single range on the same tree.
 class HLD {
 public:
     vector<int> par, sz, head, tin, tout, who, depth;

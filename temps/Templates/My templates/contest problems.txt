@@ -1,0 +1,4 @@
+https://dmoj.ca/problem/aac1p3 1000
+https://dmoj.ca/problem/aac1p5 2000
+https://dmoj.ca/problem/aac2p1 1100
+https://dmoj.ca/problem/bpc1j4 1800

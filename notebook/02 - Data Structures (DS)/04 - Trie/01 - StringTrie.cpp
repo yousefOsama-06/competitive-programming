@@ -1,3 +1,5 @@
+// PREFIX TRIE over an alphabet. O(L) per insert/query. Reach for it for prefix counting, autocomplete,
+// "is any inserted word a prefix of this one", and as the skeleton Aho-Corasick is built on.
 // Prefix Trie for Strings
 // Time: O(L) per insert/query, Space: O(N * L * Alphabet)
 struct Trie {

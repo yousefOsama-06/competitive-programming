@@ -1,3 +1,10 @@
+// HOPCROFT-KARP - maximum bipartite matching in O(E sqrt(V)), the fast alternative to Kuhn's O(VE).
+// Use it when n is above a few thousand; below that Kuhn is shorter and fast enough.
+// HOPCROFT-KARP - maximum bipartite matching in O(E sqrt(V)), the fast alternative to Kuhn's
+// O(VE). Use above a few thousand vertices; below that Kuhn (02) is shorter and fast enough.
+// INDEXING TRAP: leftMatch has size m and is indexed by a RIGHT vertex; rightMatch has size n and
+// is indexed by a LEFT vertex. Reading the names the obvious way is the default way to get this
+// wrong. For the minimum vertex cover / maximum independent set (Konig), see 02 - KuhnAndKonig.
 struct HopcroftKarp {
     vector<int> leftMatch, rightMatch, dist, cur;
     vector<vector<int> > a;

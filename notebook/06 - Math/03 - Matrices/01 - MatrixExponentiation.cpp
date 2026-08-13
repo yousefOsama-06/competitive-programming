@@ -1,54 +1,25 @@
-int modSum(ll a, ll b) {
-    if (a < 0)
-        a += MOD;
-    if (b < 0)
-        b += MOD;
-    a += b;
-    if (a >= MOD)
-        a -= MOD;
-    return a;
-}
+// Needs: Mint (01 - Modular Arithmetic/01 - Mint.cpp).
+// Matrix over Mint. mul O(n^3) (cache-friendly i-k-j order), pow O(n^3 log e).
+// Fix the size at compile time (array<array<Mint,K>,K>) if you need the last 2x speedup.
+typedef vector<vector<Mint>> Mat;
 
-int modProd(ll a, ll b) {
-    if (a < 0)
-        a += MOD;
-    if (b < 0)
-        b += MOD;
-    a *= b;
-    if (a >= MOD)
-        a %= MOD;
-    return a;
+Mat operator*(const Mat& a, const Mat& b) {
+    int n = a.size(), k = b.size(), m = b[0].size();
+    Mat c(n, vector<Mint>(m));
+    for (int i = 0; i < n; i++)
+        for (int t = 0; t < k; t++) if (a[i][t].v)
+            for (int j = 0; j < m; j++) c[i][j] += a[i][t] * b[t][j];
+    return c;
 }
-
-typedef vector<vector<int>> matrix;
-
-matrix operator*(const matrix& lhs, const matrix& rhs) {
-    int n = lhs.size();
-    int m = rhs[0].size();
-    int s1 = lhs[0].size(), s2 = rhs.size();
-    assert(s1 == s2);
-    matrix ret(n, vector<int>(m));
-    for (int i = 0; i < n; ++i)
-        for (int j = 0; j < s1; ++j)
-            for (int k = 0; k < m; ++k)
-                ret[i][k] = modSum(ret[i][k], modProd(lhs[i][j], rhs[j][k]));
-    return ret;
+Mat eye(int n) { Mat r(n, vector<Mint>(n)); for (int i = 0; i < n; i++) r[i][i] = 1; return r; }
+Mat mpow(Mat a, ll e) {
+    Mat r = eye(a.size());
+    for (; e > 0; e >>= 1, a = a * a) if (e & 1) r = r * a;
+    return r;
 }
-
-matrix Identity(int n) {
-    matrix ret(n, vector<int>(n));
-    for (int i = 0; i < n; ++i) {
-        ret[i][i] = 1;
-    }
-    return ret;
-}
-
-matrix mat_power(matrix x, ll p) {
-    matrix res = Identity(x.size());
-    while (p) {
-        if (p & 1) res = (res * x);
-        x = (x * x);
-        p >>= 1;
-    }
-    return res;
-}
+// RECIPES
+//  Linear recurrence f(n) = c1*f(n-1) + ... + ck*f(n-k):
+//    companion matrix, first row = (c1..ck), subdiagonal = 1.  f(n) = (M^(n-k) * [f(k-1)..f(0)]^T)[0]
+//  Add a "+d" constant term: enlarge by one row/col with a 1 on the diagonal, put d in the first row.
+//  Count walks of length L between u and v: (A^L)[u][v] where A is the adjacency matrix.
+//  Shortest walk with exactly L edges: same, but replace (+,*) with (min,+) — "min-plus product".

@@ -1,0 +1,40 @@
+const int LOG = 63;
+struct Basis {
+    ll basis[LOG];
+    int lst_idx[LOG];
+    int sz;
+
+    Basis() {
+        sz = 0;
+        for (int i = LOG - 1; i >= 0; --i) {
+            basis[i] = 0;
+            lst_idx[i] = -1;
+        }
+    }
+    void insert(ll x, int idx) {
+        for (int i = LOG - 1; i >= 0; --i) {
+            if ((x & (1ll << i)) == 0) continue;
+            if(lst_idx[i] < idx) {
+                if(lst_idx[i] == -1) sz++;
+                swap(x, basis[i]);
+                swap(lst_idx[i], idx);
+            }
+            x ^= basis[i];
+        }
+    }
+    ll get_max(int l) {
+        int ans = 0;
+        for (int i = LOG - 1; i >= 0; --i) {
+            if(basis[i] && !(ans & (1ll<<i)) && lst_idx[i] >= l)
+                ans ^= basis[i];
+        }
+        return ans;
+    }
+    bool can(ll x,int l) {
+            for (int i = LOG - 1; i >= 0; --i) {
+                if(basis[i] && (x & (1ll<<i)) && lst_idx[i] >= l)
+                    x ^= basis[i];
+            }
+            return x == 0;
+    }
+};

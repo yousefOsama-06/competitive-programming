@@ -1,3 +1,5 @@
+// MO'S ON TREE PATHS - the Euler tour trick where a vertex appearing TWICE in the range cancels out,
+// plus the LCA added back by hand. Answers path queries offline in O((n + q) sqrt n) with no HLD.
 class MoTreePath {
 private:
     int n, LOG, block_size;
@@ -122,11 +124,24 @@ public:
         adj[v].push_back(u);
     }
 
-    vector<long long> solve(int root, vector<Query>& queries) {
+    // PRIMARY ENTRY POINT: give it the paths as vertex pairs and it builds the queries itself.
+    // (in[], out[] and lca() are only valid AFTER the dfs, so you cannot build them yourself.)
+    vector<long long> solve(int root, const vector<pair<int, int>>& paths) {
         flat.clear();
         dfs(root);
         build_lca();
-
+        vector<Query> queries;
+        for (int i = 0; i < (int)paths.size(); i++) {
+            int u = paths[i].first, v = paths[i].second;
+            if (in[u] > in[v]) swap(u, v);
+            int w = lca(u, v);
+            // u inside v's subtree -> plain range; otherwise use out[u]..in[v] and add back the LCA
+            if (w == u) queries.push_back({in[u], in[v], i, -1, 0});
+            else queries.push_back({out[u], in[v], i, w, 0});
+        }
+        return solveRanges(queries);
+    }
+    vector<long long> solveRanges(vector<Query>& queries) {
         int q = queries.size();
         if (q == 0) return {};
         
@@ -142,10 +157,10 @@ public:
         int cur_l = 0, cur_r = -1;
 
         for (const Query& qry : queries) {
+            while (cur_l > qry.l) update(--cur_l);       // GROW first, then shrink - the other
+            while (cur_r < qry.r) update(++cur_r);       // order can pass through an invalid window
             while (cur_l < qry.l) update(cur_l++);
             while (cur_r > qry.r) update(cur_r--);
-            while (cur_l > qry.l) update(--cur_l);
-            while (cur_r < qry.r) update(++cur_r);
 
             answers[qry.idx] = get_answer() + (qry.x != -1 ? up[qry.x] : 0);
         }

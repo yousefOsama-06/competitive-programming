@@ -1,0 +1,65 @@
+//r0x + r1y = gcd(r0, r1)
+ll egcd(ll r0,ll r1,ll &x0,ll &y0){
+    ll x1 = y0 = 0, y1 = x0 = 1;
+    while (r1) {
+        ll q = r0 / r1, t = r0 - q * r1;
+        r0 = r1, r1 = t;
+        t = x0 - q * x1;
+        x0 = x1, x1 = t;
+        t = y0 - q * y1;
+        y0 = y1, y1 = t;
+    }
+    return r0;
+}
+
+//ax + by = c
+//x, y are the initial candidate answers
+//x' = x - k * (b / g)
+//y' = y + k * (a / g)
+//Where k is any integer number
+//The first solution minimize |x|+|y| (not will tested)
+bool solveLDE(ll a, ll b, ll c, ll &x, ll &y, ll &g) {
+    g = egcd(a, b, x, y);
+    if (c % g != 0) return false; // No solution
+    ll m = c / g;
+    x *= m, y *= m;
+    return true; // Solution exists
+}
+
+//Get the Kth solution
+void bezout(ll a, ll b, ll &x, ll &y, ll g, ll k) {
+    x -= k * (b / g);
+    y += k * (a / g);
+}
+
+//The valid range of k that makes (x' >= 0) && (y' >= 0)
+bool get_non_negative_range(ll a, ll b, ll x, ll y, ll g, ll &k1, ll &k2) {
+    a /= g;
+    b /= g;
+    k1 = ceill(1.0 * -y / a);
+    k2 = floorl(1.0 * x / b);
+    return k1 <= k2;
+}
+
+//a and m must be coprimes
+ll modInv(ll a, ll m) {
+    ll x, y;
+    if(egcd(a, m, x, y) != 1) return -1; // no inverse exist
+    return (x % m + m) % m;
+}
+
+bool CRT_General(pair<ll, ll> p1, pair<ll, ll> p2, pair<ll, ll> &ans) {
+    auto &[m1, r1] = p1;
+    auto &[m2, r2] = p2;
+
+    ll q1, q2, g;
+    if(!solveLDE(m1, -m2, r2 - r1, q1, q2, g)) return 0;
+
+    ll lcm = m1 / abs(g) * m2;
+    q1 %= m2 / g;
+    ll r = (q1 * m1 + r1) % lcm;
+    if(r < 0) r += lcm;
+    ans = {lcm, r};
+
+    return 1;
+}

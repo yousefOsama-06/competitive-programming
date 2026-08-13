@@ -1,0 +1,26 @@
+ll fastpow(ll n, ll m) {
+    ll ret = 1;
+    while (m) {
+        if (m & 1)
+            (ret *= n) %= mod;
+        (n *= n) %= mod;
+        m /= 2;
+    }
+    return ret;
+}
+
+ll fact[N], modinv[N];
+void pre() {
+    fact[0] = 1;
+    for (ll i = 1; i < N; i++)
+        fact[i] = fact[i - 1] * i, fact[i] %= mod;
+    modinv[N - 1] = fastpow(fact[N - 1], mod - 2);
+    for (ll i = N - 2; i >= 0; i--)
+        modinv[i] = (i + 1) * modinv[i + 1] % mod;
+
+}
+ll ncr(ll n, ll r) {
+    if (r > n || r < 0)
+        return 0;
+    return fact[n] * modinv[r] % mod * modinv[n - r] % mod;
+}

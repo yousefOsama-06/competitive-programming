@@ -1,3 +1,4 @@
+// NOTE: extGCD below is the same one as in 01 - Euclidean Algorithm. Paste only one copy.
 long long extGCD(long long a, long long b, long long &x, long long &y) {
     if (b == 0) {
         x = 1; y = 0;
@@ -20,7 +21,7 @@ pair<long long, long long> CRT(const vector<long long>& a, const vector<long lon
         
         long long step = m[i] / g;
         long long k = ((a[i] - res) / g) % step * (x % step) % step;
-        res += k * lcm;
+        res = (long long)(((__int128)k * lcm + res) % ((__int128)lcm * step));
         lcm *= step;
         res = (res % lcm + lcm) % lcm;
     }

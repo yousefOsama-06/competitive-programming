@@ -1,3 +1,7 @@
+// NOTE: 01 - Miscellaneous/04 - random.cpp declares the same `rng`. Keep one copy.
+// IMPLICIT TREAP - a treap keyed by POSITION (subtree size) instead of value, i.e. an array that
+// supports insert/erase in the middle, reverse a range, and move a block, all in O(log n).
+// This is the structure for "cut [l,r] out and paste it elsewhere" problems.
 mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
 
 template <typename T>

@@ -1,6 +1,7 @@
 // Divide & Conquer DP Optimization - Time: O(K * N log N), Space: O(N)
 // Applies when DP transition is dp[k][i] = min_{j < i} (dp[k-1][j] + cost(j+1, i))
 // Condition: opt(i, j) <= opt(i, j + 1) (Monotonicity of optimal split points)
+const int N = 200005;                            // ALSO in 01 - Template.cpp: keep one copy
 int a[N];
 ll curCost;
 int curL = 0, curR = -1, freq[N];
@@ -29,7 +30,7 @@ ll Cost(int l, int r) {
     return curCost;
 }
 
-ll f(int ind, int k) { return pre[k - 1].nd + Cost(k, ind); }
+ll f(int ind, int k) { return pre[k - 1].second + Cost(k, ind); }
 void store(int ind, int k, ll v) { cur[ind] = pair(k, v); }
 
 void rec(int L, int R, int LO, int HI) {

@@ -1,3 +1,6 @@
+// MO'S ALGORITHM - answers m OFFLINE range queries in O((n + m) sqrt n) when you can move an endpoint
+// by one in O(1) (add/remove an element and maintain the answer). Sort queries by block of l, then by
+// r (alternating direction per block). Use it for distinct counts, frequency-of-frequency, XOR pairs.
 class MoArray {
 private:
     struct Query {

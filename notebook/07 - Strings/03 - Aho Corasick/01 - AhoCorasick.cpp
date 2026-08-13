@@ -1,3 +1,6 @@
+// AHO-CORASICK - a trie of all patterns plus suffix (fail) links, so one pass over the text finds
+// every occurrence of every pattern in O(|text| + total pattern length + #matches).
+// The goto-automaton form (nxt filled in by BFS) is also the transition table for DP over strings.
 struct Mapper {
     int operator()(char c) const { return c - 'a'; }
 };

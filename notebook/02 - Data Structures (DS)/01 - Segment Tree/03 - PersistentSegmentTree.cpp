@@ -1,8 +1,11 @@
+// PERSISTENT SEGMENT TREE - every update returns a NEW root and old versions stay queryable.
+// O(log n) time and O(log n) new nodes per update. The standard use is offline k-th smallest in a
+// range (build a version per prefix, then query version[r] minus version[l-1]).
 struct Node {
     Node *l, *r;
     ll val = 0;
 
-    Node(int val) : l(NULL), r(NULL), val(val) {
+    Node(ll val) : l(NULL), r(NULL), val(val) {
     }
 
     Node() : l(NULL), r(NULL) {
@@ -31,7 +34,7 @@ struct PST {
         return ret;
     }
 
-    Node* update(Node* v, int i, int val, int lx, int rx) {
+    Node* update(Node* v, int i, ll val, int lx, int rx) {
         if (lx == rx) return new Node(v->val + val);
         int mid = (lx + rx) / 2;
         if (!v->l) v->addChild();
@@ -39,7 +42,7 @@ struct PST {
         return new Node(v->l, update(v->r, i, val, mid + 1, rx));
     }
 
-    Node* update(Node* v, int i, int val) { return update(v, i, val, 0, n - 1); }
+    Node* update(Node* v, int i, ll val) { return update(v, i, val, 0, n - 1); }
 
     Node query(Node* v, int l, int r, int lx, int rx) {
         if (l > rx || r < lx) return {};

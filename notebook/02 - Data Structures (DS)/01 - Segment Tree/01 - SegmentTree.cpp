@@ -1,3 +1,6 @@
+// SEGMENT TREE, point update + range query, O(log n) each. Swap the merge in SEG to change the
+// operation (sum/min/max/gcd/matrix); any associative monoid works. Size is rounded up to a power
+// of two so the tree is perfect and indices are simple.
 struct SEG {
     ll sum = 0;
     SEG() {

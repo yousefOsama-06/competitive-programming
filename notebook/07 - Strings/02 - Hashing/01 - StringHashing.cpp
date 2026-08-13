@@ -1,84 +1,32 @@
-int modSum(ll a, ll b) {
-    ///complexity: 1
-    if (a < 0)
-        a += MOD;
-    if (b < 0)
-        b += MOD;
-    a += b;
-    if (a >= MOD)
-        a %= MOD;
-    return a;
-}
-
-int modProd(ll a, ll b) {
-    ///complexity: 1
-    if (a < 0)
-        a += MOD;
-    if (b < 0)
-        b += MOD;
-    a *= b;
-    if (a >= MOD)
-        a %= MOD;
-    return a;
-}
-
-int fastPow(int a, ll b) {
-    ///complexity: log(b)
-    if (b == 0) return 1;
-    int temp = fastPow(a, b / 2);
-    if (b % 2 == 0)
-        return modProd(temp, temp);
-    return modProd(modProd(a, temp), temp);
-}
-
-
-int modInverse(int a) {
-    ///complexity: log(mod)
-    return fastPow(a, MOD - 2);
-}
-
-
+// Double-mod polynomial hashing. RANDOM bases => not anti-hackable.
+// No modular inverses: h(l,r) is compared already scaled, so get() is 2 mults.
+ll HB1, HB2;
 struct Hash {
-    vector<pair<int, int>> hash_value = {{0, 0}};
-    const pair<int, int> p = {67, 97};
-    vector<pair<int, int>> p_pow = {{1, 1}};
-    vector<pair<int, int>> inv = {{1, 1}};
+    static const ll M1 = 1000000007, M2 = 998244353;
+    int n;
+    vector<ll> h1, h2, p1, p2;
 
-    void compute(string const &s) {
-        for (char c: s) {
-            if (c >= 'a' && c <= 'z') {
-                c = c - 'a' + 1;
-            } else if (c >= 'A' && c <= 'Z') {
-                c = c - 'A' + 30;
-            } else {
-                c = c - '0' + 60;
-            }
-            int x = modSum(hash_value.back().st, modProd(c, p_pow.back().st));
-            int a = modProd(p_pow.back().st, p.st);
-
-            int y = modSum(hash_value.back().nd, modProd(c, p_pow.back().nd));
-            int b = modProd(p_pow.back().nd, p.nd);
-
-            hash_value.emplace_back(x, y);
-            p_pow.emplace_back(a, b);
-            if (inv.size() == 1) {
-                inv.emplace_back(modInverse(a), modInverse(b));
-            } else {
-                inv.emplace_back(modProd(inv[1].st, inv.back().st), modProd(inv[1].nd, inv.back().nd));
-            }
+    Hash(const string& s) : n(s.size()), h1(n + 1, 0), h2(n + 1, 0), p1(n + 1, 1), p2(n + 1, 1) {
+        if (!HB1) {
+            mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
+            HB1 = 256 + rng() % (M1 - 300), HB2 = 256 + rng() % (M2 - 300);   // FULL range: a base drawn
+        // from only 1e6 values gives collision probability n/1e6 per modulus (0.1 at n = 1e5)
+        }
+        for (int i = 0; i < n; i++) {
+            h1[i + 1] = (h1[i] * HB1 + s[i]) % M1, p1[i + 1] = p1[i] * HB1 % M1;
+            h2[i + 1] = (h2[i] * HB2 + s[i]) % M2, p2[i + 1] = p2[i] * HB2 % M2;
         }
     }
-
-    pair<int, int> get(int l, int r) {
-        l++, r++;
-        pair<int, int> ans;
-        ans.st = modSum(hash_value[r].st, -hash_value[l - 1].st);
-        ans.st = modProd(ans.st, inv[l].st);
-
-
-        ans.nd = modSum(hash_value[r].nd, -hash_value[l - 1].nd);
-        ans.nd = modProd(ans.nd, inv[l].nd);
-
-        return ans;
+    pair<ll, ll> get(int l, int r) const {              // [l, r] inclusive, 0-based
+        ll a = (h1[r + 1] - h1[l] * p1[r - l + 1]) % M1;
+        ll b = (h2[r + 1] - h2[l] * p2[r - l + 1]) % M2;
+        return {a < 0 ? a + M1 : a, b < 0 ? b + M2 : b};
     }
+    bool eq(int l1, int r1, int l2, int r2) const {
+        return r1 - l1 == r2 - l2 && get(l1, r1) == get(l2, r2);
+    }
+    // concat(A over lenA, B): h = hA * base^lenB + hB   (works per modulus)
 };
+// USES: substring equality O(1) · longest common prefix of two suffixes by binary search
+//       · dedup of substrings · 2D grid patterns (hash rows, then hash the row-hashes)
+//       · tree isomorphism (hash the sorted multiset of child hashes)

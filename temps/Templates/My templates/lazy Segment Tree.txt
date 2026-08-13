@@ -1,0 +1,61 @@
+ll combine(ll a, ll b) {
+    return min(a, b);
+}
+ 
+const ll IDN = OO;
+ 
+struct SegTree {
+    vector<ll> tree;
+    vector<ll> lazy;
+ 
+    static int n;
+ 
+    void build(int inputN, ll *a) {
+        n = inputN;
+        if (__builtin_popcount(n) != 1)
+            n = 1 << (__lg(n) + 1);
+ 
+        tree.resize(n << 1, OO);
+        lazy.resize(n << 1, 0);
+        for (int i = 0; i < inputN; i++)
+            tree[i + n] = a[i];
+        for (int i = n - 1; i >= 1; i--)
+            tree[i] = combine(tree[i << 1], tree[i << 1 | 1]);
+    }
+ 
+    void propagate(int k, int sl, int sr) {
+        if (lazy[k] != 0) {
+            tree[k] += lazy[k];
+            if (sl != sr) {
+                lazy[k << 1] += lazy[k];
+                lazy[k << 1 | 1] += lazy[k];
+            }
+        }
+        lazy[k] = 0;
+    }
+ 
+    void update(int ql, int qr, ll v, int k = 1, int sl = 0, int sr = n - 1) {
+        propagate(k, sl, sr);
+        if (ql <= sl && qr >= sr) {
+            lazy[k] = v;
+            propagate(k, sl, sr);
+            return;
+        }
+        if (qr < sl || sr < ql)
+            return;
+        int mid = (sl + sr) / 2;
+        update(ql, qr, v, k << 1, sl, mid);
+        update(ql, qr, v, (k << 1) | 1, mid + 1, sr);
+        tree[k] = combine(tree[k << 1], tree[k << 1 | 1]);
+    }
+ 
+    ll query(int ql, int qr, int k = 1, int sl = 0, int sr = n - 1) {
+        propagate(k, sl, sr);
+        if (ql <= sl && qr >= sr)
+            return tree[k];
+        if (qr < sl || sr < ql)
+            return IDN;
+        int mid = (sl + sr) / 2;
+        return combine(query(ql, qr, k << 1, sl, mid), query(ql, qr, k << 1 | 1, mid + 1, sr));
+    }
+};

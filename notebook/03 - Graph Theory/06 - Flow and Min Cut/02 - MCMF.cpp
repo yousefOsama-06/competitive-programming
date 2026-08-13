@@ -1,77 +1,67 @@
-struct Edge {
-    int to;
-    int cost;
-    int cap, flow, backEdge;
-};
- 
-struct MCMF 
-{
- 
-    const int inf = 1000000010;
+// MIN-COST MAX-FLOW with JOHNSON POTENTIALS (Dijkstra instead of SPFA on every augmentation).
+// O(F * E log V) where F = number of augmentations. Much faster than the SPFA version and the
+// one to use by default. Negative edge costs are allowed at construction PROVIDED there is no negative-cost CYCLE:
+// run one Bellman-Ford
+// to initialise the potentials (setPotentialsBF), after that every reduced cost is >= 0.
+struct MCMF {
+    struct E { int to, rev; ll cap, cost, flow = 0; };
     int n;
-    vector<vector<Edge>> g;
- 
-    MCMF(int _n) {
-        n = _n + 1;
-        g.resize(n);
+    vector<vector<E>> g;
+    vector<ll> pot, dist;
+    vector<int> pv, pe;
+
+    MCMF(int n) : n(n), g(n), pot(n, 0), dist(n), pv(n), pe(n) {}
+    void addEdge(int u, int v, ll cap, ll cost) {
+        g[u].push_back({v, (int)g[v].size(), cap, cost});
+        g[v].push_back({u, (int)g[u].size() - 1, 0, -cost});
     }
- 
-    void addEdge(int u, int v, int cap, int cost) {
-        Edge e1 = {v, cost, cap, 0, (int) g[v].size()};
-        Edge e2 = {u, -cost, 0, 0, (int) g[u].size()};
-        g[u].push_back(e1);
-        g[v].push_back(e2);
-    }
- 
-    pair<int, int> minCostMaxFlow(int s, int t) {
-        int flow = 0;
-        int cost = 0;
-        vector<int> state(n), from(n), from_edge(n);
-        vector<int> d(n);
-        deque<int> q;
-        while (true) {
-            for (int i = 0; i < n; i++)
-                state[i] = 2, d[i] = inf, from[i] = -1;
-            state[s] = 1;
-            q.clear();
-            q.push_back(s);
-            d[s] = 0;
-            while (!q.empty()) {
-                int v = q.front();
-                q.pop_front();
-                state[v] = 0;
-                for (int i = 0; i < (int) g[v].size(); i++) {
-                    Edge e = g[v][i];
-                    if (e.flow >= e.cap || (d[e.to] <= d[v] + e.cost))
-                        continue;
-                    int to = e.to;
-                    d[to] = d[v] + e.cost;
-                    from[to] = v;
-                    from_edge[to] = i;
-                    if (state[to] == 1) continue;
-                    if (!state[to] || (!q.empty() && d[q.front()] > d[to]))
-                        q.push_front(to);
-                    else q.push_back(to);
-                    state[to] = 1;
-                }
-            }
-            if (d[t] == inf) break;
-            int it = t, addflow = inf;
-            while (it != s) {
-                addflow = min(addflow,
-                              g[from[it]][from_edge[it]].cap
-                              - g[from[it]][from_edge[it]].flow);
-                it = from[it];
-            }
-            it = t;
-            while (it != s) {
-                g[from[it]][from_edge[it]].flow += addflow;
-                g[it][g[from[it]][from_edge[it]].backEdge].flow -= addflow;
-                cost += g[from[it]][from_edge[it]].cost * addflow;
-                it = from[it];
-            }
-            flow += addflow;
+    void setPotentialsBF(int s) {                     // only needed if some cost < 0
+        fill(all(pot), llinf);
+        pot[s] = 0;
+        for (int it = 0; it < n; it++) {
+            bool ch = false;
+            for (int u = 0; u < n; u++) if (pot[u] < llinf)
+                for (auto& e : g[u]) if (e.cap - e.flow > 0 && pot[u] + e.cost < pot[e.to])
+                    pot[e.to] = pot[u] + e.cost, ch = true;
+            if (!ch) break;
         }
-        return {cost, flow};
+        for (auto& x : pot) if (x == llinf) x = 0;
     }
+    bool dijkstra(int s, int t) {
+        fill(all(dist), llinf);
+        priority_queue<pair<ll, int>, vector<pair<ll, int>>, greater<>> pq;
+        dist[s] = 0, pq.push({0, s});
+        while (!pq.empty()) {
+            auto [d, u] = pq.top(); pq.pop();
+            if (d > dist[u]) continue;
+            for (int i = 0; i < (int)g[u].size(); i++) {
+                auto& e = g[u][i];
+                if (e.cap - e.flow <= 0) continue;
+                ll nd = d + e.cost + pot[u] - pot[e.to];      // reduced cost, always >= 0
+                if (nd < dist[e.to]) dist[e.to] = nd, pv[e.to] = u, pe[e.to] = i, pq.push({nd, e.to});
+            }
+        }
+        return dist[t] < llinf;
+    }
+    // Returns {flow, cost}. Pass maxf to cap the flow (e.g. for min-cost k-flow).
+    pair<ll, ll> run(int s, int t, ll maxf = llinf) {
+        ll flow = 0, cost = 0;
+        while (flow < maxf && dijkstra(s, t)) {
+            for (int i = 0; i < n; i++) if (dist[i] < llinf) pot[i] += dist[i];
+            ll aug = maxf - flow;
+            for (int v = t; v != s; v = pv[v]) aug = min(aug, g[pv[v]][pe[v]].cap - g[pv[v]][pe[v]].flow);
+            for (int v = t; v != s; v = pv[v]) {
+                auto& e = g[pv[v]][pe[v]];
+                e.flow += aug, g[v][e.rev].flow -= aug;
+                cost += aug * e.cost;
+            }
+            flow += aug;
+        }
+        return {flow, cost};
+    }
+    // MIN-COST flow of exactly K units: run(s, t, K) and check flow == K.
+    // MIN-COST (not max) flow: stop as soon as dist[t] + pot[t] - pot[s] > 0 (no profitable path).
 };
+// MODELLING: assignment on a SPARSE graph; for a dense/complete one use 07 - Matching/03 - Hungarian · transportation · "k disjoint paths of minimum total cost" ·
+// min-cost bipartite matching · scheduling with penalties · MCMF is also how you solve
+// "choose k items with a matroid-ish constraint minimising cost".
