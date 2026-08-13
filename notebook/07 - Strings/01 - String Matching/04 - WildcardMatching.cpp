@@ -11,12 +11,11 @@ vector<int> wildcardMatch(const string& t, const string& p, char wild = '?') {
     // The identity needs values >= 0 and wildcard == 0. Compress the characters that actually
     // occur to 1..k - with a raw `c - 'a' + 1` any character below 'a' is NEGATIVE and the terms
     // can cancel, which reports matches that do not exist (e.g. text "_b" against pattern "Z]").
-    map<char, ll> id;
-    for (char c : t) if (c != wild) id.emplace(c, 0);
-    for (char c : p) if (c != wild) id.emplace(c, 0);
-    ll k = 0;
-    for (auto& [c, v] : id) v = ++k;
-    auto val = [&](char c) { return c == wild ? 0LL : id[c]; };
+    ll id[256] = {}, k = 0;                                    // a flat table, not a map: the
+    for (char c : t) if (c != wild) id[(unsigned char)c] = 1;   // conversion is O(n), not O(n log n)
+    for (char c : p) if (c != wild) id[(unsigned char)c] = 1;
+    for (int c = 0; c < 256; c++) if (id[c]) id[c] = ++k;
+    auto val = [&](char c) { return c == wild ? 0LL : id[(unsigned char)c]; };
     vector<ll> a(m), b(n);
     for (int i = 0; i < m; i++) a[i] = val(p[m - 1 - i]);       // reversed pattern
     for (int i = 0; i < n; i++) b[i] = val(t[i]);

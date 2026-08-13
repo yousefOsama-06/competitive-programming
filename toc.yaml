@@ -413,6 +413,9 @@ categories:
           - file: "07 - MultiplicativeSieve.cpp"
             title: "MultiplicativeSieve"
             path: "notebook/04 - Number Theory/02 - Primes and Divisors/07 - MultiplicativeSieve.cpp"
+          - file: "08 - PrimeEnumeration1e9.cpp"
+            title: "PrimeEnumeration1e9"
+            path: "notebook/04 - Number Theory/02 - Primes and Divisors/08 - PrimeEnumeration1e9.cpp"
       - name: "03 - Modular Arithmetic"
         title: "Modular Arithmetic"
         files:
