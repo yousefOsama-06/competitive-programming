@@ -1,7 +1,0 @@
-struct tuple_hash {
-    size_t operator () (const pair<int, int>& p) const {
-        auto h1 = hash<int>{}(p.first);
-        auto h2 = hash<int>{}(p.second);
-        return (h1 + P1 * h2) % mod;
-    }
-};
