@@ -1,10 +1,10 @@
 # Notebook status — 2026-08-13 (second pass)
 
-**211 files, 12,576 lines.** Every non-trivial template has been compiled and stress-tested against
+**222 files, 13,304 lines.** Every non-trivial template has been compiled and stress-tested against
 an independent brute force or a verified reference (KACTL / AtCoder Library / cp-algorithms /
 YouKnowWho / exhaustive search).
 
-## Verification — 25 suites, 0 failures
+## Verification — 32 suites, 0 failures
 
 | Suite | Covers |
 |---|---|
@@ -182,6 +182,31 @@ The PDF is now built for the physical act of finding something under time pressu
 * a `HOW TO FIND SOMETHING` box on page 1 that names the three lookup routes in order of speed;
 * denser TOC, no listing line numbers (you never type them), and `\needspace` so a title is never
   orphaned at the foot of a column.
+
+## Pulled in from the old `temps/` libraries
+
+Everything below was rewritten from scratch (not copied) and stress-tested against an independent
+reference before it went in. The full audit of what `temps/` had is in
+[FROM-OLD-TEMPLATES.md](FROM-OLD-TEMPLATES.md).
+
+| Added | Verified against | Suite |
+|---|---|---|
+| **Blossom** — maximum matching in a general graph | brute-force matching over all subsets, 20k graphs | v26 |
+| **Gomory-Hu tree** — all-pairs min cut from n−1 flows | a fresh Dinic per pair | v26 |
+| **Karp's minimum mean cycle** | bitmask enumeration of every simple cycle | v26 |
+| **Systems of difference constraints** | every constraint re-checked, plus an exhaustive box search on the infeasible cases | v26 |
+| **Link-Cut Tree** — dynamic forest, path aggregates | 4000 random forests × 40 mixed link/cut/update/query ops against BFS | v27 |
+| **Simplex** — two-phase LP | feasibility, optimality vs a grid search, and objective consistency | v28 |
+| **Thomas algorithm** (tridiagonal) · **determinant mod a composite** | back-substitution check · cofactor expansion in `__int128` | v28 |
+| **1D/1D DP optimisation** — the self-referential Monge case | O(n²) brute force on two Monge families | v29 |
+| **Fibonacci fast doubling + Pisano period** | iterative Fibonacci mod 5 different moduli; period minimality | v29 |
+| **De Bruijn sequences** · **bitap / shift-and** | every length-n word appears exactly once cyclically · naive matching | v30 |
+| **Permutation rank/unrank** · **Julian day number** · **Stern-Brocot search** | all n! permutations for n ≤ 7 · round-trip over 800 years + leap rules · brute-force minimal fraction | v30, v31 |
+| **Persistent array + persistent DSU** | per-version reference copies, with branching histories | v32 |
+
+Two real bugs in this batch were caught by the tests, not by reading: `Simplex::pivot` applied the
+pivot-column update twice (the solver cycled forever), and the first `fracSearch` had a doubling
+loop that could make no progress. Both were found because the test hung, then fixed and re-verified.
 
 ## Still missing (ranked)
 

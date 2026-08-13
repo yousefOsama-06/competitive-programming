@@ -1052,6 +1052,95 @@ struct Big {
 // SQRT: binary search with the multiply above, or Newton on doubles then fix up by a few steps.
 \end{lstlisting}
 
+\needspace{4\baselineskip}
+\subsection{RankingAndDates}\index{permRank}\index{permUnrank}\index{dateToInt}\index{intToDate}\index{weekday}\index{fracSearch}
+\nopagebreak{\footnotesize\sffamily\color{blurb} RANKING / UNRANKING COMBINATORIAL OBJECTS, and CALENDAR ARITHMETIC. Small, and each one costs\par}\nopagebreak
+\begin{lstlisting}
+// RANKING / UNRANKING COMBINATORIAL OBJECTS, and CALENDAR ARITHMETIC. Small, and each one costs
+// 20 minutes to re-derive under pressure.
+
+// --- FACTORIAL NUMBER SYSTEM: rank and unrank a PERMUTATION. O(n^2) as written; use an
+// order-statistic tree or a BIT for O(n log n) when n is large.
+// order(p) = how many permutations of the same multiset are lexicographically smaller.
+ll permRank(vector<int> p) {                                   // p is a permutation of 0..n-1
+    int n = p.size();
+    ll r = 0, f = 1;
+    for (int i = n - 1; i >= 0; i--) {
+        int c = 0;
+        for (int j = i + 1; j < n; j++) if (p[j] < p[i]) c++;   // the Lehmer code digit
+        r += c * f, f *= (n - i);
+    }
+    return r;
+}
+vector<int> permUnrank(int n, ll k) {                          // k-th permutation, 0-indexed
+    vector<int> avail(n), p(n);
+    iota(all(avail), 0);
+    vector<ll> f(n + 1, 1);
+    for (int i = 1; i <= n; i++) f[i] = f[i - 1] * i;
+    for (int i = 0; i < n; i++) {
+        ll d = k / f[n - 1 - i];
+        k %= f[n - 1 - i];
+        p[i] = avail[d], avail.erase(avail.begin() + d);
+    }
+    return p;
+}
+// NEXT PERMUTATION in place is std::next_permutation, O(n) - use it unless you need the rank.
+// COMBINATIONS: rank of a k-subset {c_1<...<c_k} of [n] is sum C(c_i, i); unrank greedily by
+// finding the largest c with C(c, i) <= remaining. Same shape, C instead of factorials.
+// BALANCED BRACKET SEQUENCES rank/unrank with the ballot numbers; GRAY CODE is g = i ^ (i >> 1).
+
+// --- JULIAN DAY NUMBER: date <-> integer, closed form, no loops, correct for the Gregorian
+// calendar including every leap rule. Date differences, "what weekday", and "add 1000 days" all
+// become integer arithmetic once you are here.
+ll dateToInt(int y, int m, int d) {                            // y-m-d Gregorian -> day number
+    return 1461 * (y + 4800 + (m - 14) / 12) / 4
+         + 367 * (m - 2 - (m - 14) / 12 * 12) / 12
+         - 3 * ((y + 4900 + (m - 14) / 12) / 100) / 4 + d - 32075;
+}
+array<int, 3> intToDate(ll jd) {                               // inverse: {y, m, d}
+    ll x, n, i, j, dd;
+    x = jd + 68569, n = 4 * x / 146097, x -= (146097 * n + 3) / 4;
+    i = 4000 * (x + 1) / 1461001, x -= 1461 * i / 4 - 31;
+    j = 80 * x / 2447, dd = x - 2447 * j / 80, x = j / 11;
+    return {(int)(100 * (n - 49) + i + x), (int)(j + 2 - 12 * x), (int)dd};
+}
+int weekday(ll jd) { return (int)((jd + 1) % 7); }              // 0 = Sunday
+// LEAP YEAR: y % 4 == 0 && (y % 100 != 0 || y % 400 == 0).
+// ZELLER'S CONGRUENCE gives the weekday directly, but the day number is strictly more useful.
+
+// --- STERN-BROCOT SEARCH: the simplest fraction satisfying a MONOTONE predicate. ---
+// Descend the mediant tree, but take many steps in one direction at once (double the step size)
+// so a 1e18 denominator costs O(log^2) instead of O(answer).
+// USES: "smallest denominator q with property P", recovering p/q from a decimal prefix, the
+// simplest fraction strictly inside an interval, and best rational approximation with a bound.
+// ok() must be MONOTONE in the value p/q: false on small fractions, true from some point on.
+// Returns the SMALLEST such fraction with denominator <= N. Each iteration takes as many steps
+// as possible in one direction (found by doubling, then binary search), so it is O(log^2 N)
+// rather than O(answer) - the difference between instant and hopeless at N = 1e18.
+template <class F>
+pair<ll, ll> fracSearch(ll N, F ok) {
+    ll lp = 0, lq = 1, rp = 1, rq = 0;                          // 0/1 (not ok) .. 1/0 (ok)
+    for (;;) {
+        ll moved = 0;
+        auto walk = [&](ll& ap, ll& aq, ll bp, ll bq, bool want) {   // steps from a toward b
+            ll k = 0, s = 1;
+            auto test = [&](ll t) {
+                return aq + t * bq <= N && ok(ap + t * bp, aq + t * bq) == want;
+            };
+            while (test(k + s)) k += s, s *= 2;
+            for (s /= 2; s; s /= 2) if (test(k + s)) k += s;
+            ap += k * bp, aq += k * bq, moved += k;
+        };
+        walk(lp, lq, rp, rq, false);                            // push the FALSE end up
+        if (lq + rq > N) return {rp, rq};
+        walk(rp, rq, lp, lq, true);                             // pull the TRUE end down
+        if (lq + rq > N || !moved) return {rp, rq};             // !moved: nothing left to refine
+    }
+}
+// The Stern-Brocot tree IS the continued fraction expansion: going left/right k times is one
+// partial quotient. See 04 - Number Theory/05 - Rational for the CF machinery and semiconvergents.
+\end{lstlisting}
+
 \section{Data Structures (DS)}
 
 \subsection{Segment Tree}
@@ -4226,6 +4315,86 @@ struct MHeap {
 // push into the larger, O(n log^2 n) total. Shorter than this file - use it unless the log^2 hurts.
 \end{lstlisting}
 
+\needspace{4\baselineskip}
+\subsection{PersistentAndUndo}\index{PArray}\index{Node}\index{PDSU}
+\nopagebreak{\footnotesize\sffamily\color{blurb} PERSISTENCE AND UNDO - three ways to travel in a structure's history, and when each applies.\par}\nopagebreak
+\begin{lstlisting}
+// PERSISTENCE AND UNDO - three ways to travel in a structure's history, and when each applies.
+//   ROLLBACK  (05 - DSU/02): undo the last op. Cheapest. Needs a stack discipline (LIFO).
+//   OFFLINE DELETION (14 - OfflineDynamicConnectivity): segment tree over time + rollback.
+//     Handles arbitrary insert/delete, but you must know every operation in advance.
+//   PERSISTENCE (this file): branch the history. The only one that works ONLINE with deletions,
+//     and the only one that lets you query a past version after moving on.
+
+// --- PERSISTENT ARRAY: a segment tree over indices. get/set in O(log n), O(log n) new nodes. ---
+struct PArray {
+    struct Node { int l = 0, r = 0; ll v = 0; };
+    vector<Node> t;
+    int n;
+    PArray(int n) : t(1), n(n) {}                              // node 0 is the shared all-zero
+    int build(const vector<ll>& a, int lo, int hi) {
+        int id = t.size();
+        t.push_back({});
+        if (lo == hi) { t[id].v = a[lo]; return id; }
+        int m = (lo + hi) / 2, L = build(a, lo, m), R = build(a, m + 1, hi);
+        t[id].l = L, t[id].r = R;
+        return id;
+    }
+    int build(const vector<ll>& a) { return build(a, 0, n - 1); }
+    ll get(int u, int i, int lo, int hi) {
+        if (lo == hi) return t[u].v;
+        int m = (lo + hi) / 2;
+        return i <= m ? get(t[u].l, i, lo, m) : get(t[u].r, i, m + 1, hi);
+    }
+    ll get(int u, int i) { return get(u, i, 0, n - 1); }
+    int set(int u, int i, ll v, int lo, int hi) {
+        int id = t.size();
+        t.push_back(t[u]);
+        if (lo == hi) { t[id].v = v; return id; }
+        int m = (lo + hi) / 2;
+        if (i <= m) t[id].l = set(t[u].l, i, v, lo, m);
+        else t[id].r = set(t[u].r, i, v, m + 1, hi);
+        return id;
+    }
+    int set(int u, int i, ll v) { return set(u, i, v, 0, n - 1); }
+};
+// --- PERSISTENT DSU on top of it. O(log^2 n) per operation. ---
+// The catch that makes it work: NO PATH COMPRESSION (that would mutate an old version), so you
+// MUST union by size/rank to keep the height O(log n).
+struct PDSU {
+    PArray par, sz;
+    PDSU(int n) : par(n), sz(n) {}
+    pair<int, int> init(int n) {                               // returns {parRoot, szRoot}
+        vector<ll> p(n), s(n, 1);
+        iota(all(p), 0);
+        return {par.build(p), sz.build(s)};
+    }
+    int find(int pr, int x) { ll p = par.get(pr, x); return p == x ? x : find(pr, p); }
+    pair<int, int> join(int pr, int sr, int a, int b) {
+        a = find(pr, a), b = find(pr, b);
+        if (a == b) return {pr, sr};
+        if (sz.get(sr, a) < sz.get(sr, b)) swap(a, b);
+        return {par.set(pr, b, a), sz.set(sr, a, sz.get(sr, a) + sz.get(sr, b))};
+    }
+};
+/* THE OTHER TWO TIME-TRAVEL TRICKS, as recipes
+ QUEUE UNDO. You have a structure that supports only "undo the last op" (rollback DSU), but the
+   deletions arrive in FIFO order (a sliding window). Keep the undo stack partitioned so the
+   OLDEST element is near the top; when it is not, pop a prefix and re-push it in the other order,
+   always rebuilding the SMALLER half. O(log n) amortised extra. This is the online alternative to
+   the offline segment-tree-on-time trick, and it is what "sliding window connectivity" needs.
+ STATIC TO DYNAMIC (the logarithmic method). Any STATIC structure with O(B(n)) build and O(Q(n))
+   query becomes insert-only: keep O(log n) instances of sizes 2^0, 2^1, 2^2, ...; inserting is
+   binary-counter carrying, so you rebuild an instance of size 2^k only every 2^k insertions.
+   Insert becomes O(B(n)/n * log n) amortised and query O(Q(n) log n) (ask all instances).
+   Use it to make a convex hull / a wavelet tree / an Aho-Corasick automaton accept insertions.
+ PARTIALLY vs FULLY PERSISTENT: partially = you may query any past version but only modify the
+   latest (much cheaper - a version-stamped array often suffices); fully = you may modify any
+   version, branching the history into a tree. The code above is fully persistent.
+ WHEN NOT TO BOTHER: if the problem is offline and only needs "delete", the segment tree over the
+   timeline with a rollback DSU is shorter, faster, and has a smaller constant than any of this. */
+\end{lstlisting}
+
 \section{Graph Theory}
 
 \subsection{Graph Traversal}
@@ -4649,6 +4818,70 @@ struct SPEdgeModify {
 //   * SECOND SHORTEST WALK (may reuse edges): min over edges of ds[u] + w + dt[v] strictly > base.
 //   * If instead the whole graph changes per query, you need a fresh Dijkstra - this trick only
 //     works because s, t and every other weight stay fixed.
+\end{lstlisting}
+
+\needspace{4\baselineskip}
+\subsubsection{CyclesAndConstraints}\index{minMeanCycle}\index{differenceConstraints}
+\nopagebreak{\footnotesize\sffamily\color{blurb} MINIMUM MEAN CYCLE, and SYSTEMS OF DIFFERENCE CONSTRAINTS - the two shortest-path tools that\par}\nopagebreak
+\begin{lstlisting}
+// MINIMUM MEAN CYCLE, and SYSTEMS OF DIFFERENCE CONSTRAINTS - the two shortest-path tools that
+// are not about shortest paths.
+
+// --- KARP'S MINIMUM MEAN CYCLE, O(V*E). Returns the smallest possible (cycle weight)/(length).
+// dp[k][v] = min weight of a walk of EXACTLY k edges ending at v (from a virtual source that
+// reaches everything). Karp: the answer is  min over v of  max over k<n of (dp[n][v]-dp[k][v])/(n-k).
+// Reach for it whenever the objective is an AVERAGE around a cycle: "minimum cost per unit time",
+// "is there a cycle with negative average", profit-per-day loops.
+ld minMeanCycle(int n, const vector<array<ll, 3>>& e) {        // e = {u, v, w}, directed
+    vector<vector<ll>> dp(n + 1, vector<ll>(n, llinf));
+    fill(all(dp[0]), 0);                                       // virtual source reaches every v
+    for (int k = 1; k <= n; k++)
+        for (auto [u, v, w] : e)
+            if (dp[k - 1][u] < llinf) dp[k][v] = min(dp[k][v], dp[k - 1][u] + w);
+    ld best = 1e18;
+    for (int v = 0; v < n; v++) {
+        if (dp[n][v] == llinf) continue;
+        ld cur = -1e18;
+        for (int k = 0; k < n; k++)
+            if (dp[k][v] < llinf) cur = max(cur, (ld)(dp[n][v] - dp[k][v]) / (n - k));
+        best = min(best, cur);
+    }
+    return best;                                               // 1e18 if the graph is acyclic
+}
+// MINIMUM COST-TO-TIME RATIO CYCLE (minimise sum(cost)/sum(time), time > 0): binary search x and
+// test for a negative cycle with weights cost - x*time. Same skeleton, one Bellman-Ford per step.
+// MAXIMUM mean cycle: negate the weights.
+
+// --- SYSTEM OF DIFFERENCE CONSTRAINTS. Every constraint x_j - x_i <= w becomes an edge i -> j of
+// weight w; add a super-source with a 0-edge to every vertex and run Bellman-Ford.
+// FEASIBLE iff there is no negative cycle. The distances are then a solution, and they are the
+// POINTWISE MAXIMUM one (every other solution is <= it componentwise, after fixing x_source = 0).
+// TRANSLATIONS you will need: x_j - x_i >= w  is  x_i - x_j <= -w.  x_j - x_i = w is both.
+// x_i <= c is x_i - x_0 <= c against the source. Strict "<" on integers is "<= w-1".
+// USES: scheduling with precedence and deadlines, "arrange these values so all the gaps hold",
+// consistency of a set of relative measurements, and the dual of a min-cost-flow.
+bool differenceConstraints(int n, const vector<array<ll, 3>>& c, vector<ll>& x) {
+    vector<array<ll, 3>> e = c;                                // c = {i, j, w} meaning x_j-x_i<=w
+    for (int v = 0; v < n; v++) e.push_back({(ll)n, (ll)v, 0});    // super-source n
+    x.assign(n + 1, 0);
+    for (int it = 0; it <= n; it++) {
+        bool any = false;
+        for (auto [u, v, w] : e)
+            if (x[u] + w < x[v]) x[v] = x[u] + w, any = true;
+        if (!any) { x.resize(n); return true; }
+    }
+    return false;                                              // negative cycle: infeasible
+}
+// --- BELLMAN-FORD EXTRAS worth remembering
+// NEGATIVE CYCLE RECOVERY: after n rounds, take a vertex that still relaxed, walk n parent
+// pointers back (this lands you ON the cycle - the relaxed vertex may only be reachable from it),
+// then follow parents until a vertex repeats.
+// SPFA is Bellman-Ford with a queue; it is O(VE) worst case and killable, but the SLF heuristic
+// (push to the front if the new distance beats the front) makes it fast in practice.
+// ONLY SHORTEST PATHS WITH AT MOST K EDGES: run exactly k rounds, updating from a SNAPSHOT of the
+// previous round (otherwise one round can propagate along many edges).
+// JOHNSON'S APSP for sparse graphs with negative edges: Bellman-Ford from a super-source gives
+// potentials h[], reweight w'(u,v) = w + h[u] - h[v] >= 0, then run n Dijkstras. O(VE + V E log V).
 \end{lstlisting}
 
 \needspace{4\baselineskip}
@@ -5398,6 +5631,57 @@ ll maxClosure(int n, const vector<ll>& w, const vector<pair<int, int>>& need, ve
  scale the capacities or use a strongly polynomial algorithm. */
 \end{lstlisting}
 
+\needspace{4\baselineskip}
+\subsubsection{GomoryHu}\index{GomoryHu}
+\nopagebreak{\footnotesize\sffamily\color{blurb} GOMORY-HU TREE - ALL-PAIRS MINIMUM CUT from only n-1 max-flow runs.\par}\nopagebreak
+\begin{lstlisting}
+// Needs: Dinic (01 - Dinic.cpp).
+// GOMORY-HU TREE - ALL-PAIRS MINIMUM CUT from only n-1 max-flow runs.
+// The result is a weighted tree on the same vertex set with the property that, for EVERY pair
+// (u, v), the minimum u-v cut in the original graph equals the MINIMUM EDGE WEIGHT on the u-v
+// path in the tree. (There are at most n-1 distinct min-cut values in any graph - that is the
+// whole content of the theorem.)
+// Reach for it when a problem asks about min cuts between many pairs: "sum/max/k-th of all
+// pairwise min cuts", "order the vertices to maximise the sum of consecutive cuts", "how many
+// pairs have min cut >= k". Undirected graphs only.
+// Complexity: (n-1) x Dinic. The tree is returned as parent + weight arrays (par[0] = -1).
+struct GomoryHu {
+    int n;
+    vector<array<ll, 3>> edges;                                // {u, v, capacity}, undirected
+    vector<int> par;
+    vector<ll> w;
+    GomoryHu(int n) : n(n), par(n, 0), w(n, 0) {}
+    void addEdge(int u, int v, ll c) { edges.push_back({(ll)u, (ll)v, c}); }
+    void build() {
+        par.assign(n, 0), w.assign(n, 0), par[0] = -1;
+        for (int i = 1; i < n; i++) {
+            Dinic din(n);
+            for (auto [u, v, c] : edges) din.addEdge(u, v, c, c);   // undirected: both directions
+            w[i] = din.calc(i, par[i]);
+            for (int j = i + 1; j < n; j++)                     // re-parent the same-side vertices
+                if (par[j] == par[i] && din.leftOfMinCut(j)) par[j] = i;
+        }
+    }
+    ll minCut(int u, int v) const {                            // min edge on the tree path
+        ll best = llinf;
+        vector<int> du(n, 0);
+        for (int x = u; x != -1; x = par[x]) du[x] = 1;
+        vector<int> pv;
+        int m = v;
+        while (!du[m]) pv.push_back(m), m = par[m];             // m = the meeting vertex
+        for (int x = u; x != m; x = par[x]) best = min(best, w[x]);
+        for (int x : pv) best = min(best, w[x]);
+        return best;
+    }
+};
+// EQUIVALENT-FLOW TREE (Gusfield's variant) is the same n-1 flows without the re-parenting step;
+// it gets the min-cut VALUES right but not the actual cuts. The version above is the real
+// Gomory-Hu, so the tree edges are genuine cuts.
+// GLOBAL MIN CUT is the minimum edge of the whole tree - but Stoer-Wagner (04) is O(V^3) and
+// needs no flow at all, so prefer it when that is all you want.
+// DIRECTED graphs have no Gomory-Hu tree; you genuinely need O(n^2) flows there.
+\end{lstlisting}
+
 \subsection{Matching}
 
 \needspace{4\baselineskip}
@@ -5593,6 +5877,91 @@ pair<ll, vector<int>> hungarian(const vector<vector<ll>>& a) {
 // would overflow.  ans[j] == 0 means column j is unmatched (possible only when n < m).
 // WHICH ONE: on a DENSE / complete graph this beats MCMF - n^2*m here versus n augmentations of
 // Dijkstra over n^2 arcs (n^3 log n) there. Use MCMF only when the graph is genuinely SPARSE.
+\end{lstlisting}
+
+\needspace{4\baselineskip}
+\subsubsection{Blossom}\index{Blossom}
+\nopagebreak{\footnotesize\sffamily\color{blurb} MAXIMUM MATCHING IN A GENERAL (NON-BIPARTITE) GRAPH - Edmonds' blossom algorithm, O(V\textasciicircum{}3).\par}\nopagebreak
+\begin{lstlisting}
+// MAXIMUM MATCHING IN A GENERAL (NON-BIPARTITE) GRAPH - Edmonds' blossom algorithm, O(V^3).
+// Everything else in this folder assumes bipartite. Reach for this the moment the two sides are
+// not fixed: "pair up people who are compatible", "tile a board where the colouring argument
+// fails", "maximum set of disjoint edges" on an arbitrary graph.
+// The trick it exists for: an ODD cycle can be traversed in two directions, so an alternating
+// search can enter and leave it on the same side. Edmonds CONTRACTS such a cycle (a "blossom")
+// into a single vertex, searches the contracted graph, and expands afterwards.
+// Certificate: the answer equals the Tutte-Berge bound (see 10 - Theorems/01 - GraphTheorems).
+struct Blossom {
+    int n;
+    vector<vector<char>> g;                                    // adjacency MATRIX
+    vector<int> match, p, base;
+    vector<char> used, inBlossom;
+    Blossom(int n) : n(n), g(n, vector<char>(n, 0)), match(n, -1), p(n), base(n),
+                     used(n), inBlossom(n) {}
+    void addEdge(int u, int v) { g[u][v] = g[v][u] = 1; }
+    int lca(int a, int b) {
+        vector<char> seen(n, 0);
+        for (;;) { a = base[a], seen[a] = 1; if (match[a] < 0) break; a = p[match[a]]; }
+        for (;;) { b = base[b]; if (seen[b]) return b; b = p[match[b]]; }
+    }
+    void mark(int v, int b, int child) {                       // walk v up to the blossom base
+        while (base[v] != b) {
+            inBlossom[base[v]] = inBlossom[base[match[v]]] = 1;
+            p[v] = child, child = match[v], v = p[match[v]];
+        }
+    }
+    bool augment(int root) {                                   // one BFS for an augmenting path
+        fill(all(used), 0), fill(all(p), -1);
+        iota(all(base), 0);
+        used[root] = 1;
+        queue<int> q({root});
+        while (!q.empty()) {
+            int v = q.front(); q.pop();
+            for (int to = 0; to < n; to++) {
+                if (!g[v][to] || base[v] == base[to] || match[v] == to) continue;
+                if (to == root || (match[to] >= 0 && p[match[to]] >= 0)) {   // odd cycle -> contract
+                    int b = lca(v, to);
+                    fill(all(inBlossom), 0);
+                    mark(v, b, to), mark(to, b, v);
+                    for (int i = 0; i < n; i++) if (inBlossom[base[i]]) {
+                        base[i] = b;
+                        if (!used[i]) used[i] = 1, q.push(i);
+                    }
+                } else if (p[to] < 0) {
+                    p[to] = v;
+                    if (match[to] < 0) {                        // free vertex: flip the path
+                        for (int u = to, pv, nv; u >= 0; u = nv)
+                            pv = p[u], nv = match[pv], match[u] = pv, match[pv] = u;
+                        return true;
+                    }
+                    used[match[to]] = 1, q.push(match[to]);
+                }
+            }
+        }
+        return false;
+    }
+    int solve() {
+        int r = 0;
+        for (int v = 0; v < n; v++)                            // greedy start: fewer BFS rounds
+            if (match[v] < 0)
+                for (int u = 0; u < n; u++)
+                    if (g[v][u] && match[u] < 0) { match[v] = u, match[u] = v, r++; break; }
+        for (int v = 0; v < n; v++) if (match[v] < 0) r += augment(v);
+        return r;                                              // match[v] = partner, or -1
+    }
+};
+// PERFECT MATCHING EXISTS iff solve() * 2 == n. Tutte's theorem gives the certificate when it
+// does not: some U with odd(G - U) > |U|.
+// MINIMUM EDGE COVER (no isolated vertices) = n - maximum matching (Gallai).
+// MAXIMUM INDEPENDENT SET is still NP-hard here - Konig's alpha = n - nu is BIPARTITE ONLY.
+// WEIGHTED general matching needs the dual-variable version (~150 lines); if the graph is small
+// (n <= 20) a bitmask DP over matched vertices is far shorter and usually enough.
+// CHINESE POSTMAN (undirected): make every degree even by duplicating a minimum-weight perfect
+// matching on the ODD-degree vertices, using all-pairs shortest paths as the edge weights, then
+// take an Eulerian circuit. The MIXED version (some edges directed) is NP-hard.
+// THE MATCHING GAME (a token moves along edges to unvisited vertices; stuck loses): the first
+// player wins iff the start vertex is covered by EVERY maximum matching, i.e. iff deleting it
+// decreases the matching size. With this file that works on a general graph, not just bipartite.
 \end{lstlisting}
 
 \subsection{Spanning Trees}
@@ -7225,6 +7594,70 @@ pair<ll, ll> bestApprox(ll p, ll q, ll N) {
 // (a+c)/(b+d) is the unique simplest fraction strictly between them.
 \end{lstlisting}
 
+\subsection{Sequences}
+
+\needspace{4\baselineskip}
+\subsubsection{FibonacciAndPisano}\index{fibPair}\index{fib}\index{pisanoPrime}
+\nopagebreak{\footnotesize\sffamily\color{blurb} FIBONACCI, FAST. The notebook had the identities on a formula sheet and no routine; this is it.\par}\nopagebreak
+\begin{lstlisting}
+// FIBONACCI, FAST. The notebook had the identities on a formula sheet and no routine; this is it.
+// F(0)=0, F(1)=1. Fast doubling is O(log n) with two multiplications per bit and NO matrices -
+// shorter and ~2x faster than 2x2 matrix exponentiation.
+//   F(2k)   = F(k) * (2*F(k+1) - F(k))
+//   F(2k+1) = F(k)^2 + F(k+1)^2
+pair<ll, ll> fibPair(ll n, ll mod) {                           // returns {F(n), F(n+1)} mod
+    if (!n) return {0, 1 % mod};
+    auto [a, b] = fibPair(n >> 1, mod);
+    ll c = a * ((2 * b % mod - a % mod + mod) % mod) % mod;     // F(2k)
+    ll d = (a * a + b * b) % mod;                               // F(2k+1)
+    return (n & 1) ? make_pair(d, (c + d) % mod) : make_pair(c, d);
+}
+ll fib(ll n, ll mod) { return fibPair(n, mod).first; }
+// LUCAS NUMBERS L(n) = F(n-1) + F(n+1) = 2F(n+1) - F(n).
+// NEGATIVE index: F(-n) = (-1)^(n+1) F(n).
+// The mod must be < ~3e9 for the ll products above, or use __int128 / Mint.
+
+// --- PISANO PERIOD pi(m): the period of F(n) mod m. Needed to reduce a huge index. ---
+// pi(1) = 1, pi(2) = 3, and pi(m) is EVEN for every m > 2.
+// pi(lcm(a,b)) = lcm(pi(a), pi(b))      pi(p^k) = p^(k-1) * pi(p)
+// pi(m) <= 6m, with equality exactly at m = 2 * 5^k.
+// p = +-1 (mod 5) => pi(p) divides p-1;   p = +-2 (mod 5) => pi(p) divides 2(p+1).
+// So: factor m, get pi for each prime power by testing the divisors of that bound, then lcm.
+ll pisanoPrime(ll p) {                                         // p prime
+    if (p == 2) return 3;
+    if (p == 5) return 20;
+    ll cand = (p % 5 == 1 || p % 5 == 4) ? p - 1 : 2 * (p + 1);
+    vector<ll> divs;
+    for (ll d = 1; d * d <= cand; d++)
+        if (cand % d == 0) divs.push_back(d), divs.push_back(cand / d);
+    sort(all(divs));
+    for (ll d : divs) {
+        auto [a, b] = fibPair(d, p);
+        if (a == 0 && b == 1 % p) return d;
+    }
+    return cand;
+}
+// Full pi(m): factorise m (Pollard rho), take pisanoPrime(p) * p^(e-1) per prime power, lcm them.
+/* MORE FIBONACCI FACTS worth the page
+   gcd(F_m, F_n) = F_gcd(m,n)      =>   F_m | F_n  iff  m | n   (m >= 3)
+   Cassini:   F_{n-1} F_{n+1} - F_n^2 = (-1)^n
+   Catalan:   F_n^2 - F_{n-r} F_{n+r} = (-1)^{n-r} F_r^2
+   d'Ocagne:  F_m F_{n+1} - F_{m+1} F_n = (-1)^n F_{m-n}
+   sum_{i<=n} F_i = F_{n+2} - 1        sum_{i<=n} F_i^2 = F_n F_{n+1}
+   sum_{i<=n} F_{2i-1} = F_{2n}        sum_{i<=n} F_{2i} = F_{2n+1} - 1
+   F_n = (phi^n - psi^n)/sqrt5;  F_92 is the last one fitting in a signed 64-bit integer.
+   ZECKENDORF: every n >= 1 is a UNIQUE sum of NON-CONSECUTIVE Fibonacci numbers, found greedily
+     from the largest. This is the "Fibonacci base", and it is what makes Fibonacci-nim work.
+   LCM of F_1..F_n and "which F are divisible by k" both follow from the gcd identity.
+   Fibonacci mod p when 5 is a QR mod p: sqrt(5) exists, so the closed form works in F_p directly.
+     When it is not, work in F_p[x]/(x^2-5) (a "Phi field") - two components, same O(log n). */
+
+// --- TRIBONACCI / any linear recurrence: matrix exponentiation (06 - Math/03), or Kitamasa /
+// Bostan-Mori for a long recurrence. Berlekamp-Massey RECOVERS the recurrence from ~2k terms.
+// --- LUCAS SEQUENCES U_n, V_n with U_{n+1} = P U_n - Q U_{n-1} generalise all of this and have
+// the same doubling identities; they are what Baillie-PSW primality is built on.
+\end{lstlisting}
+
 \section{Combinatorics}
 
 \needspace{4\baselineskip}
@@ -8726,6 +9159,160 @@ template <class F> ld integrate(F f, ld a, ld b, ld eps = 1e-9) {
 //   linearly; nested ternary search is the safer contest answer (the objective is convex).
 \end{lstlisting}
 
+\needspace{4\baselineskip}
+\subsubsection{LinearSolvers}\index{thomas}\index{detMod}
+\nopagebreak{\footnotesize\sffamily\color{blurb} SPECIAL-SHAPE LINEAR SOLVERS. Gaussian elimination is O(n\textasciicircum{}3); these are the shapes where the\par}\nopagebreak
+\begin{lstlisting}
+// SPECIAL-SHAPE LINEAR SOLVERS. Gaussian elimination is O(n^3); these are the shapes where the
+// structure buys you a factor of n or removes a precondition.
+
+// --- THOMAS ALGORITHM: TRIDIAGONAL system in O(n). ---
+//   a[i] x[i-1] + b[i] x[i] + c[i] x[i+1] = d[i],  with a[0] = c[n-1] = 0.
+// This is THE closer for random walks on a path ("expected steps to escape [0, n]"), 1-D heat /
+// diffusion DPs, and any DP whose state depends on its two neighbours. Gaussian elimination on
+// the same system is O(n^3) and will TLE at n = 1e5; this is 8 lines.
+// STABLE without pivoting when the system is diagonally dominant (|b| > |a| + |c|), which every
+// hitting-time system is.
+vector<ld> thomas(vector<ld> a, vector<ld> b, vector<ld> c, vector<ld> d) {
+    int n = b.size();
+    for (int i = 1; i < n; i++) {
+        ld m = a[i] / b[i - 1];
+        b[i] -= m * c[i - 1], d[i] -= m * d[i - 1];
+    }
+    vector<ld> x(n);
+    x[n - 1] = d[n - 1] / b[n - 1];
+    for (int i = n - 2; i >= 0; i--) x[i] = (d[i] - c[i] * x[i + 1]) / b[i];
+    return x;
+}
+// BANDED systems of half-width w (state depends on w neighbours) generalise this at O(n w^2) -
+// the shape of "robot on a grid with m columns", where w = m.
+// CYCLIC tridiagonal (x[0] and x[n-1] also coupled): Sherman-Morrison - solve two tridiagonal
+// systems and combine, still O(n).
+
+// --- DETERMINANT MODULO AN ARBITRARY m (composite allowed), O(n^3 log m). ---
+// Gaussian elimination inverts the pivot, so it needs a PRIME modulus. This version never
+// divides: it runs the Euclidean algorithm between two rows, swapping them, until the lower
+// entry is 0. Use it when the modulus is 2^k, 1e9, or anything you cannot invert in.
+ll detMod(vector<vector<ll>> a, ll m) {
+    int n = a.size();
+    ll det = 1 % m;
+    for (int i = 0; i < n; i++) {
+        for (int j = i + 1; j < n; j++)
+            while (a[j][i]) {                                  // Euclid on the two rows
+                ll t = a[i][i] / a[j][i];
+                for (int k = i; k < n; k++) a[i][k] = (a[i][k] - t * a[j][k]) % m;
+                swap(a[i], a[j]), det = -det;
+            }
+        det = det * a[i][i] % m;
+        if (!a[i][i]) return 0;
+    }
+    return (det % m + m) % m;
+}
+// MATRIX RANK over a field: the usual elimination, counting non-zero pivot rows.
+// RANK over GF(2): use bitsets - O(n^3 / 64), see 04 - Linear Algebra/03.
+// INTEGER determinant with no modulus: compute it modulo several primes and CRT. Size it with
+// HADAMARD'S BOUND |det| <= prod of the row 2-norms <= n^(n/2) * max|a_ij|^n, and take enough
+// primes that the product exceeds 2x that.
+// SPARSE determinant (n = 1e5 with few non-zeros): Wiedemann - pick random u, v, feed the Krylov
+// sequence u^T A^k v to Berlekamp-Massey to get the minimal polynomial, whose constant term is
+// +-det after a random diagonal preconditioner. O(n * nnz).
+// CHARACTERISTIC POLYNOMIAL in O(n^3): reduce to upper HESSENBERG form by similarity transforms
+// (so det(xI - H) satisfies a short recurrence in the leading principal minors), then read the
+// coefficients off. With Cayley-Hamilton that gives A^k in O(n^3 + n^2 log k) instead of
+// O(n^3 log k) - worth it only for large k and small n.
+\end{lstlisting}
+
+\subsection{Linear Programming}
+
+\needspace{4\baselineskip}
+\subsubsection{Simplex}\index{Simplex}
+\nopagebreak{\footnotesize\sffamily\color{blurb} TWO-PHASE SIMPLEX.  maximise c.x  subject to  A x \textless{}= b,  x \textgreater{}= 0.\par}\nopagebreak
+\begin{lstlisting}
+// TWO-PHASE SIMPLEX.  maximise c.x  subject to  A x <= b,  x >= 0.
+// Returns the optimum, or +inf if unbounded, or -inf if infeasible; x is filled with a solution.
+// Exponential in theory, O(n*m) per pivot and instant at contest sizes (n, m up to a few hundred).
+// REACH FOR IT when the problem is "optimise a linear objective under linear constraints" and no
+// combinatorial structure presents itself - resource allocation, blending, fractional covering,
+// zero-sum matrix games, and any min-cost-flow-with-side-constraints that flow cannot express.
+typedef vector<ld> vd;
+struct Simplex {
+    int m, n;
+    vector<int> B, N;
+    vector<vd> D;
+    Simplex(const vector<vd>& A, const vd& b, const vd& c)
+        : m(b.size()), n(c.size()), B(m), N(n + 1), D(m + 2, vd(n + 2, 0)) {
+        for (int i = 0; i < m; i++) for (int j = 0; j < n; j++) D[i][j] = A[i][j];
+        for (int i = 0; i < m; i++) B[i] = n + i, D[i][n] = -1, D[i][n + 1] = b[i];
+        for (int j = 0; j < n; j++) N[j] = j, D[m][j] = -c[j];
+        N[n] = -1, D[m + 1][n] = 1;
+    }
+    void pivot(int r, int s) {
+        ld inv = 1 / D[r][s];
+        for (int i = 0; i < m + 2; i++) if (i != r && fabsl(D[i][s]) > 1e-9) {
+            ld f = D[i][s] * inv;                              // the pivot COLUMN is fixed up by
+            for (int j = 0; j < n + 2; j++) if (j != s) D[i][j] -= f * D[r][j];   // the loop below
+        }
+        for (int j = 0; j < n + 2; j++) if (j != s) D[r][j] *= inv;
+        for (int i = 0; i < m + 2; i++) if (i != r) D[i][s] *= -inv;
+        D[r][s] = inv;
+        swap(B[r], N[s]);
+    }
+    bool simplex(int phase) {
+        int x = m + phase - 1;
+        for (;;) {
+            int s = -1;
+            for (int j = 0; j <= n; j++)
+                if (N[j] != -phase && (s < 0 || make_pair(D[x][j], N[j]) < make_pair(D[x][s], N[s]))) s = j;
+            if (D[x][s] >= -1e-9) return true;
+            int r = -1;
+            for (int i = 0; i < m; i++) {
+                if (D[i][s] <= 1e-9) continue;
+                if (r < 0 || make_pair(D[i][n + 1] / D[i][s], B[i]) < make_pair(D[r][n + 1] / D[r][s], B[r])) r = i;
+            }
+            if (r < 0) return false;                           // unbounded
+            pivot(r, s);
+        }
+    }
+    ld solve(vd& x) {
+        int r = 0;
+        for (int i = 1; i < m; i++) if (D[i][n + 1] < D[r][n + 1]) r = i;
+        if (D[r][n + 1] < -1e-9) {                             // phase 1: find any feasible point
+            pivot(r, n);
+            if (!simplex(2) || D[m + 1][n + 1] < -1e-9) return -1.0L / 0.0L;   // infeasible
+            for (int i = 0; i < m; i++) if (B[i] == -1) {
+                int s = 0;
+                for (int j = 1; j <= n; j++)
+                    if (make_pair(D[i][j], N[j]) < make_pair(D[i][s], N[s])) s = j;
+                pivot(i, s);
+            }
+        }
+        bool ok = simplex(1);
+        x.assign(n, 0);
+        for (int i = 0; i < m; i++) if (B[i] < n) x[B[i]] = D[i][n + 1];
+        return ok ? D[m][n + 1] : 1.0L / 0.0L;                 // +inf = unbounded
+    }
+};
+/* MODELLING NOTES - the part that actually costs you time
+ MINIMISE instead: negate c and negate the answer.
+ >= CONSTRAINT: multiply the row by -1.   EQUALITY: add it twice, as <= and as >=.
+ FREE VARIABLE (no x >= 0): substitute x = u - v with u, v >= 0. Doubles that column.
+ UPPER BOUND x_i <= U: just another row; simplex has no special handling and does not need any.
+ LINEAR-FRACTIONAL objective (c.x + a) / (d.x + b): CHARNES-COOPER - substitute y = x/(d.x+b),
+   t = 1/(d.x+b) and maximise c.y + a t subject to A y <= b t, d.y + b t = 1, t >= 0. Linear again.
+ INTEGER answers are NOT guaranteed. If the constraint matrix is TOTALLY UNIMODULAR (network
+   matrices, interval matrices, bipartite incidence) the optimum IS integral - that is exactly why
+   flow problems have integral optima. Otherwise you need ILP, which is NP-hard.
+ ZERO-SUM MATRIX GAME: shift A so every entry is > 0, then min sum(y) s.t. A y >= 1, y >= 0 gives
+   value v = 1/sum(y) and the column player's mixed strategy y*v; the DUAL gives the row player's.
+   Von Neumann: max_x min_y x^T A y = min_y max_x x^T A y.
+ DUALITY, which is often the actual solution: max c.x, Ax <= b, x >= 0  is dual to
+   min b.y, A^T y >= c, y >= 0; the two optima are equal. COMPLEMENTARY SLACKNESS at the optimum:
+   x_j > 0 => the j-th dual constraint is tight, and y_i > 0 => the i-th primal row is tight.
+   The combinatorial specialisations you already know are max-flow/min-cut and Konig.
+ PRECISION: this is floating point. If the data is integral and small, and you need an exact
+   answer, prefer a combinatorial model (flow, matching) over simplex. */
+\end{lstlisting}
+
 \section{Strings}
 
 \subsection{String Matching}
@@ -9865,6 +10452,76 @@ int minRotation(string s) {
 //       lexicographically smallest result of rotating; runs / repetitions via Lyndon roots.
 \end{lstlisting}
 
+\subsection{Sequences}
+
+\needspace{4\baselineskip}
+\subsubsection{DeBruijnAndBitap}\index{deBruijn}\index{bitap}
+\nopagebreak{\footnotesize\sffamily\color{blurb} DE BRUIJN SEQUENCES and BIT-PARALLEL MATCHING.\par}\nopagebreak
+\begin{lstlisting}
+// DE BRUIJN SEQUENCES and BIT-PARALLEL MATCHING.
+
+// --- DE BRUIJN SEQUENCE B(k, n): a CYCLIC string over an alphabet of size k, of length k^n, in
+// which every one of the k^n words of length n appears exactly once as a (cyclic) substring.
+// USES: "open the safe with the fewest keypresses" (the classic), minimum-length probe sequences,
+// and hashing tricks (a de Bruijn constant is how you find the index of the lowest set bit).
+// CONSTRUCTION (FKM / Lyndon): concatenate, in lexicographic order, every Lyndon word whose
+// length DIVIDES n. That is exactly what this O(k^n) recursion emits.
+string deBruijn(int k, int n) {
+    string s;
+    vector<int> a(k * n, 0);
+    function<void(int, int)> db = [&](int t, int p) {
+        if (t > n) {
+            if (n % p == 0) for (int i = 1; i <= p; i++) s += char('0' + a[i]);
+        } else {
+            a[t] = a[t - p];
+            db(t + 1, p);
+            for (int j = a[t - p] + 1; j < k; j++) a[t] = j, db(t + 1, t);
+        }
+    };
+    db(1, 1);
+    return s;                                                  // length k^n, read cyclically
+}
+// The same object is an EULERIAN CIRCUIT in the de Bruijn graph (vertices = words of length n-1,
+// edges = words of length n), so Hierholzer on that graph is the alternative construction - and
+// the BEST theorem then counts how many distinct de Bruijn sequences exist: (k!)^(k^(n-1)) / k^n.
+
+// --- BITAP / SHIFT-AND: exact matching in O(n*m/64) with bitsets, and the natural home for
+// approximate matching. Build one bitmask per character marking where it occurs in the pattern;
+// then one pass over the text ANDs shifted copies together.
+// Beats KMP only when you need the extra flexibility (k mismatches, wildcards, "any of these
+// patterns"), or when you want ALL occurrences as a bitset to intersect with a range.
+vector<int> bitap(const string& t, const string& p) {
+    int n = t.size(), m = p.size();
+    if (!m || m > n) return {};
+    vector<unsigned long long> mask(256, 0);
+    // Works for m <= 64 with a single word; for longer patterns use bitset<M> and shift it.
+    if (m > 64) return {};
+    for (int i = 0; i < m; i++) mask[(unsigned char)p[i]] |= 1ULL << i;
+    unsigned long long st = 0, hit = 1ULL << (m - 1);
+    vector<int> res;
+    for (int i = 0; i < n; i++) {
+        st = ((st << 1) | 1) & mask[(unsigned char)t[i]];
+        if (st & hit) res.push_back(i - m + 1);
+    }
+    return res;
+}
+/* WHAT BITAP GENERALISES TO, which is the reason to carry it
+ k MISMATCHES: keep k+1 state words R0..Rk, where Rj = "matched a prefix with at most j errors".
+   Rj_new = ((Rj << 1) & mask[c]) | Rj-1 | (Rj-1 << 1) | (Rj-1_old << 1) | 1
+   covering substitution, insertion and deletion respectively - that is Wu-Manber, O(k n m / 64).
+ WILDCARDS in the PATTERN: set mask[c] bits for every character the class accepts. A '?' just
+   means "every mask has that bit". This is free - no FFT needed - and is the right tool when the
+   alphabet is small and the pattern is short. Use the FFT method (01 - String Matching/04) when
+   the pattern is long or wildcards appear in the TEXT too.
+ MULTIPLE PATTERNS of the same length: OR their masks and check which one actually matched.
+ OCCURRENCES INSIDE [l, r]: keep the whole occurrence set as a bitset and popcount a range - that
+   is what makes "how many times does p occur in t[l..r]" O(n/64) per query with no suffix
+   structure at all.
+ MYERS' BIT-VECTOR ALGORITHM computes full edit distance in O(n m / 64) with the same idea
+   (carry-save arithmetic on the DP's difference vectors); it is the fastest practical exact edit
+   distance and the escape hatch when the O(nm) DP is 1e10.  */
+\end{lstlisting}
+
 \section{Dynamic Programming (DP)}
 
 \subsection{DP Optimizations}
@@ -10686,6 +11343,71 @@ void dcOpt(int kl, int kr, int il, int ir, vector<ll>& c, F cost, V valid) {
 // WHERE THIS APPEARS: merging two "cost as a function of how many you take" curves - group
 // knapsack, tree DP where each child contributes a convex cost curve, and combining the
 // per-part curves produced by Alien's trick.
+\end{lstlisting}
+
+\needspace{4\baselineskip}
+\subsubsection{OneDOneD}\index{onedOned}
+\nopagebreak{\footnotesize\sffamily\color{blurb} 1D/1D DP OPTIMISATION - the self-referential case that divide \& conquer structurally cannot do.\par}\nopagebreak
+\begin{lstlisting}
+// 1D/1D DP OPTIMISATION - the self-referential case that divide & conquer structurally cannot do.
+//     dp[i] = min over j < i of ( dp[j] + w(j, i) )
+// D&C optimisation needs the LAYERED form dp[k][i] = min(dp[k-1][j] + w) so that the whole
+// previous layer is already known. Here dp[j] is produced by the very loop that consumes it, so
+// you must decide dp[i] before you may use it. That is what this file solves.
+// PRECONDITION: w satisfies the QUADRANGLE INEQUALITY (Monge)
+//     w(a,c) + w(b,d) <= w(a,d) + w(b,c)   for all a <= b <= c <= d
+// checkable in the local form  w(a,c) + w(a+1,c+1) <= w(a+1,c) + w(a,c+1).
+// Then the optimal j for i is NON-DECREASING in i, so the array of "who is currently best for
+// each future i" is a sequence of INTERVALS, each owned by one j - and finalising dp[i] can only
+// append one new interval and overwrite a suffix of the old ones. Keep them on a stack.
+// O(n log n) (the binary search for the crossover); O(n) if the crossover is O(1) to find.
+template <class F>
+vector<ll> onedOned(int n, F w) {                              // w(j, i) for j < i
+    vector<ll> dp(n + 1, llinf);
+    dp[0] = 0;
+    vector<array<int, 3>> st;                                  // {owner j, from, to} intervals
+    st.push_back({0, 1, n});
+    int head = 0;
+    for (int i = 1; i <= n; i++) {
+        while (head < (int)st.size() && st[head][2] < i) head++;
+        dp[i] = dp[st[head][0]] + w(st[head][0], i);            // the owner of position i
+        st[head][1] = i;
+        // now insert i as a candidate owner for the suffix it wins
+        auto better = [&](int a, int b, int x) {                // is a better than b at x?
+            return dp[a] + w(a, x) <= dp[b] + w(b, x);
+        };
+        while (!st.empty() && st.back()[1] > i && better(i, st.back()[0], st.back()[1])) st.pop_back();
+        if (st.empty() || head >= (int)st.size()) st.push_back({i, i + 1, n});
+        else {
+            auto [j, l, r] = st.back();
+            if (better(i, j, r)) {                              // i wins part of this interval
+                int lo = max(l, i + 1), hi = r, pos = r + 1;
+                while (lo <= hi) {                              // first x where i beats j
+                    int m = (lo + hi) / 2;
+                    better(i, j, m) ? (pos = m, hi = m - 1) : lo = m + 1;
+                }
+                st.back()[2] = pos - 1;
+                if (pos <= n) st.push_back({i, pos, n});
+            } else if (r < n) st.push_back({i, r + 1, n});
+        }
+    }
+    return dp;
+}
+/* WHEN YOU NEED WHICH OPTIMISATION - the whole family on one card
+   dp[i] = min_j (dp[j] + w(j,i)),   w Monge, SELF-REFERENTIAL       -> THIS FILE, O(n log n)
+   dp[k][i] = min_j (dp[k-1][j] + w(j,i)),  w Monge, LAYERED          -> D&C opt (01), O(n k log n)
+   dp[i][j] = min_k (dp[i][k] + dp[k+1][j]) + w(i,j),  w Monge AND
+              monotone on intervals                                   -> Knuth (06), O(n^2)
+   dp[i] = min_j (m_j * x_i + b_j)                                    -> CHT (02) / Li Chao (04)
+   "exactly k pieces", optimum convex in k                            -> Aliens (07)
+   min-plus convolution of a CONVEX sequence with anything            -> SMAWK / D&C (11)
+   the query point moves monotonically and lines are range-updated    -> kinetic segment tree
+   VERIFY the quadrangle inequality numerically on random quadruples before trusting any of them:
+   a DP optimisation applied without its precondition is a silent wrong answer, never a crash.
+   COMMON MONGE COSTS: (S_j - S_i)^2; f(S_j - S_i) with f convex and a[] >= 0; c * (j - i);
+   "number of equal pairs inside [i,j]"; a_i * b_j with a non-increasing and b non-decreasing.
+   NOT MONGE: anything built from max, and anything with negative a[] where you also need the
+   interval-monotonicity half (D&C only needs QI; Knuth needs both). */
 \end{lstlisting}
 
 \subsection{Bitmask DP}
@@ -11923,6 +12645,86 @@ vector<ll> knapTree(int v, int p, const vector<vector<int>>& adj, const vector<l
    RECURSION DEPTH: a path-shaped tree with n = 2e5 overflows the default stack once frames get
      fat. Move big locals out of the recursive function or convert to the iterative order used
      in 07 - Rerooting.cpp. */
+\end{lstlisting}
+
+\subsection{Dynamic Trees}
+
+\needspace{4\baselineskip}
+\subsubsection{LinkCutTree}\index{LCT}\index{Node}
+\nopagebreak{\footnotesize\sffamily\color{blurb} LINK-CUT TREE - a FOREST that changes shape, with path queries. O(log n) amortised per op.\par}\nopagebreak
+\begin{lstlisting}
+// LINK-CUT TREE - a FOREST that changes shape, with path queries. O(log n) amortised per op.
+// This is dynamic HLD: link, cut, re-root, and aggregate over the path u..v, all online.
+// If the tree is STATIC use HLD (09 - Trees/03) - it is faster and far shorter. Reach for an LCT
+// only when edges are added/removed, or when you need makeRoot.
+// HOW IT WORKS: each vertex has at most one "preferred" child; preferred paths are stored as
+// splay trees keyed by DEPTH; a non-preferred edge is a path-parent pointer the splay does not
+// know about. access(v) makes root..v one preferred path, and the same heavy/light potential that
+// bounds HLD bounds the number of preferred-child changes, hence the O(log n) amortised.
+struct LCT {
+    struct Node { int ch[2] = {0, 0}, p = 0; ll val = 0, sum = 0; bool rev = 0; };
+    vector<Node> t;
+    LCT(int n) : t(n + 1) {}                                   // 1-indexed; node 0 is the null
+    bool isRoot(int x) { return t[t[x].p].ch[0] != x && t[t[x].p].ch[1] != x; }
+    void pull(int x) { t[x].sum = t[t[x].ch[0]].sum ^ t[x].val ^ t[t[x].ch[1]].sum; }
+    void flip(int x) { if (x) swap(t[x].ch[0], t[x].ch[1]), t[x].rev ^= 1; }
+    void push(int x) { if (t[x].rev) flip(t[x].ch[0]), flip(t[x].ch[1]), t[x].rev = 0; }
+    void rot(int x) {
+        int p = t[x].p, g = t[p].p, d = t[p].ch[1] == x;
+        if (!isRoot(p)) t[g].ch[t[g].ch[1] == p] = x;
+        t[x].p = g;
+        t[p].ch[d] = t[x].ch[!d], t[t[x].ch[!d]].p = p;
+        t[x].ch[!d] = p, t[p].p = x;
+        pull(p), pull(x);
+    }
+    void splay(int x) {
+        vector<int> st{x};
+        for (int y = x; !isRoot(y); y = t[y].p) st.push_back(t[y].p);
+        for (int i = st.size() - 1; i >= 0; i--) push(st[i]);
+        while (!isRoot(x)) {
+            int p = t[x].p, g = t[p].p;
+            if (!isRoot(p)) rot((t[g].ch[1] == p) == (t[p].ch[1] == x) ? p : x);
+            rot(x);
+        }
+    }
+    int access(int x) {                                        // root..x becomes one splay tree
+        int last = 0;
+        for (int y = x; y; y = t[y].p) splay(y), t[y].ch[1] = last, pull(y), last = y;
+        splay(x);
+        return last;                                           // = the LCA on the previous access
+    }
+    void makeRoot(int x) { access(x), flip(x), push(x); }
+    int findRoot(int x) { access(x); while (t[x].ch[0]) push(x), x = t[x].ch[0]; splay(x); return x; }
+    bool connected(int x, int y) { return findRoot(x) == findRoot(y); }
+    void link(int x, int y) { makeRoot(x); if (findRoot(y) != x) t[x].p = y; }
+    void cut(int x, int y) {                                   // no-op if the edge is absent
+        makeRoot(x);
+        if (findRoot(y) == x && t[y].p == x && !t[y].ch[0]) t[y].p = t[x].ch[1] = 0, pull(x);
+    }
+    ll query(int x, int y) { makeRoot(x), access(y); return t[y].sum; }    // path aggregate
+    void update(int x, ll v) { access(x), t[x].val = v, pull(x); }
+    int lca(int r, int x, int y) { makeRoot(r), access(x); return access(y); }
+};
+// THE AGGREGATE is XOR here purely because it is self-inverse and needs no reversal handling.
+// For SUM/MIN/MAX just change pull(); for a NON-COMMUTATIVE aggregate (matrix product, max
+// prefix sum) you must store BOTH directions in the node and swap them inside flip().
+// EDGE WEIGHTS: give each edge its own vertex (n + edgeId) with the weight, and link both ends
+// to it. Vertex values then stay 0 and every path query still works.
+// SUBTREE aggregates need "virtual subtree" bookkeeping: keep a second sum over the non-preferred
+// children, updated in access() when you swap t[y].ch[1]. That doubles the code - if the tree is
+// static, an Euler tour (09 - Trees/06) is O(log n) and ten lines.
+/* WHAT LCT UNLOCKS
+   ONLINE DYNAMIC CONNECTIVITY ON A FOREST: connected() in O(log n). For general graphs (cycles)
+     you need the offline segment-tree-on-time trick (02 - Data Structures/14) or Holm-de
+     Lichtenberg-Thorup at O(log^2 n).
+   DYNAMIC MST: to add edge (u,v,w), if u and v are connected find the MAXIMUM edge on the path;
+     if it exceeds w, cut it and link the new edge. O(log n) per update.
+   MAXIMUM FLOW (Dinic with link-cut) improves the blocking-flow step to O(VE log V) - almost
+     never needed at contest sizes.
+   OFFLINE "PAINT THE ROOT PATH": access() itself is the operation "recolour root..v with a new
+     colour"; the number of colour changes is O(n log n) total, so if each change costs a segment
+     tree update you get O(n log^2 n). This is the standard trick for "count distinct substrings
+     over all substrings of s" and for tree-path-colouring problems. */
 \end{lstlisting}
 
 \section{Game Theory}

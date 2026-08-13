@@ -67,6 +67,9 @@ categories:
       - file: "21 - BigInt.cpp"
         title: "BigInt"
         path: "notebook/01 - Miscellaneous/21 - BigInt.cpp"
+      - file: "22 - RankingAndDates.cpp"
+        title: "RankingAndDates"
+        path: "notebook/01 - Miscellaneous/22 - RankingAndDates.cpp"
   - category: "02 - Data Structures (DS)"
     title: "Data Structures (DS)"
     subcategories:
@@ -233,6 +236,9 @@ categories:
       - file: "19 - MergeableHeap.cpp"
         title: "MergeableHeap"
         path: "notebook/02 - Data Structures (DS)/19 - MergeableHeap.cpp"
+      - file: "20 - PersistentAndUndo.cpp"
+        title: "PersistentAndUndo"
+        path: "notebook/02 - Data Structures (DS)/20 - PersistentAndUndo.cpp"
   - category: "03 - Graph Theory"
     title: "Graph Theory"
     subcategories:
@@ -263,6 +269,9 @@ categories:
           - file: "05 - ShortestPathEdgeModify.cpp"
             title: "ShortestPathEdgeModify"
             path: "notebook/03 - Graph Theory/02 - Shortest Paths/05 - ShortestPathEdgeModify.cpp"
+          - file: "06 - CyclesAndConstraints.cpp"
+            title: "CyclesAndConstraints"
+            path: "notebook/03 - Graph Theory/02 - Shortest Paths/06 - CyclesAndConstraints.cpp"
           - file: "06 - SegmentTreeGraph.cpp"
             title: "SegmentTreeGraph"
             path: "notebook/03 - Graph Theory/02 - Shortest Paths/06 - SegmentTreeGraph.cpp"
@@ -311,6 +320,9 @@ categories:
           - file: "05 - MinCutModelling.cpp"
             title: "MinCutModelling"
             path: "notebook/03 - Graph Theory/06 - Flow and Min Cut/05 - MinCutModelling.cpp"
+          - file: "06 - GomoryHu.cpp"
+            title: "GomoryHu"
+            path: "notebook/03 - Graph Theory/06 - Flow and Min Cut/06 - GomoryHu.cpp"
       - name: "07 - Matching"
         title: "Matching"
         files:
@@ -323,6 +335,9 @@ categories:
           - file: "03 - Hungarian.cpp"
             title: "Hungarian"
             path: "notebook/03 - Graph Theory/07 - Matching/03 - Hungarian.cpp"
+          - file: "04 - Blossom.cpp"
+            title: "Blossom"
+            path: "notebook/03 - Graph Theory/07 - Matching/04 - Blossom.cpp"
       - name: "08 - Spanning Trees"
         title: "Spanning Trees"
         files:
@@ -431,6 +446,12 @@ categories:
           - file: "01 - ContinuedFractions.cpp"
             title: "ContinuedFractions"
             path: "notebook/04 - Number Theory/05 - Rational/01 - ContinuedFractions.cpp"
+      - name: "06 - Sequences"
+        title: "Sequences"
+        files:
+          - file: "01 - FibonacciAndPisano.cpp"
+            title: "FibonacciAndPisano"
+            path: "notebook/04 - Number Theory/06 - Sequences/01 - FibonacciAndPisano.cpp"
   - category: "05 - Combinatorics"
     title: "Combinatorics"
     files:
@@ -539,6 +560,15 @@ categories:
           - file: "01 - Integration.cpp"
             title: "Integration"
             path: "notebook/06 - Math/07 - Numerical/01 - Integration.cpp"
+          - file: "02 - LinearSolvers.cpp"
+            title: "LinearSolvers"
+            path: "notebook/06 - Math/07 - Numerical/02 - LinearSolvers.cpp"
+      - name: "08 - Linear Programming"
+        title: "Linear Programming"
+        files:
+          - file: "01 - Simplex.cpp"
+            title: "Simplex"
+            path: "notebook/06 - Math/08 - Linear Programming/01 - Simplex.cpp"
   - category: "07 - Strings"
     title: "Strings"
     subcategories:
@@ -608,6 +638,12 @@ categories:
           - file: "01 - LyndonAndRotations.cpp"
             title: "LyndonAndRotations"
             path: "notebook/07 - Strings/06 - Rotations/01 - LyndonAndRotations.cpp"
+      - name: "07 - Sequences"
+        title: "Sequences"
+        files:
+          - file: "01 - DeBruijnAndBitap.cpp"
+            title: "DeBruijnAndBitap"
+            path: "notebook/07 - Strings/07 - Sequences/01 - DeBruijnAndBitap.cpp"
   - category: "08 - Dynamic Programming (DP)"
     title: "Dynamic Programming (DP)"
     subcategories:
@@ -647,6 +683,9 @@ categories:
           - file: "11 - MinPlusConvolution.cpp"
             title: "MinPlusConvolution"
             path: "notebook/08 - Dynamic Programming (DP)/01 - DP Optimizations/11 - MinPlusConvolution.cpp"
+          - file: "12 - OneDOneD.cpp"
+            title: "OneDOneD"
+            path: "notebook/08 - Dynamic Programming (DP)/01 - DP Optimizations/12 - OneDOneD.cpp"
       - name: "02 - Bitmask DP"
         title: "Bitmask DP"
         files:
@@ -755,6 +794,12 @@ categories:
           - file: "01 - TreeDP.cpp"
             title: "TreeDP"
             path: "notebook/09 - Trees/10 - Tree DP/01 - TreeDP.cpp"
+      - name: "11 - Dynamic Trees"
+        title: "Dynamic Trees"
+        files:
+          - file: "01 - LinkCutTree.cpp"
+            title: "LinkCutTree"
+            path: "notebook/09 - Trees/11 - Dynamic Trees/01 - LinkCutTree.cpp"
   - category: "10 - Game Theory"
     title: "Game Theory"
     files:
