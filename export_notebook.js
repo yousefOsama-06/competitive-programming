@@ -40,14 +40,30 @@ function symbolsOf(code) {
     let m;
     while ((m = reType.exec(code))) out.add(m[1]);
     while ((m = reFunc.exec(code))) out.add(m[1]);
-    for (const bad of ['if', 'for', 'while', 'switch', 'return', 'sizeof', 'main', 'else', 'do'])
-        out.delete(bad);
-    return [...out];
+    const noise = new Set(['if', 'for', 'while', 'switch', 'return', 'sizeof', 'main', 'else',
+        'do', 'go', 'rec', 'dfs2', 'f', 'g', 'h', 'cmp', 'add', 'push', 'pull', 'init', 'build',
+        'query', 'update', 'solve', 'test', 'sub', 'cur', 'ok', 'get', 'set', 'node', 'eye']);
+    // 1-2 character names and generic helper names are noise in an alphabetical index
+    return [...out].filter(x => x.length > 2 && !noise.has(x) && !x.startsWith('_'));
 }
 function indexEntries(code) {
     return symbolsOf(code)
         .map(sym => `\\index{${sym.replace(/[_]/g, '\\_').replace(/[!@|"]/g, '"$&')}}`)
         .join('');
+}
+// If the blurb reproduced line 1 of the file in full, drop that line from the listing - printing
+// the same sentence twice on 200 files costs pages and reads as noise.
+function trimBlurbLine(code) {
+    const b = blurbOf(code);
+    if (!b || b.length < 12 || b.length > 150) return code;
+    const lines = code.split('\n');
+    for (let i = 0; i < lines.length; i++) {
+        const l = lines[i].trim();
+        if (!l || l.startsWith('// Needs:') || l.startsWith('// NOTE:')) continue;
+        if (l === '// ' + b || l === '//' + b) { lines.splice(i, 1); return lines.join('\n'); }
+        return code;
+    }
+    return code;
 }
 // First real comment line of a file = its one-line description, printed under the title.
 function blurbOf(code) {
@@ -78,9 +94,7 @@ let latex = `\\UseRawInputEncoding
 \\usepackage[utf8]{inputenc}
 \\usepackage{lmodern}
 \\usepackage{fancyhdr}
-\\usepackage{tocloft}
 \\usepackage{makeidx}
-\\usepackage{needspace}
 \\usepackage[hidelinks]{hyperref}
 \\makeindex
 
@@ -95,21 +109,21 @@ let latex = `\\UseRawInputEncoding
 \\renewcommand{\\sectionmark}[1]{\\markboth{#1}{}}
 \\renewcommand{\\subsectionmark}[1]{\\markright{#1}}
 
-\\definecolor{codebg}{HTML}{F8F9FA}
-\\definecolor{codeframe}{HTML}{D0D5DD}
-\\definecolor{keyword}{HTML}{0033CC}
-\\definecolor{comment}{HTML}{008000}
-\\definecolor{string}{HTML}{A31515}
-\\definecolor{blurb}{HTML}{444444}
+\\definecolor{codeframe}{HTML}{B8BEC8}
+\\definecolor{keyword}{HTML}{00248F}
+\\definecolor{comment}{HTML}{006400}
+\\definecolor{string}{HTML}{8B1A1A}
+\\definecolor{blurb}{HTML}{333333}
+\\definecolor{secbar}{HTML}{1F2933}
 
 \\lstset{
     language=C++,
-    basicstyle=\\ttfamily\\scriptsize,
+    basicstyle=\\ttfamily\\fontsize{7.8}{9.0}\\selectfont,
     keywordstyle=\\color{keyword}\\bfseries,
     commentstyle=\\color{comment}\\itshape,
     stringstyle=\\color{string},
-    backgroundcolor=\\color{codebg},
-    frame=single,
+    frame=leftline,
+    framerule=0.5pt,
     rulecolor=\\color{codeframe},
     breaklines=true,
     breakatwhitespace=false,
@@ -125,16 +139,26 @@ let latex = `\\UseRawInputEncoding
     extendedchars=false,
 }
 
-\\titleformat{\\section}{\\large\\bfseries\\sffamily}{\\thesection}{0.4em}{}
+% Section titles are a solid dark bar: they are the landmark you thumb for.
+\\newcommand{\\sectionbar}[1]{%
+  \\colorbox{secbar}{\\parbox{\\dimexpr\\linewidth-2\\fboxsep}{%
+    \\color{white}\\large\\bfseries\\sffamily\\thesection\\hspace{0.7em}#1}}}
+\\titleformat{\\section}[block]{\\normalfont}{}{0pt}{\\sectionbar}
+\\titleformat{name=\\section,numberless}[block]{\\normalfont}{}{0pt}{\\sectionbarplain}
+\\newcommand{\\sectionbarplain}[1]{%
+  \\colorbox{secbar}{\\parbox{\\dimexpr\\linewidth-2\\fboxsep}{%
+    \\color{white}\\large\\bfseries\\sffamily #1}}}
 \\titleformat{\\subsection}{\\normalsize\\bfseries\\sffamily}{\\thesubsection}{0.3em}{}
-\\titleformat{\\subsubsection}{\\small\\bfseries\\sffamily}{\\thesubsubsection}{0.2em}{}
+  [\\vspace{-0.75\\baselineskip}\\rule{\\linewidth}{0.4pt}]
+\\titleformat{\\subsubsection}{\\small\\bfseries\\sffamily}{\\thesubsubsection}{0.25em}{}
 
 \\titlespacing*{\\section}{0pt}{0.5em}{0.2em}
 \\titlespacing*{\\subsection}{0pt}{0.4em}{0.1em}
 \\titlespacing*{\\subsubsection}{0pt}{0.3em}{0.1em}
 
-\\setlength{\\columnseprule}{0pt}
-\\setlength{\\columnsep}{0.6cm}
+\\setlength{\\columnseprule}{0.3pt}
+\\setlength{\\columnsep}{0.7cm}
+\\linespread{1.0}
 
 \\begin{document}
 
@@ -162,15 +186,8 @@ Geometry: \\texttt{P\\textless ll\\textgreater} for every decision, \\texttt{P\\
 }}
 \\vspace{0.8em}
 
-{\\small
-\\setlength{\\cftbeforesecskip}{0.15em}
-\\setlength{\\cftbeforesubsecskip}{0.02em}
-\\setlength{\\cftsecindent}{0em}
-\\setlength{\\cftsubsecindent}{0.8em}
-\\renewcommand{\\cftsecfont}{\\bfseries\\sffamily}
-\\renewcommand{\\cftsubsecfont}{\\sffamily}
-\\renewcommand{\\cftsubsubsecfont}{\\sffamily\\footnotesize}
-\\setcounter{tocdepth}{2}
+{\\small\\sffamily
+\\setcounter{tocdepth}{1}
 \\tableofcontents
 }
 \\vspace{0.6em}
@@ -209,18 +226,18 @@ for (const section of sections) {
             for (const file of subFiles) {
                 const fileName = cleanName(path.basename(file.name, '.cpp'));
                 const code = fs.readFileSync(file.fullPath, 'utf-8').trimEnd();
-                latex += `\\needspace{4\\baselineskip}\n`;
+                latex += `\\filbreak\n`;
                 latex += `\\subsubsection{${escapeLatex(fileName)}}${indexEntries(code)}\n`;
                 latex += blurbLine(code);
-                latex += `\\begin{lstlisting}\n${code}\n\\end{lstlisting}\n\n`;
+                latex += `\\begin{lstlisting}\n${trimBlurbLine(code)}\n\\end{lstlisting}\n\n`;
             }
         } else if (entry.name.endsWith('.cpp')) {
             const fileName = cleanName(path.basename(entry.name, '.cpp'));
             const code = fs.readFileSync(entry.fullPath, 'utf-8').trimEnd();
-            latex += `\\needspace{4\\baselineskip}\n`;
+            latex += `\\filbreak\n`;
             latex += `\\subsection{${escapeLatex(fileName)}}${indexEntries(code)}\n`;
             latex += blurbLine(code);
-            latex += `\\begin{lstlisting}\n${code}\n\\end{lstlisting}\n\n`;
+            latex += `\\begin{lstlisting}\n${trimBlurbLine(code)}\n\\end{lstlisting}\n\n`;
         }
     }
 }

@@ -362,6 +362,12 @@ categories:
           - file: "01 - GraphTheorems.cpp"
             title: "GraphTheorems"
             path: "notebook/03 - Graph Theory/10 - Theorems/01 - GraphTheorems.cpp"
+      - name: "11 - Special Structures"
+        title: "Special Structures"
+        files:
+          - file: "01 - StableChordalComplement.cpp"
+            title: "StableChordalComplement"
+            path: "notebook/03 - Graph Theory/11 - Special Structures/01 - StableChordalComplement.cpp"
   - category: "04 - Number Theory"
     title: "Number Theory"
     subcategories:

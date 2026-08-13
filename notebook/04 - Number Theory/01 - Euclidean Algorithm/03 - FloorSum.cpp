@@ -1,4 +1,4 @@
-// EUCLIDEAN-LIKE ALGORITHM (类欧几里得 / AtCoder Library `floor_sum`).
+// EUCLIDEAN-LIKE ALGORITHM (AtCoder Library `floor_sum`).
 //   floorSum(n, m, a, b) = sum_{i=0}^{n-1} floor((a*i + b) / m)     in O(log m).
 // This is THE tool for "sum over a lattice line": counting lattice points under a line, sums of
 // floor/mod expressions, and anything of the shape sum floor((a i + b) / m) that a loop cannot do
@@ -27,11 +27,11 @@ ll floorSum(ll n, ll m, ll a, ll b) {
 //
 // THE OTHER TWO SUMS of the same family (needed together often enough to be worth knowing they
 // exist): S1 = sum i * floor((a i + b)/m) and S2 = sum floor((a i + b)/m)^2 obey the same
-// recursion with a 3-tuple state - the "universal Euclidean algorithm" (万能欧几里得) generalises
+// recursion with a 3-tuple state - the "universal Euclidean algorithm" generalises
 // this to any monoid: you supply the two operators U ("move right") and R ("move up") and it
 // composes the word for the line in O(log) monoid multiplications.
 //
-// DIVISOR BLOCKS (数论分块) - the other floor trick, O(sqrt n):
+// DIVISOR BLOCKS - the other floor trick, O(sqrt n):
 //   floor(n / i) is constant on maximal blocks; for a block starting at l the block ends at
 //   r = n / (n / l). Use it for sum_{i=1}^{n} floor(n/i), sum of tau/sigma, Du sieve, Mobius sums.
 //     for (ll l = 1, r; l <= n; l = r + 1) { r = n / (n / l); /* value n/l on [l, r] */ }

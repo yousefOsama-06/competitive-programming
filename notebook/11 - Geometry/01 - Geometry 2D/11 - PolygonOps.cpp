@@ -46,7 +46,7 @@ template <class P> vector<P> clipByConvex(vector<P> subject, const vector<P>& wi
         subject = cut(subject, win[i], win[(i + 1) % m]);
     return subject;
 }
-// --- CONVEX ∩ CONVEX in O(n + m) is the classic O'Rourke walk, but clipByConvex is O(nm) and
+// --- CONVEX intersect CONVEX in O(n + m) is the classic O'Rourke walk, but clipByConvex is O(nm) and
 // fits on one line - at contest sizes (n, m <= a few thousand) prefer it. Use halfPlaneInter
 // (06) when you have the polygons as half-plane constraints instead of vertex lists.
 

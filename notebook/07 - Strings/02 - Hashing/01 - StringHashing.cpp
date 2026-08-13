@@ -27,6 +27,6 @@ struct Hash {
     }
     // concat(A over lenA, B): h = hA * base^lenB + hB   (works per modulus)
 };
-// USES: substring equality O(1) · longest common prefix of two suffixes by binary search
-//       · dedup of substrings · 2D grid patterns (hash rows, then hash the row-hashes)
-//       · tree isomorphism (hash the sorted multiset of child hashes)
+// USES: substring equality O(1) * longest common prefix of two suffixes by binary search
+//       * dedup of substrings * 2D grid patterns (hash rows, then hash the row-hashes)
+//       * tree isomorphism (hash the sorted multiset of child hashes)

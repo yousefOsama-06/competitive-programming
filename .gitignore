@@ -7,3 +7,10 @@
 
 # reference clones of other teams notebooks, kept locally for comparison only
 temps/
+
+# build artefacts from the local pdflatex run
+notebook.aux
+notebook.idx
+notebook.ilg
+notebook.ind
+notebook.toc

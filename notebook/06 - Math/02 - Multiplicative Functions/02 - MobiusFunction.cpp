@@ -1,7 +1,7 @@
-// Mobius Function μ(n) Sieve - Time: O(N), Space: O(N)
-// μ(n) = 1 if n is square-free with an even number of prime factors
-// μ(n) = -1 if n is square-free with an odd number of prime factors
-// μ(n) = 0 if n has a squared prime factor
+// Mobius Function mu(n) Sieve - Time: O(N), Space: O(N)
+// mu(n) = 1 if n is square-free with an even number of prime factors
+// mu(n) = -1 if n is square-free with an odd number of prime factors
+// mu(n) = 0 if n has a squared prime factor
 struct Mobius {
     int n;
     vector<int> mu, primes;

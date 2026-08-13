@@ -62,6 +62,6 @@ struct MCMF {
     // MIN-COST flow of exactly K units: run(s, t, K) and check flow == K.
     // MIN-COST (not max) flow: stop as soon as dist[t] + pot[t] - pot[s] > 0 (no profitable path).
 };
-// MODELLING: assignment on a SPARSE graph; for a dense/complete one use 07 - Matching/03 - Hungarian · transportation · "k disjoint paths of minimum total cost" ·
-// min-cost bipartite matching · scheduling with penalties · MCMF is also how you solve
+// MODELLING: assignment on a SPARSE graph; for a dense/complete one use 07 - Matching/03 - Hungarian * transportation * "k disjoint paths of minimum total cost" *
+// min-cost bipartite matching * scheduling with penalties * MCMF is also how you solve
 // "choose k items with a matroid-ish constraint minimising cost".

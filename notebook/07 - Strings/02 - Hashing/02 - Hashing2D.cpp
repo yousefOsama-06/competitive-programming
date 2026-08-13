@@ -33,7 +33,7 @@ struct Hash2D {                                      // Per-object bases would m
         return (ll)((v % M + M) % M);
     }
 };
-// USES: count occurrences of a pattern grid · largest common square submatrix (binary search the
-// side, hash all windows of both grids) · count distinct k x k submatrices.
+// USES: count occurrences of a pattern grid * largest common square submatrix (binary search the
+// side, hash all windows of both grids) * count distinct k x k submatrices.
 // CHEAPER when the pattern is fixed: 1D-hash each row of the pattern, then run KMP /
 // Aho-Corasick over the rows treated as single symbols.

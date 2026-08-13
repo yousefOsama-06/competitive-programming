@@ -1,6 +1,6 @@
 // REROOTING DP - compute f(v as root) for EVERY v in O(n).
-// Four hooks:  E() identity of merge · self(v) contribution of v itself ·
-//              merge(a,b) associative+commutative · lift(a, child) push a child's value
+// Four hooks:  E() identity of merge * self(v) contribution of v itself *
+//              merge(a,b) associative+commutative * lift(a, child) push a child's value
 //              across one edge into the parent's frame.
 // Shipped example: ans[v].first = sum of distances from v to every other node.
 struct Reroot {

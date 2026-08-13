@@ -8,9 +8,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage{lmodern}
 \usepackage{fancyhdr}
-\usepackage{tocloft}
 \usepackage{makeidx}
-\usepackage{needspace}
 \usepackage[hidelinks]{hyperref}
 \makeindex
 
@@ -25,21 +23,21 @@
 \renewcommand{\sectionmark}[1]{\markboth{#1}{}}
 \renewcommand{\subsectionmark}[1]{\markright{#1}}
 
-\definecolor{codebg}{HTML}{F8F9FA}
-\definecolor{codeframe}{HTML}{D0D5DD}
-\definecolor{keyword}{HTML}{0033CC}
-\definecolor{comment}{HTML}{008000}
-\definecolor{string}{HTML}{A31515}
-\definecolor{blurb}{HTML}{444444}
+\definecolor{codeframe}{HTML}{B8BEC8}
+\definecolor{keyword}{HTML}{00248F}
+\definecolor{comment}{HTML}{006400}
+\definecolor{string}{HTML}{8B1A1A}
+\definecolor{blurb}{HTML}{333333}
+\definecolor{secbar}{HTML}{1F2933}
 
 \lstset{
     language=C++,
-    basicstyle=\ttfamily\scriptsize,
+    basicstyle=\ttfamily\fontsize{7.8}{9.0}\selectfont,
     keywordstyle=\color{keyword}\bfseries,
     commentstyle=\color{comment}\itshape,
     stringstyle=\color{string},
-    backgroundcolor=\color{codebg},
-    frame=single,
+    frame=leftline,
+    framerule=0.5pt,
     rulecolor=\color{codeframe},
     breaklines=true,
     breakatwhitespace=false,
@@ -55,16 +53,26 @@
     extendedchars=false,
 }
 
-\titleformat{\section}{\large\bfseries\sffamily}{\thesection}{0.4em}{}
+% Section titles are a solid dark bar: they are the landmark you thumb for.
+\newcommand{\sectionbar}[1]{%
+  \colorbox{secbar}{\parbox{\dimexpr\linewidth-2\fboxsep}{%
+    \color{white}\large\bfseries\sffamily\thesection\hspace{0.7em}#1}}}
+\titleformat{\section}[block]{\normalfont}{}{0pt}{\sectionbar}
+\titleformat{name=\section,numberless}[block]{\normalfont}{}{0pt}{\sectionbarplain}
+\newcommand{\sectionbarplain}[1]{%
+  \colorbox{secbar}{\parbox{\dimexpr\linewidth-2\fboxsep}{%
+    \color{white}\large\bfseries\sffamily #1}}}
 \titleformat{\subsection}{\normalsize\bfseries\sffamily}{\thesubsection}{0.3em}{}
-\titleformat{\subsubsection}{\small\bfseries\sffamily}{\thesubsubsection}{0.2em}{}
+  [\vspace{-0.75\baselineskip}\rule{\linewidth}{0.4pt}]
+\titleformat{\subsubsection}{\small\bfseries\sffamily}{\thesubsubsection}{0.25em}{}
 
 \titlespacing*{\section}{0pt}{0.5em}{0.2em}
 \titlespacing*{\subsection}{0pt}{0.4em}{0.1em}
 \titlespacing*{\subsubsection}{0pt}{0.3em}{0.1em}
 
-\setlength{\columnseprule}{0pt}
-\setlength{\columnsep}{0.6cm}
+\setlength{\columnseprule}{0.3pt}
+\setlength{\columnsep}{0.7cm}
+\linespread{1.0}
 
 \begin{document}
 
@@ -93,23 +101,16 @@ only when the answer is a real number.
 }}
 \vspace{0.8em}
 
-{\small
-\setlength{\cftbeforesecskip}{0.15em}
-\setlength{\cftbeforesubsecskip}{0.02em}
-\setlength{\cftsecindent}{0em}
-\setlength{\cftsubsecindent}{0.8em}
-\renewcommand{\cftsecfont}{\bfseries\sffamily}
-\renewcommand{\cftsubsecfont}{\sffamily}
-\renewcommand{\cftsubsubsecfont}{\sffamily\footnotesize}
-\setcounter{tocdepth}{2}
+{\small\sffamily
+\setcounter{tocdepth}{1}
 \tableofcontents
 }
 \vspace{0.6em}
 
 \section{Miscellaneous}
 
-\needspace{4\baselineskip}
-\subsection{Template}\index{\_p}\index{\_pr}\index{testCase}\index{preCompute}
+\filbreak
+\subsection{Template}\index{testCase}\index{preCompute}
 \begin{lstlisting}
 #include <bits/stdc++.h>
 using namespace std;
@@ -178,11 +179,10 @@ int32_t main() {
 */
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsection{fastIO}
 \nopagebreak{\footnotesize\sffamily\color{blurb} HAND-ROLLED FAST IO (fread/fwrite buffered). Use only when cin with sync off is measurably too\par}\nopagebreak
 \begin{lstlisting}
-// HAND-ROLLED FAST IO (fread/fwrite buffered). Use only when cin with sync off is measurably too
 // slow: >1e6 numbers to read, or heavy output. Otherwise prefer the template's ios::sync_with_stdio.
 const int MOD = 1e9 + 7;
 const int BUF_SZ = 1 << 15;
@@ -244,22 +244,20 @@ inline namespace Output {
 }  // namespace Output
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsection{grid}
 \nopagebreak{\footnotesize\sffamily\color{blurb} GRID DIRECTION VECTORS. First 4 entries = 4-neighbourhood (L,R,U,D), all 8 = king moves.\par}\nopagebreak
 \begin{lstlisting}
-// GRID DIRECTION VECTORS. First 4 entries = 4-neighbourhood (L,R,U,D), all 8 = king moves.
 // Knight moves: dx {1,1,-1,-1,2,2,-2,-2}, dy {2,-2,2,-2,1,-1,1,-1}. Guard with 0<=x<n && 0<=y<m.
 int dx[] = {0, 0, -1, 1, -1, -1, 1, 1};
 int dy[] = {-1, 1, 0, 0, -1, 1, -1, 1};
 char di[] = {'L', 'R', 'U', 'D'};
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsection{random}\index{rng}\index{rnd}\index{randPerm}
 \nopagebreak{\footnotesize\sffamily\color{blurb} RANDOMNESS. Seed from the clock so tests cannot be prepared against you.\par}\nopagebreak
 \begin{lstlisting}
-// RANDOMNESS. Seed from the clock so tests cannot be prepared against you.
 mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
 ll rnd(ll l, ll r) { return uniform_int_distribution<ll>(l, r)(rng); }   // inclusive
 
@@ -276,11 +274,10 @@ vector<int> randPerm(int n) {                           // random permutation of
 //   - random rotation of points removes degenerate ties in a geometry sweep
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsection{coordinateCompression}\index{Compress}
 \nopagebreak{\footnotesize\sffamily\color{blurb} Coordinate Compression - O(N log N)\par}\nopagebreak
 \begin{lstlisting}
-// Coordinate Compression - O(N log N)
 template<typename T>
 struct Compress {
     vector<T> v;
@@ -299,11 +296,10 @@ struct Compress {
 };
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsection{grayCode}\index{grayCode}\index{rev\_g}
 \nopagebreak{\footnotesize\sffamily\color{blurb} GRAY CODE - orders 0..2\textasciicircum{}n-1 so consecutive values differ in exactly ONE bit. Use it to walk all\par}\nopagebreak
 \begin{lstlisting}
-// GRAY CODE - orders 0..2^n-1 so consecutive values differ in exactly ONE bit. Use it to walk all
 // subsets while changing one element at a time (incremental DP, XOR-basis sweeps, Tower of Hanoi).
 // Gray Code Generator - O(2^N)
 // g(n) = n ^ (n >> 1)
@@ -323,11 +319,10 @@ int rev_g (int g) {
 }
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsection{customHashHashTable}\index{custom\_hash}
 \nopagebreak{\footnotesize\sffamily\color{blurb} UNORDERED\_MAP THAT CANNOT BE HACKED. The default std::hash for integers is the identity, so an\par}\nopagebreak
 \begin{lstlisting}
-// UNORDERED_MAP THAT CANNOT BE HACKED. The default std::hash for integers is the identity, so an
 // adversary can force every key into one bucket and turn O(1) into O(n). splitmix64 + a clock seed
 // fixes that. gp_hash_table is ~3x faster than unordered_map; reserve() and max_load_factor help more.
 #include <ext/pb_ds/assoc_container.hpp>
@@ -352,11 +347,10 @@ struct custom_hash {
 //        unordered_map<ll, int, custom_hash> safe_map;
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsection{pragmas}
 \nopagebreak{\footnotesize\sffamily\color{blurb} COMPILER PRAGMAS. O3 + unrolling, and AVX2 for auto-vectorised loops (bitset, simple array math).\par}\nopagebreak
 \begin{lstlisting}
-// COMPILER PRAGMAS. O3 + unrolling, and AVX2 for auto-vectorised loops (bitset, simple array math).
 // Put them at the very top, before any include. Risk: `target` crashes judges without those CPU
 // features - never use avx2 on an unknown judge, and never on Codeforces problems with old machines.
 // GCC Optimizations
@@ -364,11 +358,10 @@ struct custom_hash {
 #pragma GCC target("avx2,bmi,bmi2,lzcnt,popcnt")
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsection{int128}
 \nopagebreak{\footnotesize\sffamily\color{blurb} \_\_int128 Stream Operators Helper\par}\nopagebreak
 \begin{lstlisting}
-// __int128 Stream Operators Helper
 typedef __int128_t int128;
 typedef __uint128_t uint128;
 
@@ -391,11 +384,10 @@ istream &operator>>(istream &is, int128 &n) {
 }
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsection{SearchIdioms}\index{firstTrue}\index{lastTrue}\index{binReal}\index{ternaryInt}\index{ternaryReal}\index{convexArgmin}\index{newton}\index{isqrt}\index{icbrt}
 \nopagebreak{\footnotesize\sffamily\color{blurb} The four searches. Getting the boundary right here saves more contest time than any template.\par}\nopagebreak
 \begin{lstlisting}
-// The four searches. Getting the boundary right here saves more contest time than any template.
 
 // BINARY SEARCH ON A PREDICATE. pred must be monotone: F F F T T T.
 // firstTrue returns the first x in [lo, hi] with pred(x), or hi+1 if none.
@@ -457,7 +449,7 @@ ll icbrt(ll n) { ll r = (ll)cbrtl((ld)n); while (r > 0 && r * r * r > n) r--; wh
 // their current midpoint, sweep the shared structure once per level, O(log) sweeps total.
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsection{BitTricks}\index{forEachSubmask}\index{kSubsets}\index{pairXorSum}
 \nopagebreak{\footnotesize\sffamily\color{blurb} BIT MANIPULATION CHEAT SHEET =====================\par}\nopagebreak
 \begin{lstlisting}
@@ -527,7 +519,7 @@ ll pairXorSum(const vector<ll>& a, int B = 62) {
 }
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsection{StressTest}\index{stress}
 \nopagebreak{\footnotesize\sffamily\color{blurb} STRESS TESTING =================\par}\nopagebreak
 \begin{lstlisting}
@@ -584,11 +576,10 @@ void stress(Gen gen, Fast fast, Brute brute, int iters = 100000) {
 }
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsection{Fraction}\index{Frac}
 \nopagebreak{\footnotesize\sffamily\color{blurb} Exact rational. Always normalised (gcd reduced, denominator \textgreater{} 0).\par}\nopagebreak
 \begin{lstlisting}
-// Exact rational. Always normalised (gcd reduced, denominator > 0).
 // Comparison uses __int128 so it is exact for |num|,|den| up to ~9e18.
 // Use whenever comparing ratios: slopes, "maximum average", scheduling exchange arguments.
 struct Frac {
@@ -615,11 +606,10 @@ struct Frac {
 // For unbounded exactness use Python/BigInt, or the Stern-Brocot search (ContinuedFractions).
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsection{Inversions}\index{inversions}
 \nopagebreak{\footnotesize\sffamily\color{blurb} INVERSIONS: \#pairs i \textless{} j with a[i] \textgreater{} a[j]. O(n log n) by merge sort (also sorts a).\par}\nopagebreak
 \begin{lstlisting}
-// INVERSIONS: #pairs i < j with a[i] > a[j]. O(n log n) by merge sort (also sorts a).
 ll inversions(vector<int>& a) {
     int n = a.size();
     if (n < 2) return 0;
@@ -649,11 +639,10 @@ ll inversions(vector<int>& a) {
 //   compress values, sweep left to right, ans += (#inserted so far) - query(a[i]), then add a[i].
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsection{ExpressionParser}\index{Parser}
 \nopagebreak{\footnotesize\sffamily\color{blurb} EXPRESSION PARSER (shunting-yard). Handles + - * / \% \textasciicircum{}, unary minus, parentheses.\par}\nopagebreak
 \begin{lstlisting}
-// EXPRESSION PARSER (shunting-yard). Handles + - * / % ^, unary minus, parentheses.
 // Left-associative except ^. Extend by editing prec() / applyOp().
 struct Parser {
     static int prec(char op) {
@@ -718,11 +707,10 @@ struct Parser {
 // For boolean/comparison operators just add them to prec() with lower precedence.
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsection{CycleFinding}\index{FuncGraph}\index{floydCycle}\index{iterate}
 \nopagebreak{\footnotesize\sffamily\color{blurb} CYCLE FINDING in a FUNCTIONAL GRAPH x -\textgreater{} f(x). Every component is a "rho": a tail feeding\par}\nopagebreak
 \begin{lstlisting}
-// CYCLE FINDING in a FUNCTIONAL GRAPH x -> f(x). Every component is a "rho": a tail feeding
 // into a cycle. Answers: where does x end up after k steps, cycle length, distance to cycle.
 
 // Floyd (tortoise & hare), O(1) memory. Returns {start index of the cycle, cycle length}.
@@ -780,11 +768,10 @@ struct FuncGraph {
 // detecting a repeat in a modular sequence, linked-list loop detection.
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsection{ParallelBinarySearch}\index{parallelBinarySearch}
 \nopagebreak{\footnotesize\sffamily\color{blurb} PARALLEL BINARY SEARCH - binary search the answer for MANY queries at once, sweeping the\par}\nopagebreak
 \begin{lstlisting}
-// PARALLEL BINARY SEARCH - binary search the answer for MANY queries at once, sweeping the
 // shared structure once per level instead of once per query.
 // PRECONDITION: test(i) must be MONOTONE in time - once it is true it stays true. If updates
 // can also undo things, parallel binary search does not apply; use offline divide & conquer over
@@ -821,11 +808,10 @@ vector<int> parallelBinarySearch(int q, int T, Apply applyUpdate, Reset reset, T
 // (see OfflineDynamicConnectivity) - it is one pass instead of log passes.
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsection{MeetInTheMiddle}\index{subsetSums}\index{countAtMost}\index{bestAtMost}
 \nopagebreak{\footnotesize\sffamily\color{blurb} MEET IN THE MIDDLE - n \textless{}= 40. Split into halves, enumerate 2\textasciicircum{}(n/2) subsets each side,\par}\nopagebreak
 \begin{lstlisting}
-// MEET IN THE MIDDLE - n <= 40. Split into halves, enumerate 2^(n/2) subsets each side,
 // then recombine by sorting + binary search / two pointers. O(2^(n/2) * n).
 
 // All subset sums of a half, as a sorted vector.
@@ -871,7 +857,7 @@ ll bestAtMost(vector<ll> a, ll S) {
 // If n <= 20 a plain 2^n loop is simpler; meet in the middle earns its keep from n = 30 upward.
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsection{Scheduling}\index{maxOnTime}\index{johnson}
 \nopagebreak{\footnotesize\sffamily\color{blurb} SCHEDULING / EXCHANGE-ARGUMENT THEOREM CARD ==============\par}\nopagebreak
 \begin{lstlisting}
@@ -934,11 +920,10 @@ vector<int> johnson(const vector<pair<ll, ll>>& jobs) {     // {p on machine 1, 
 }
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsection{Josephus}\index{josephus}\index{josephus2}\index{josephusFast}
 \nopagebreak{\footnotesize\sffamily\color{blurb} JOSEPHUS PROBLEM. n people in a circle 0..n-1, every k-th is removed; who survives?\par}\nopagebreak
 \begin{lstlisting}
-// JOSEPHUS PROBLEM. n people in a circle 0..n-1, every k-th is removed; who survives?
 // Recurrence: J(1) = 0, J(n) = (J(n-1) + k) mod n. O(n).
 ll josephus(ll n, ll k) { ll r = 0; for (ll i = 2; i <= n; i++) r = (r + k) % i; return r; }
 // k = 2 closed form: write n = 2^m + l with 0 <= l < 2^m, the survivor is 2*l  (0-indexed).
@@ -971,11 +956,10 @@ ll josephusFast(ll n, ll k) {
 //   (n-m)/(n+m) * C(n+m, m)  (Bertrand's ballot theorem).
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsection{BigInt}\index{Big}
 \nopagebreak{\footnotesize\sffamily\color{blurb} BIG INTEGERS, non-negative, base 1e9. Enough for the usual "the answer does not fit in 64 bits"\par}\nopagebreak
 \begin{lstlisting}
-// BIG INTEGERS, non-negative, base 1e9. Enough for the usual "the answer does not fit in 64 bits"
 // problems: exact factorials / Catalan numbers / determinants, huge Fibonacci, exact comparisons.
 // Add/sub O(n), schoolbook multiply O(n*m) (fine to ~1e4 digits), divide by a small int O(n).
 // If you need big*big beyond that, convolve the limbs with FFT and carry.
@@ -1052,11 +1036,10 @@ struct Big {
 // SQRT: binary search with the multiply above, or Newton on doubles then fix up by a few steps.
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsection{RankingAndDates}\index{permRank}\index{permUnrank}\index{dateToInt}\index{intToDate}\index{weekday}\index{fracSearch}
 \nopagebreak{\footnotesize\sffamily\color{blurb} RANKING / UNRANKING COMBINATORIAL OBJECTS, and CALENDAR ARITHMETIC. Small, and each one costs\par}\nopagebreak
 \begin{lstlisting}
-// RANKING / UNRANKING COMBINATORIAL OBJECTS, and CALENDAR ARITHMETIC. Small, and each one costs
 // 20 minutes to re-derive under pressure.
 
 // --- FACTORIAL NUMBER SYSTEM: rank and unrank a PERMUTATION. O(n^2) as written; use an
@@ -1145,11 +1128,10 @@ pair<ll, ll> fracSearch(ll N, F ok) {
 
 \subsection{Segment Tree}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{SegmentTree}\index{SEG}\index{segTree}
 \nopagebreak{\footnotesize\sffamily\color{blurb} SEGMENT TREE, point update + range query, O(log n) each. Swap the merge in SEG to change the\par}\nopagebreak
 \begin{lstlisting}
-// SEGMENT TREE, point update + range query, O(log n) each. Swap the merge in SEG to change the
 // operation (sum/min/max/gcd/matrix); any associative monoid works. Size is rounded up to a power
 // of two so the tree is perfect and indices are simple.
 struct SEG {
@@ -1226,11 +1208,10 @@ struct segTree {
 };
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{LazySegmentTree}\index{LazySeg}
 \nopagebreak{\footnotesize\sffamily\color{blurb} Lazy Segment Tree (range add, range sum) - build O(n), update/query O(log n)\par}\nopagebreak
 \begin{lstlisting}
-// Lazy Segment Tree (range add, range sum) - build O(n), update/query O(log n)
 // 1-based node indices, 0-based positions, ALL recursions on [0, n-1].
 // To change the op: edit merge(), apply() and the identity in qry().
 struct LazySeg {
@@ -1279,11 +1260,10 @@ struct LazySeg {
 };
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{PersistentSegmentTree}\index{Node}\index{PST}
 \nopagebreak{\footnotesize\sffamily\color{blurb} PERSISTENT SEGMENT TREE - every update returns a NEW root and old versions stay queryable.\par}\nopagebreak
 \begin{lstlisting}
-// PERSISTENT SEGMENT TREE - every update returns a NEW root and old versions stay queryable.
 // O(log n) time and O(log n) new nodes per update. The standard use is offline k-th smallest in a
 // range (build a version per prefix, then query version[r] minus version[l-1]).
 struct Node {
@@ -1353,7 +1333,7 @@ struct PST {
 };
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{SegmentTreeBeats}\index{Node}\index{SegTree}
 \nopagebreak{\footnotesize\sffamily\color{blurb} Rename one if you ever paste two of them together.\par}\nopagebreak
 \begin{lstlisting}
@@ -1643,11 +1623,10 @@ struct SegTree {
 };
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{DynamicSegTree}\index{DynamicSegTree}\index{Node}
 \nopagebreak{\footnotesize\sffamily\color{blurb} Dynamic (Implicit) Segment Tree - Space: O(Q log N) per query\par}\nopagebreak
 \begin{lstlisting}
-// Dynamic (Implicit) Segment Tree - Space: O(Q log N) per query
 // Allocates nodes on demand for ranges up to 1e9 or 1e18
 template<typename T = ll>
 struct DynamicSegTree {
@@ -1704,11 +1683,10 @@ struct DynamicSegTree {
 };
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{MergeSortTree}\index{MergeSortTree}
 \nopagebreak{\footnotesize\sffamily\color{blurb} Merge Sort Tree - Space: O(N log N), Build: O(N log N), Query: O(log\textasciicircum{}2 N)\par}\nopagebreak
 \begin{lstlisting}
-// Merge Sort Tree - Space: O(N log N), Build: O(N log N), Query: O(log^2 N)
 // Stores sorted elements in each node to answer 2D range count queries
 template<typename T = int>
 struct MergeSortTree {
@@ -1746,11 +1724,10 @@ struct MergeSortTree {
 };
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{IterativeSegTree}\index{IterativeSegTree}
 \nopagebreak{\footnotesize\sffamily\color{blurb} Iterative (Non-Recursive) Segment Tree - Space: O(N), Update: O(log N), Query: O(log N)\par}\nopagebreak
 \begin{lstlisting}
-// Iterative (Non-Recursive) Segment Tree - Space: O(N), Update: O(log N), Query: O(log N)
 // Fast, cache-friendly implementation for point update and range query
 template<typename T = ll>
 struct IterativeSegTree {
@@ -1788,11 +1765,10 @@ struct IterativeSegTree {
 };
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{SegTree2D}\index{SegTree2D}
 \nopagebreak{\footnotesize\sffamily\color{blurb} 2D Segment Tree - Space: O(N * M), Update: O(log N * log M), Query: O(log N * log M)\par}\nopagebreak
 \begin{lstlisting}
-// 2D Segment Tree - Space: O(N * M), Update: O(log N * log M), Query: O(log N * log M)
 // Supports point updates and 2D subgrid range sum queries
 template<typename T = ll>
 struct SegTree2D {
@@ -1846,11 +1822,10 @@ struct SegTree2D {
 };
 \end{lstlisting}
 
-\needspace{4\baselineskip}
-\subsubsection{MergeSortTreeFractional}\index{Node}\index{build}\index{query}
+\filbreak
+\subsubsection{MergeSortTreeFractional}\index{Node}
 \nopagebreak{\footnotesize\sffamily\color{blurb} MERGE SORT TREE WITH FRACTIONAL CASCADING - static "how many values \textless{}= x in [l,r]" in O(log n)\par}\nopagebreak
 \begin{lstlisting}
-// MERGE SORT TREE WITH FRACTIONAL CASCADING - static "how many values <= x in [l,r]" in O(log n)
 // instead of O(log^2 n): each node stores its sorted values plus pointers into the children, so the
 // binary search happens ONCE at the root and is then followed down for free.
 const int MAXN = 30005;
@@ -1920,8 +1895,8 @@ int query(int node, int start, int end, int l, int r, int idx) {
 }
 \end{lstlisting}
 
-\needspace{4\baselineskip}
-\subsubsection{RangeMajorityCandidates}\index{Node}\index{merge\_nodes}\index{build}\index{query\_candidates}\index{get\_frequency}\index{solve}
+\filbreak
+\subsubsection{RangeMajorityCandidates}\index{Node}\index{merge\_nodes}\index{query\_candidates}\index{get\_frequency}
 \begin{lstlisting}
 const int MAXN = 200005;                         // array bound (Template.cpp calls this N)
 int a[MAXN];
@@ -2043,11 +2018,10 @@ void solve() {
 }
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{SegTreeDescent}\index{SegMax}
 \nopagebreak{\footnotesize\sffamily\color{blurb} Segment Tree DESCENT - answer "first / last index satisfying P" in O(log n), not O(log\textasciicircum{}2 n).\par}\nopagebreak
 \begin{lstlisting}
-// Segment Tree DESCENT - answer "first / last index satisfying P" in O(log n), not O(log^2 n).
 // Here: max-segtree. first_ge(l, x) = smallest i >= l with a[i] >= x, or n if none.
 // Swap the stored aggregate + the two `good()` tests to get: first prefix-sum >= S,
 // first zero, k-th set bit, "how far right can I extend". This is the workhorse behind
@@ -2104,11 +2078,10 @@ struct SegMax {
 
 \subsection{Binary Indexed Tree (BIT)}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{FenwickTree}\index{FenwickTree}
 \nopagebreak{\footnotesize\sffamily\color{blurb} Fenwick Tree (Binary Indexed Tree) - 0-based indexing\par}\nopagebreak
 \begin{lstlisting}
-// Fenwick Tree (Binary Indexed Tree) - 0-based indexing
 // Space: O(N), Time: O(log N) per update/query
 template<typename T = ll>
 struct FenwickTree {
@@ -2150,11 +2123,10 @@ struct FenwickTree {
 };
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{FenwickTree2D}\index{FenwickTree2D}
 \nopagebreak{\footnotesize\sffamily\color{blurb} 2D Fenwick Tree - 0-based indexing\par}\nopagebreak
 \begin{lstlisting}
-// 2D Fenwick Tree - 0-based indexing
 // Space: O(N * M), Time: O(log N * log M) per update/query
 template<typename T = ll>
 struct FenwickTree2D {
@@ -2193,11 +2165,10 @@ struct FenwickTree2D {
 };
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{Offline2DFenwickTree}\index{BIT2D}
 \nopagebreak{\footnotesize\sffamily\color{blurb} Offline 2D Fenwick Tree (Compressed 2D BIT)\par}\nopagebreak
 \begin{lstlisting}
-// Offline 2D Fenwick Tree (Compressed 2D BIT)
 // Space: O(N + Q log N), Time: O(log^2 N) per query
 template<typename T = ll>
 struct BIT2D {
@@ -2250,11 +2221,10 @@ struct BIT2D {
 };
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{BITRangeUpdateRangeQuery}\index{BIT2}
 \nopagebreak{\footnotesize\sffamily\color{blurb} BIT with RANGE UPDATE + RANGE QUERY (two BITs). 0-based, O(log n) per op.\par}\nopagebreak
 \begin{lstlisting}
-// BIT with RANGE UPDATE + RANGE QUERY (two BITs). 0-based, O(log n) per op.
 // pre(i) = sum_{j<=i} a[j] = S1(i)*(i+1) - S2(i), where a range-add of v on [l,r] does
 //   S1: +v at l, -v at r+1        S2: +v*l at l, -v*(r+1) at r+1
 template <typename T = ll>
@@ -2277,11 +2247,10 @@ struct BIT2 {
 
 \subsection{Sparse Table}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{SparseTable}\index{SparseTable}
 \nopagebreak{\footnotesize\sffamily\color{blurb} SPARSE TABLE - O(1) range query after O(N log N) build, NO updates.\par}\nopagebreak
 \begin{lstlisting}
-// SPARSE TABLE - O(1) range query after O(N log N) build, NO updates.
 // The operation must be IDEMPOTENT (min, max, gcd, and, or) because the two covering blocks
 // OVERLAP. For sum/product/xor - anything not idempotent - use 12 - DisjointSparseTable.cpp
 // (still O(1) query) or a Fenwick tree. Guard l <= r: __lg(0) is undefined.
@@ -2309,11 +2278,10 @@ struct SparseTable {
 };
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{SparseTable2D}\index{SparseTable2D}
 \nopagebreak{\footnotesize\sffamily\color{blurb} 2D Sparse Table - O(N * M * log N * log M) build, O(1) query\par}\nopagebreak
 \begin{lstlisting}
-// 2D Sparse Table - O(N * M * log N * log M) build, O(1) query
 template<typename T = ll>
 struct SparseTable2D {
     int n, m;
@@ -2366,11 +2334,10 @@ struct SparseTable2D {
 
 \subsection{Trie}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{StringTrie}\index{Trie}
 \nopagebreak{\footnotesize\sffamily\color{blurb} PREFIX TRIE over an alphabet. O(L) per insert/query. Reach for it for prefix counting, autocomplete,\par}\nopagebreak
 \begin{lstlisting}
-// PREFIX TRIE over an alphabet. O(L) per insert/query. Reach for it for prefix counting, autocomplete,
 // "is any inserted word a prefix of this one", and as the skeleton Aho-Corasick is built on.
 // Prefix Trie for Strings
 // Time: O(L) per insert/query, Space: O(N * L * Alphabet)
@@ -2414,11 +2381,10 @@ struct Trie {
 };
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{BinaryTrie}\index{BTrie}
 \nopagebreak{\footnotesize\sffamily\color{blurb} Binary trie over [0, 2\textasciicircum{}(B+1)). insert / ERASE / query all O(B).\par}\nopagebreak
 \begin{lstlisting}
-// Binary trie over [0, 2^(B+1)). insert / ERASE / query all O(B).
 // erase() is what lets you keep the trie equal to the current root->node path during a DFS
 // ("min XOR with any ancestor"): add on entry, add(-1) on exit.
 struct BTrie {
@@ -2464,11 +2430,10 @@ struct BTrie {
 };
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{PersistentTrie}\index{PersistentTrie}\index{Node}
 \nopagebreak{\footnotesize\sffamily\color{blurb} Persistent Binary Trie - Space: O(N * BITS), Time: O(BITS) per insert/query\par}\nopagebreak
 \begin{lstlisting}
-// Persistent Binary Trie - Space: O(N * BITS), Time: O(BITS) per insert/query
 // Supports versioning and range max XOR queries between versions [l_ver, r_ver]
 struct PersistentTrie {
     struct Node {
@@ -2539,11 +2504,10 @@ struct PersistentTrie {
 
 \subsection{Disjoint Set Union (DSU)}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{DSU}\index{DSU}
 \nopagebreak{\footnotesize\sffamily\color{blurb} Disjoint Set Union (DSU) - Path Compression \& Union by Size\par}\nopagebreak
 \begin{lstlisting}
-// Disjoint Set Union (DSU) - Path Compression & Union by Size
 // Time: O(alpha(N)) per operation
 struct DSU {
     vector<int> par, sz;
@@ -2576,11 +2540,10 @@ struct DSU {
 };
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{DSURollback}\index{DSURollback}
 \nopagebreak{\footnotesize\sffamily\color{blurb} DSU with Rollback - No path compression to allow backtracking\par}\nopagebreak
 \begin{lstlisting}
-// DSU with Rollback - No path compression to allow backtracking
 // Time: O(log N) per operation, O(1) rollback
 struct DSURollback {
     vector<int> par, sz;
@@ -2636,11 +2599,10 @@ struct DSURollback {
 };
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{WeightedDSU}\index{WDSU}
 \nopagebreak{\footnotesize\sffamily\color{blurb} DSU with POTENTIALS: maintains pot[v] = value(v) - value(root), so you can answer\par}\nopagebreak
 \begin{lstlisting}
-// DSU with POTENTIALS: maintains pot[v] = value(v) - value(root), so you can answer
 // "what is value(u) - value(v)" and detect contradictions.
 // Group is (Z, +) here; for parity/bipartiteness use XOR: change ALL FOUR of pot[x] += p -> ^=,
 // pu - pv == w -> (pu ^ pv) == w, pot[rv] = pu - pv - w -> pu ^ pv ^ w, and DELETE the w = -w line
@@ -2681,11 +2643,10 @@ struct WDSU {
 
 \subsection{Square Root Decomposition}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{MoAlgorithm}\index{MoArray}\index{Query}
 \nopagebreak{\footnotesize\sffamily\color{blurb} MO'S ALGORITHM - answers m OFFLINE range queries in O((n + m) sqrt n) when you can move an endpoint\par}\nopagebreak
 \begin{lstlisting}
-// MO'S ALGORITHM - answers m OFFLINE range queries in O((n + m) sqrt n) when you can move an endpoint
 // by one in O(1) (add/remove an element and maintain the answer). Sort queries by block of l, then by
 // r (alternating direction per block). Use it for distinct counts, frequency-of-frequency, XOR pairs.
 class MoArray {
@@ -2766,11 +2727,10 @@ public:
 };
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{MoOnSubtrees}\index{MoSubtree}\index{Query}
 \nopagebreak{\footnotesize\sffamily\color{blurb} MO'S ON SUBTREES - flatten the tree with an Euler tour so every subtree is a contiguous range,\par}\nopagebreak
 \begin{lstlisting}
-// MO'S ON SUBTREES - flatten the tree with an Euler tour so every subtree is a contiguous range,
 // then run plain Mo's on it. Same O((n + q) sqrt n). Use for "query over the subtree of v" when no
 // online structure fits (distinct colours in a subtree, k-th most frequent, etc.).
 class MoSubtree {
@@ -2875,11 +2835,10 @@ public:
 };
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{MoOnPaths}\index{MoTreePath}\index{Query}
 \nopagebreak{\footnotesize\sffamily\color{blurb} MO'S ON TREE PATHS - the Euler tour trick where a vertex appearing TWICE in the range cancels out,\par}\nopagebreak
 \begin{lstlisting}
-// MO'S ON TREE PATHS - the Euler tour trick where a vertex appearing TWICE in the range cancels out,
 // plus the LCA added back by hand. Answers path queries offline in O((n + q) sqrt n) with no HLD.
 class MoTreePath {
 private:
@@ -3050,11 +3009,10 @@ public:
 };
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{BlockDecomposition}\index{Blocks}
 \nopagebreak{\footnotesize\sffamily\color{blurb} SQRT / BLOCK DECOMPOSITION. Split [0,n) into blocks of B \textasciitilde{} sqrt(n) and keep one aggregate per\par}\nopagebreak
 \begin{lstlisting}
-// SQRT / BLOCK DECOMPOSITION. Split [0,n) into blocks of B ~ sqrt(n) and keep one aggregate per
 // block. Point update O(1..B), range query O(sqrt n). A BIT/segtree beats it for sum, so reach for
 // this when the aggregate is NOT a group / has no lazy tag: block-sorted arrays, block frequency
 // tables, "count values > x in [l,r]", range-assign + weird query, or a per-block rebuild that is
@@ -3091,11 +3049,10 @@ struct Blocks {
 // if updates are much more frequent than queries, take bigger blocks, and vice versa.
 \end{lstlisting}
 
-\needspace{4\baselineskip}
-\subsubsection{MoWithUpdates}\index{MoUpd}\index{Q}\index{U}
+\filbreak
+\subsubsection{MoWithUpdates}\index{MoUpd}
 \nopagebreak{\footnotesize\sffamily\color{blurb} MO'S WITH UPDATES (3D Mo). Queries \{l, r, t\} where t = \#updates applied before this query.\par}\nopagebreak
 \begin{lstlisting}
-// MO'S WITH UPDATES (3D Mo). Queries {l, r, t} where t = #updates applied before this query.
 // Block size n^(2/3) gives O(n^(5/3)) total. Use when the array changes between queries and no
 // online structure fits.
 struct MoUpd {
@@ -3153,11 +3110,10 @@ struct MoUpd {
 // step forwards AND backwards through time using the same swap-based inverse.
 \end{lstlisting}
 
-\needspace{4\baselineskip}
-\subsubsection{MoWithRollback}\index{MoRollback}\index{Q}
+\filbreak
+\subsubsection{MoWithRollback}\index{MoRollback}
 \nopagebreak{\footnotesize\sffamily\color{blurb} MO'S WITH ROLLBACK - for structures where ADD is easy but REMOVE is hard or impossible\par}\nopagebreak
 \begin{lstlisting}
-// MO'S WITH ROLLBACK - for structures where ADD is easy but REMOVE is hard or impossible
 // (running maximum, DSU, "best pair so far", knapsack-ish state).
 // Per block of left endpoints: sort by r, keep a persistent right part that only grows, and
 // rebuild the short left part from scratch for every query, rolling back afterwards.
@@ -3228,12 +3184,11 @@ struct MoRollback {
 
 \subsection{Balanced Binary Search Tree (BBST)}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{Treap}\index{Treap}\index{Node}\index{rng}
 \nopagebreak{\footnotesize\sffamily\color{blurb} TREAP (keyed) - a BST by key and a heap by random priority, so it is balanced in expectation.\par}\nopagebreak
 \begin{lstlisting}
 // NOTE: 01 - Miscellaneous/04 - random.cpp declares the same `rng`. Keep one copy.
-// TREAP (keyed) - a BST by key and a heap by random priority, so it is balanced in expectation.
 // O(log n) insert/erase/find, plus split and merge, which is what makes it better than std::set:
 // you can cut the tree at a key, operate on a whole range, and glue it back.
 mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
@@ -3398,12 +3353,11 @@ struct Treap {
 };
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{ImplicitTreap}\index{ImplicitTreap}\index{Node}\index{rng}
 \nopagebreak{\footnotesize\sffamily\color{blurb} IMPLICIT TREAP - a treap keyed by POSITION (subtree size) instead of value, i.e. an array that\par}\nopagebreak
 \begin{lstlisting}
 // NOTE: 01 - Miscellaneous/04 - random.cpp declares the same `rng`. Keep one copy.
-// IMPLICIT TREAP - a treap keyed by POSITION (subtree size) instead of value, i.e. an array that
 // supports insert/erase in the middle, reverse a range, and move a block, all in O(log n).
 // This is the structure for "cut [l,r] out and paste it elsewhere" problems.
 mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
@@ -3618,11 +3572,10 @@ struct ImplicitTreap {
 
 \subsection{Policy Based Data Structures}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{OrderedSet}
 \nopagebreak{\footnotesize\sffamily\color{blurb} Policy-Based Data Structure: ordered\_set\par}\nopagebreak
 \begin{lstlisting}
-// Policy-Based Data Structure: ordered_set
 // Time: O(log N) per operation
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
@@ -3638,11 +3591,10 @@ using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statisti
 
 \subsection{Monotonic Data Structures}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{MonotonicStack}\index{MonotonicStack}
 \nopagebreak{\footnotesize\sffamily\color{blurb} Monotonic Stack - Time: O(N), Space: O(N)\par}\nopagebreak
 \begin{lstlisting}
-// Monotonic Stack - Time: O(N), Space: O(N)
 // Computes Next/Previous Smaller and Greater element indices for all positions
 template<typename T = ll>
 struct MonotonicStack {
@@ -3680,11 +3632,10 @@ struct MonotonicStack {
 };
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{TwoStackQueue}\index{TwoStackQ}\index{Node}
 \nopagebreak{\footnotesize\sffamily\color{blurb} Monotonic Queue via Two Stacks (Sliding Window Min/Max)\par}\nopagebreak
 \begin{lstlisting}
-// Monotonic Queue via Two Stacks (Sliding Window Min/Max)
 // Space: O(N), Time: O(1) amortized per push/pop/get
 struct TwoStackQ {
     struct Node {
@@ -3738,11 +3689,10 @@ struct TwoStackQ {
 };
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{MonotonicQueue2D}\index{MonotonicQueue2D}
 \nopagebreak{\footnotesize\sffamily\color{blurb} 2D Monotonic Queue (Sliding Window 2D Min/Max) - Time: O(N * M), Space: O(N * M)\par}\nopagebreak
 \begin{lstlisting}
-// 2D Monotonic Queue (Sliding Window 2D Min/Max) - Time: O(N * M), Space: O(N * M)
 // Computes min in every K x L subgrid of an N x M matrix
 template<typename T = ll>
 struct MonotonicQueue2D {
@@ -3782,11 +3732,10 @@ struct MonotonicQueue2D {
 };
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsection{DynamicMedian}\index{balance}\index{add\_val}\index{remove\_val}\index{get\_cost}
 \nopagebreak{\footnotesize\sffamily\color{blurb} RUNNING MEDIAN / k-th SMALLEST under insertions, via two multisets kept balanced around the split.\par}\nopagebreak
 \begin{lstlisting}
-// RUNNING MEDIAN / k-th SMALLEST under insertions, via two multisets kept balanced around the split.
 // O(log n) per insert, O(1) to read the median and either side's sum. The pattern generalises to
 // "maintain the sum of the k smallest" - which is what cost-to-move-to-median problems need.
 multiset<ll> L, R;
@@ -3854,11 +3803,10 @@ ll get_cost() {                                  // UB if empty - guard the call
 }
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsection{IntervalSetODT}\index{ODT}
 \nopagebreak{\footnotesize\sffamily\color{blurb} INTERVAL SET / "Chtholly tree" (ODT). Keeps the array as maximal runs of equal value.\par}\nopagebreak
 \begin{lstlisting}
-// INTERVAL SET / "Chtholly tree" (ODT). Keeps the array as maximal runs of equal value.
 // assign(l, r, v) is amortised near-O(log n) WHEN the data has many range-assigns (random or
 // adversarial-but-assign-heavy); each assign destroys the intervals it covers, so the total
 // number of intervals created is O(q).
@@ -3922,11 +3870,10 @@ struct ODT {
 // queries, use a segment tree instead.
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsection{DisjointSparseTable}\index{DisjointST}
 \nopagebreak{\footnotesize\sffamily\color{blurb} DISJOINT SPARSE TABLE - O(1) query for ANY associative operation (not just idempotent ones).\par}\nopagebreak
 \begin{lstlisting}
-// DISJOINT SPARSE TABLE - O(1) query for ANY associative operation (not just idempotent ones).
 // Build O(n log n) time and memory. Use when a plain sparse table would double-count:
 // sum, product, matrix product, hashing, "merge two structs", min-count pairs, ...
 // (For min/max/gcd/or/and a normal sparse table is smaller - use that instead.)
@@ -3966,11 +3913,10 @@ struct DisjointST {
 // already prefix/suffix-accumulated at that level - hence exactly one op() per query.
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsection{WaveletTree}\index{Wavelet}
 \nopagebreak{\footnotesize\sffamily\color{blurb} WAVELET TREE over values in [lo, hi]. Build O(n log V).\par}\nopagebreak
 \begin{lstlisting}
-// WAVELET TREE over values in [lo, hi]. Build O(n log V).
 // kth(l, r, k)      : k-th SMALLEST in a[l..r]                       O(log V)
 // countLeq(l,r,x)   : how many a[i] <= x in a[l..r]                  O(log V)
 // countEq(l,r,x)    : how many a[i] == x in a[l..r]                  O(log V)
@@ -4019,12 +3965,11 @@ struct Wavelet {
 // queries are 1-BASED on the original positions.
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsection{OfflineDynamicConnectivity}\index{DynConn}
 \nopagebreak{\footnotesize\sffamily\color{blurb} OFFLINE DYNAMIC CONNECTIVITY - edges appear and disappear over time; answer queries at each\par}\nopagebreak
 \begin{lstlisting}
 // Needs: DSURollback (02 - DSU/02 - DSURollback.cpp).
-// OFFLINE DYNAMIC CONNECTIVITY - edges appear and disappear over time; answer queries at each
 // moment. Segment tree over the TIMELINE + DSU with rollback. O(q log q * log n) - DSURollback has no path compression, so find is log n, not alpha.
 // The same skeleton answers ANY "structure supports add + rollback, but not delete" problem:
 // put each element on the time interval where it is alive, DFS the segment tree, add on entry,
@@ -4063,11 +4008,10 @@ struct DynConn {
 // record the queries per leaf and test d.same(u, v) inside the l == r branch.
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsection{CartesianTree}\index{CartTree}
 \nopagebreak{\footnotesize\sffamily\color{blurb} CARTESIAN TREE in O(n): heap-ordered by VALUE, BST-ordered by INDEX.\par}\nopagebreak
 \begin{lstlisting}
-// CARTESIAN TREE in O(n): heap-ordered by VALUE, BST-ordered by INDEX.
 // The root of any range is its minimum, so "range minimum" structure becomes a TREE -
 // which turns range problems into subtree problems (and enables divide & conquer on the min).
 // Built with a monotonic stack; ties go left so the tree is unique.
@@ -4097,11 +4041,10 @@ struct CartTree {
 //  - a Treap built on (index, random priority) is exactly a Cartesian tree - same code shape
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsection{SegTreeMerging}\index{SegMerge}\index{Node}
 \nopagebreak{\footnotesize\sffamily\color{blurb} SEGMENT TREE MERGING - one dynamic segment tree per vertex over the VALUE domain, merged\par}\nopagebreak
 \begin{lstlisting}
-// SEGMENT TREE MERGING - one dynamic segment tree per vertex over the VALUE domain, merged
 // bottom-up along a tree. Total O(n log n) nodes touched over ALL merges (amortised), because
 // each merge destroys as many nodes as it visits.
 // Solves, per subtree and in one DFS: most frequent value, k-th value, count of a value,
@@ -4162,11 +4105,10 @@ struct SegMerge {
 // into v's. Answer v's query right there. Never reuse a root after merging it away.
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsection{BitsetTricks}\index{transitiveClosure}\index{bitLCS}
 \nopagebreak{\footnotesize\sffamily\color{blurb} BITSET SPEEDUPS - the /64 family. All of these are "obviously too slow" DPs that fit anyway.\par}\nopagebreak
 \begin{lstlisting}
-// BITSET SPEEDUPS - the /64 family. All of these are "obviously too slow" DPs that fit anyway.
 
 // TRANSITIVE CLOSURE (reachability) in O(n^3 / 64). n up to ~5000.
 template <int N>
@@ -4213,11 +4155,10 @@ int bitLCS(const string& a, const string& b) {
 // about n*m/64 <= 1e8 for a comfortable pass.
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsection{VeniceAndSWAG}\index{Venice}\index{SWAG}
 \nopagebreak{\footnotesize\sffamily\color{blurb} VENICE TECHNIQUE - a multiset with an O(1) "add x to EVERY element".\par}\nopagebreak
 \begin{lstlisting}
-// VENICE TECHNIQUE - a multiset with an O(1) "add x to EVERY element".
 // Keep a global offset; store values shifted by it. 15 lines, and it turns a whole family of
 // "everyone loses X health, remove the dead" problems into a one-liner.
 struct Venice {
@@ -4268,11 +4209,10 @@ struct SWAG {
 // product comes out reversed.
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsection{MergeableHeap}\index{MHeap}\index{Node}
 \nopagebreak{\footnotesize\sffamily\color{blurb} MERGEABLE (MELDABLE) HEAP - a priority queue that also supports MERGING two heaps in O(log n),\par}\nopagebreak
 \begin{lstlisting}
-// MERGEABLE (MELDABLE) HEAP - a priority queue that also supports MERGING two heaps in O(log n),
 // which std::priority_queue cannot do. This is a skew heap: merge by walking the two right spines
 // and swapping children, which keeps the amortised depth logarithmic with no stored rank.
 // Supports a lazy "add v to every key in this heap" tag, because that is what the two algorithms
@@ -4315,11 +4255,10 @@ struct MHeap {
 // push into the larger, O(n log^2 n) total. Shorter than this file - use it unless the log^2 hurts.
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsection{PersistentAndUndo}\index{PArray}\index{Node}\index{PDSU}
 \nopagebreak{\footnotesize\sffamily\color{blurb} PERSISTENCE AND UNDO - three ways to travel in a structure's history, and when each applies.\par}\nopagebreak
 \begin{lstlisting}
-// PERSISTENCE AND UNDO - three ways to travel in a structure's history, and when each applies.
 //   ROLLBACK  (05 - DSU/02): undo the last op. Cheapest. Needs a stack discipline (LIFO).
 //   OFFLINE DELETION (14 - OfflineDynamicConnectivity): segment tree over time + rollback.
 //     Handles arbitrary insert/delete, but you must know every operation in advance.
@@ -4399,11 +4338,10 @@ struct PDSU {
 
 \subsection{Graph Traversal}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{TopoSort}\index{TopoSort}
 \nopagebreak{\footnotesize\sffamily\color{blurb} Topological Sort (Kahn's Algorithm) - O(V + E)\par}\nopagebreak
 \begin{lstlisting}
-// Topological Sort (Kahn's Algorithm) - O(V + E)
 struct TopoSort {
     int n;
     vector<vector<int>> adj;
@@ -4434,11 +4372,10 @@ struct TopoSort {
 };
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{BFS\_DFS}\index{bfs}\index{pathTo}\index{bfs01}\index{dfsIter}
 \nopagebreak{\footnotesize\sffamily\color{blurb} BFS / DFS / 0-1 BFS / multi-source. 0-based. The bread and butter - keep them short.\par}\nopagebreak
 \begin{lstlisting}
-// BFS / DFS / 0-1 BFS / multi-source. 0-based. The bread and butter - keep them short.
 
 // Unweighted shortest path + parent for reconstruction.
 pair<vector<int>, vector<int>> bfs(int n, const vector<vector<int>>& adj, vector<int> src) {
@@ -4498,11 +4435,10 @@ void dfsIter(int n, const vector<vector<int>>& adj, int root, vector<int>& tin, 
 
 \subsection{Shortest Paths}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{Dijkstra}\index{Dijkstra}
 \nopagebreak{\footnotesize\sffamily\color{blurb} Dijkstra's Shortest Path Algorithm - O((V + E) log V)\par}\nopagebreak
 \begin{lstlisting}
-// Dijkstra's Shortest Path Algorithm - O((V + E) log V)
 struct Dijkstra {
     int n;
     vector<vector<pair<int, ll>>> adj;
@@ -4541,11 +4477,10 @@ struct Dijkstra {
 };
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{FloydWarshall}\index{FloydWarshall}
 \nopagebreak{\footnotesize\sffamily\color{blurb} Floyd-Warshall All-Pairs Shortest Path - O(V\textasciicircum{}3)\par}\nopagebreak
 \begin{lstlisting}
-// Floyd-Warshall All-Pairs Shortest Path - O(V^3)
 struct FloydWarshall {
     int n;
     vector<vector<ll>> dist;
@@ -4573,7 +4508,7 @@ struct FloydWarshall {
 };
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{BellmanFord}\index{Edge}\index{BellmanFord}
 \nopagebreak{\footnotesize\sffamily\color{blurb} If you paste both, keep only ONE copy of it.\par}\nopagebreak
 \begin{lstlisting}
@@ -4625,7 +4560,7 @@ struct BellmanFord {
 };
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{DominatorTree}\index{DominatorTree}\index{testCase}
 \begin{lstlisting}
 /*
@@ -4731,11 +4666,10 @@ void testCase() {
 }
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{ShortestPathEdgeModify}\index{SPEdgeModify}\index{Edge}
 \nopagebreak{\footnotesize\sffamily\color{blurb} SHORTEST PATH WITH ONE EDGE CHANGED, answered OFFLINE in O(1) per query after O((n+m) log n).\par}\nopagebreak
 \begin{lstlisting}
-// SHORTEST PATH WITH ONE EDGE CHANGED, answered OFFLINE in O(1) per query after O((n+m) log n).
 // Query: "if edge id had weight x instead, what is dist(s,t)?" - each query is independent.
 // IDEA. Let ds/dt be the distance arrays from s and to t, P the shortest path, base = ds[t].
 //   * Edge NOT on P: the new path either ignores it (base) or crosses it once:
@@ -4820,11 +4754,10 @@ struct SPEdgeModify {
 //     works because s, t and every other weight stay fixed.
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{CyclesAndConstraints}\index{minMeanCycle}\index{differenceConstraints}
 \nopagebreak{\footnotesize\sffamily\color{blurb} MINIMUM MEAN CYCLE, and SYSTEMS OF DIFFERENCE CONSTRAINTS - the two shortest-path tools that\par}\nopagebreak
 \begin{lstlisting}
-// MINIMUM MEAN CYCLE, and SYSTEMS OF DIFFERENCE CONSTRAINTS - the two shortest-path tools that
 // are not about shortest paths.
 
 // --- KARP'S MINIMUM MEAN CYCLE, O(V*E). Returns the smallest possible (cycle weight)/(length).
@@ -4884,11 +4817,10 @@ bool differenceConstraints(int n, const vector<array<ll, 3>>& c, vector<ll>& x) 
 // potentials h[], reweight w'(u,v) = w + h[u] - h[v] >= 0, then run n Dijkstras. O(VE + V E log V).
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{SegmentTreeGraph}\index{SegGraph}
 \nopagebreak{\footnotesize\sffamily\color{blurb} SEGMENT-TREE GRAPH - add "u -\textgreater{} every vertex in [l, r]" (or the reverse) with O(log n) edges\par}\nopagebreak
 \begin{lstlisting}
-// SEGMENT-TREE GRAPH - add "u -> every vertex in [l, r]" (or the reverse) with O(log n) edges
 // instead of O(n). Then run Dijkstra/BFS as usual. Total O((n + q log n) log n).
 // Two trees: OUT (parent -> children, cost 0) to broadcast INTO a range,
 //            IN  (children -> parent, cost 0) to collect FROM a range.
@@ -4955,11 +4887,10 @@ struct SegGraph {
 
 \subsection{Graph Connectivity}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{LowLink}\index{LowLink}
 \nopagebreak{\footnotesize\sffamily\color{blurb} LowLink: BRIDGES + ARTICULATION POINTS + 2-EDGE-CONNECTED COMPONENTS - O(V + E)\par}\nopagebreak
 \begin{lstlisting}
-// LowLink: BRIDGES + ARTICULATION POINTS + 2-EDGE-CONNECTED COMPONENTS - O(V + E)
 // Skips the parent by EDGE ID, so MULTI-EDGES are handled correctly
 // (a doubled edge is never a bridge). 0-based vertices.
 // comp[v] = id of v's 2-edge-connected component; contracting those gives the BRIDGE TREE,
@@ -5010,11 +4941,10 @@ struct LowLink {
 };
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{SCC}\index{SCC}
 \nopagebreak{\footnotesize\sffamily\color{blurb} Strongly Connected Components (Tarjan's Algorithm) - O(V + E)\par}\nopagebreak
 \begin{lstlisting}
-// Strongly Connected Components (Tarjan's Algorithm) - O(V + E)
 // IMPORTANT: component ids come out in REVERSE topological order - for every edge u->v with
 // comp[u] != comp[v] we have comp[u] > comp[v]. Iterate ids DOWNWARD to walk the condensation
 // forwards. build_dag() may emit duplicate arcs (fine for reachability, wrong for counting).
@@ -5078,11 +5008,10 @@ struct SCC {
 };
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{BlockCutTree}\index{BlockCut}
 \nopagebreak{\footnotesize\sffamily\color{blurb} BLOCK-CUT TREE (vertex biconnected components). O(V + E).\par}\nopagebreak
 \begin{lstlisting}
-// BLOCK-CUT TREE (vertex biconnected components). O(V + E).
 // Builds a forest whose nodes are: the original CUT VERTICES, plus one node per BICONNECTED
 // COMPONENT ("block"). Every cut vertex is joined to each block containing it.
 // Answers "is there a path u -> v avoiding vertex w", "which blocks does a path cross",
@@ -5135,11 +5064,10 @@ struct BlockCut {
 // biconnected iff the tree has a single node.
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{TriangleAndCycleCounting}\index{countTriangles}\index{countFourCycles}
 \nopagebreak{\footnotesize\sffamily\color{blurb} COUNTING SMALL SUBGRAPHS in O(m sqrt m) - the "degree ordering" trick. Orient every edge from\par}\nopagebreak
 \begin{lstlisting}
-// COUNTING SMALL SUBGRAPHS in O(m sqrt m) - the "degree ordering" trick. Orient every edge from
 // the lower (degree, index) endpoint to the higher one. In that DAG every out-degree is O(sqrt m),
 // because a vertex with out-degree d has d neighbours of degree >= d, so d^2 <= 2m.
 // Undirected simple graph, 0-indexed, edges given as pairs.
@@ -5203,11 +5131,10 @@ ll countFourCycles(int n, const vector<pair<int, int>>& es) {
 
 \subsection{Satisfiability}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{TwoSat}\index{TwoSat}
 \nopagebreak{\footnotesize\sffamily\color{blurb} 2-SAT via Kosaraju - O(n + m). Self-contained, 0-based variables.\par}\nopagebreak
 \begin{lstlisting}
-// 2-SAT via Kosaraju - O(n + m). Self-contained, 0-based variables.
 // Literal encoding: 2*i = (x_i false), 2*i+1 = (x_i true).
 // Satisfiable iff x and !x are never in the same SCC; then take the literal whose SCC is LATER
 // in topological order.
@@ -5266,11 +5193,10 @@ struct TwoSat {
 
 \subsection{Eulerian Path}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{EulerianPath}\index{EulerianPath}
 \nopagebreak{\footnotesize\sffamily\color{blurb} Hierholzer's Algorithm for Eulerian Path / Circuit - O(V + E)\par}\nopagebreak
 \begin{lstlisting}
-// Hierholzer's Algorithm for Eulerian Path / Circuit - O(V + E)
 // Works for both Directed and Undirected graphs
 struct EulerianPath {
     int n, m;
@@ -5323,11 +5249,10 @@ struct EulerianPath {
 
 \subsection{Flow and Min Cut}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{Dinic}\index{Dinic}\index{Edge}
 \nopagebreak{\footnotesize\sffamily\color{blurb} DINIC MAX FLOW. O(V\textasciicircum{}2 E) in general, O(E sqrt(V)) on unit-capacity graphs, O(V\textasciicircum{}2 E) worst case but\par}\nopagebreak
 \begin{lstlisting}
-// DINIC MAX FLOW. O(V^2 E) in general, O(E sqrt(V)) on unit-capacity graphs, O(V^2 E) worst case but
 // fast in practice. After maxflow, vertices reachable from s in the residual graph form the min cut.
 // Scaling (start with big capacities) helps on dense graphs with large capacities.
 // DINIC MAX FLOW. O(V^2 E) general, O(E sqrt(E)) with unit capacities, O(E sqrt(V)) for bipartite
@@ -5389,11 +5314,10 @@ struct Dinic {
 };
 \end{lstlisting}
 
-\needspace{4\baselineskip}
-\subsubsection{MCMF}\index{MCMF}\index{E}
+\filbreak
+\subsubsection{MCMF}\index{MCMF}
 \nopagebreak{\footnotesize\sffamily\color{blurb} MIN-COST MAX-FLOW with JOHNSON POTENTIALS (Dijkstra instead of SPFA on every augmentation).\par}\nopagebreak
 \begin{lstlisting}
-// MIN-COST MAX-FLOW with JOHNSON POTENTIALS (Dijkstra instead of SPFA on every augmentation).
 // O(F * E log V) where F = number of augmentations. Much faster than the SPFA version and the
 // one to use by default. Negative edge costs are allowed at construction PROVIDED there is no negative-cost CYCLE:
 // run one Bellman-Ford
@@ -5457,16 +5381,15 @@ struct MCMF {
     // MIN-COST flow of exactly K units: run(s, t, K) and check flow == K.
     // MIN-COST (not max) flow: stop as soon as dist[t] + pot[t] - pot[s] > 0 (no profitable path).
 };
-// MODELLING: assignment on a SPARSE graph; for a dense/complete one use 07 - Matching/03 - Hungarian · transportation · "k disjoint paths of minimum total cost" ·
-// min-cost bipartite matching · scheduling with penalties · MCMF is also how you solve
+// MODELLING: assignment on a SPARSE graph; for a dense/complete one use 07 - Matching/03 - Hungarian * transportation * "k disjoint paths of minimum total cost" *
+// min-cost bipartite matching * scheduling with penalties * MCMF is also how you solve
 // "choose k items with a matroid-ish constraint minimising cost".
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{FlowWithLowerBounds}\index{LowerBoundFlow}
 \nopagebreak{\footnotesize\sffamily\color{blurb} FLOWS WITH LOWER BOUNDS (circulation with demands). Every edge needs d(e) \textless{}= f(e) \textless{}= c(e).\par}\nopagebreak
 \begin{lstlisting}
-// FLOWS WITH LOWER BOUNDS (circulation with demands). Every edge needs d(e) <= f(e) <= c(e).
 // Build an auxiliary network, run one max flow; feasible iff every edge out of s' saturates.
 //   excess(v) = (sum of d over edges INTO v) - (sum of d over edges OUT of v)
 //   excess(v) > 0 -> edge s'->v of capacity excess(v);  < 0 -> edge v->t' of capacity -excess
@@ -5511,11 +5434,10 @@ struct LowerBoundFlow {
    MIN s-t FLOW WITH BOUNDS: same, but augment from t to s to cancel as much as possible. */
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{StoerWagner}\index{globalMinCut}
 \nopagebreak{\footnotesize\sffamily\color{blurb} STOER-WAGNER GLOBAL MIN CUT - minimum cut over ALL vertex pairs, undirected weighted, O(V\textasciicircum{}3).\par}\nopagebreak
 \begin{lstlisting}
-// STOER-WAGNER GLOBAL MIN CUT - minimum cut over ALL vertex pairs, undirected weighted, O(V^3).
 // No source/sink. Returns {cut weight, one side of the cut}.
 // Key lemma: in a maximum-adjacency order, if s is the second-to-last and t the last vertex
 // added, then the minimum s-t cut is exactly {t}. Merge s and t and repeat n-1 times.
@@ -5555,12 +5477,11 @@ pair<ll, vector<int>> globalMinCut(vector<vector<ll>> w) {
 // useful corollary is that a graph has AT MOST C(n,2) distinct minimum cuts.
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{MinCutModelling}\index{maxClosure}
 \nopagebreak{\footnotesize\sffamily\color{blurb} MIN-CUT MODELLING - the reason flow appears at ICPC. The code is never the hard part; choosing\par}\nopagebreak
 \begin{lstlisting}
 // Needs: Dinic (01 - Dinic.cpp).
-// MIN-CUT MODELLING - the reason flow appears at ICPC. The code is never the hard part; choosing
 // what the vertices and the infinite capacities mean is. Rule of thumb: if the objective contains
 // an "infinity", you are CUTTING, not flowing.
 
@@ -5631,12 +5552,11 @@ ll maxClosure(int n, const vector<ll>& w, const vector<pair<int, int>>& need, ve
  scale the capacities or use a strongly polynomial algorithm. */
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{GomoryHu}\index{GomoryHu}
 \nopagebreak{\footnotesize\sffamily\color{blurb} GOMORY-HU TREE - ALL-PAIRS MINIMUM CUT from only n-1 max-flow runs.\par}\nopagebreak
 \begin{lstlisting}
 // Needs: Dinic (01 - Dinic.cpp).
-// GOMORY-HU TREE - ALL-PAIRS MINIMUM CUT from only n-1 max-flow runs.
 // The result is a weighted tree on the same vertex set with the property that, for EVERY pair
 // (u, v), the minimum u-v cut in the original graph equals the MINIMUM EDGE WEIGHT on the u-v
 // path in the tree. (There are at most n-1 distinct min-cut values in any graph - that is the
@@ -5684,11 +5604,10 @@ struct GomoryHu {
 
 \subsection{Matching}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{HopcroftKarp}\index{HopcroftKarp}
 \nopagebreak{\footnotesize\sffamily\color{blurb} HOPCROFT-KARP - maximum bipartite matching in O(E sqrt(V)), the fast alternative to Kuhn's O(VE).\par}\nopagebreak
 \begin{lstlisting}
-// HOPCROFT-KARP - maximum bipartite matching in O(E sqrt(V)), the fast alternative to Kuhn's O(VE).
 // Use it when n is above a few thousand; below that Kuhn is shorter and fast enough.
 // HOPCROFT-KARP - maximum bipartite matching in O(E sqrt(V)), the fast alternative to Kuhn's
 // O(VE). Use above a few thousand vertices; below that Kuhn (02) is shorter and fast enough.
@@ -5761,11 +5680,10 @@ struct HopcroftKarp {
 };
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{KuhnAndKonig}\index{Kuhn}
 \nopagebreak{\footnotesize\sffamily\color{blurb} Kuhn's bipartite matching, O(V*E) but tiny and easy to modify. Left size n, right size m.\par}\nopagebreak
 \begin{lstlisting}
-// Kuhn's bipartite matching, O(V*E) but tiny and easy to modify. Left size n, right size m.
 // In practice fast; randomise the adjacency order + greedy pre-match if you need more speed.
 struct Kuhn {
     int n, m;
@@ -5835,11 +5753,10 @@ struct Kuhn {
              min vertex cut(s,t) = max internally-vertex-disjoint s-t paths (s,t non-adjacent) */
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{Hungarian}\index{hungarian}
 \nopagebreak{\footnotesize\sffamily\color{blurb} HUNGARIAN ALGORITHM - minimum-cost perfect matching on a DENSE bipartite graph, O(n\textasciicircum{}2 m).\par}\nopagebreak
 \begin{lstlisting}
-// HUNGARIAN ALGORITHM - minimum-cost perfect matching on a DENSE bipartite graph, O(n^2 m).
 // a is 1-indexed: a[1..n][1..m] with n <= m. Returns the cost; ans[j] = row matched to column j.
 // For MAXIMUM cost, negate the matrix.
 pair<ll, vector<int>> hungarian(const vector<vector<ll>>& a) {
@@ -5879,11 +5796,10 @@ pair<ll, vector<int>> hungarian(const vector<vector<ll>>& a) {
 // Dijkstra over n^2 arcs (n^3 log n) there. Use MCMF only when the graph is genuinely SPARSE.
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{Blossom}\index{Blossom}
 \nopagebreak{\footnotesize\sffamily\color{blurb} MAXIMUM MATCHING IN A GENERAL (NON-BIPARTITE) GRAPH - Edmonds' blossom algorithm, O(V\textasciicircum{}3).\par}\nopagebreak
 \begin{lstlisting}
-// MAXIMUM MATCHING IN A GENERAL (NON-BIPARTITE) GRAPH - Edmonds' blossom algorithm, O(V^3).
 // Everything else in this folder assumes bipartite. Reach for this the moment the two sides are
 // not fixed: "pair up people who are compatible", "tile a board where the colouring argument
 // fails", "maximum set of disjoint edges" on an arbitrary graph.
@@ -5966,12 +5882,11 @@ struct Blossom {
 
 \subsection{Spanning Trees}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{MST}\index{Edge}\index{KRT}\index{kruskal}\index{prim}
 \nopagebreak{\footnotesize\sffamily\color{blurb} MINIMUM SPANNING TREE. Kruskal O(m log m) - use on sparse graphs / when you also want the\par}\nopagebreak
 \begin{lstlisting}
 // Needs: DSU (02 - Data Structures/05 - DSU/01).
-// MINIMUM SPANNING TREE. Kruskal O(m log m) - use on sparse graphs / when you also want the
 // KRUSKAL RECONSTRUCTION TREE. Prim O(n^2) - use on dense or IMPLICIT complete graphs.
 struct Edge { int u, v; ll w; bool operator<(const Edge& o) const { return w < o.w; } };
 
@@ -6022,12 +5937,11 @@ struct KRT {
 // mst - maxEdgeOnPath(u,v) + w. Get maxEdgeOnPath with binary lifting or the KRT.
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{DirectedMSTandExtras}\index{directedMST}\index{boruvka}
 \nopagebreak{\footnotesize\sffamily\color{blurb} DIRECTED MST (Chu-Liu / Edmonds) - minimum spanning ARBORESCENCE rooted at r, O(V*E).\par}\nopagebreak
 \begin{lstlisting}
 // Needs: struct Edge {int u,v; ll w;} and DSU (both from 01 - MST.cpp).
-// DIRECTED MST (Chu-Liu / Edmonds) - minimum spanning ARBORESCENCE rooted at r, O(V*E).
 // Every non-root vertex takes its cheapest incoming edge; if that creates a cycle, contract it,
 // subtract the chosen weights, and repeat. Returns -1 if some vertex is unreachable from r.
 ll directedMST(int n, int r, vector<Edge> e) {         // Edge = {u, v, w} meaning u -> v
@@ -6096,12 +6010,11 @@ ll boruvka(int n, const vector<Edge>& e) {
 }
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{SecondBestMST}\index{secondBestMST}
 \nopagebreak{\footnotesize\sffamily\color{blurb} SECOND-BEST SPANNING TREE - cheapest spanning tree whose weight is STRICTLY greater than the MST.\par}\nopagebreak
 \begin{lstlisting}
 // Needs: Edge, kruskal (01 - MST.cpp).
-// SECOND-BEST SPANNING TREE - cheapest spanning tree whose weight is STRICTLY greater than the MST.
 // It differs from the MST in exactly one edge: add a non-tree edge (u,v,w), drop the heaviest edge
 // on the tree path u->v whose weight is < w. By the cycle property every edge on that path has
 // weight <= w, so "heaviest edge < w" is either the path maximum (if it is < w) or the second
@@ -6166,11 +6079,10 @@ ll secondBestMST(int n, const vector<Edge>& e) {
 
 \subsection{Exact Exponential}
 
-\needspace{4\baselineskip}
-\subsubsection{CliqueColouringMIS}\index{bk}\index{maxClique}\index{chromatic}\index{steinerTree}
+\filbreak
+\subsubsection{CliqueColouringMIS}\index{maxClique}\index{chromatic}\index{steinerTree}
 \nopagebreak{\footnotesize\sffamily\color{blurb} EXACT ALGORITHMS FOR NP-HARD GRAPH PROBLEMS ON SMALL n. The constraint IS the hint:\par}\nopagebreak
 \begin{lstlisting}
-// EXACT ALGORITHMS FOR NP-HARD GRAPH PROBLEMS ON SMALL n. The constraint IS the hint:
 //   n <= 20-24  -> plain subset DP, O(2^n * n)
 //   n <= 40-50  -> meet in the middle, or Bron-Kerbosch (fast in practice on sparse graphs)
 //   n <= 100+   -> only if the graph is bipartite/perfect/a tree - then it is polynomial (Konig)
@@ -6276,7 +6188,7 @@ ll steinerTree(int n, const vector<vector<pair<int, ll>>>& g, const vector<int>&
 
 \subsection{Theorems}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{GraphTheorems}
 \nopagebreak{\footnotesize\sffamily\color{blurb} GRAPH THEOREM SHEET =====================\par}\nopagebreak
 \begin{lstlisting}
@@ -6430,15 +6342,118 @@ ll steinerTree(int n, const vector<vector<pair<int, ll>>>& g, const vector<int>&
 =============================================================== */
 \end{lstlisting}
 
+\subsection{Special Structures}
+
+\filbreak
+\subsubsection{StableChordalComplement}\index{stableMarriage}\index{complementComponents}\index{mcsOrder}\index{isChordal}
+\nopagebreak{\footnotesize\sffamily\color{blurb} THREE GRAPH TOOLS THAT ARE NOT ABOUT PATHS OR FLOW.\par}\nopagebreak
+\begin{lstlisting}
+
+// --- GALE-SHAPLEY STABLE MARRIAGE, O(n^2). ---
+// n proposers, n receivers, each with a full preference ranking. A matching is STABLE if no pair
+// mutually prefer each other to their assigned partners. One always exists, and this finds the
+// PROPOSER-OPTIMAL one: every proposer gets the best partner they could have in ANY stable
+// matching, and simultaneously every receiver gets their worst. (Swap the roles to flip that.)
+// pref[i] = the proposers' preference lists; rank[j][i] = receiver j's ranking of proposer i.
+vector<int> stableMarriage(const vector<vector<int>>& pref, const vector<vector<int>>& rank) {
+    int n = pref.size();
+    vector<int> match(n, -1), nxt(n, 0);                       // match[receiver] = proposer
+    vector<int> free_(n);
+    iota(all(free_), 0);
+    while (!free_.empty()) {
+        int m = free_.back(); free_.pop_back();
+        int w = pref[m][nxt[m]++];                             // propose down the list
+        if (match[w] < 0) match[w] = m;
+        else if (rank[w][m] < rank[w][match[w]]) free_.push_back(match[w]), match[w] = m;
+        else free_.push_back(m);
+    }
+    return match;
+}
+// HOSPITALS/RESIDENTS (one side has capacity c) is the same loop with a heap of accepted
+// proposers per hospital. STABLE ROOMMATES (one pool, no sides) may have NO stable matching -
+// Irving's algorithm decides it, and it is a different, longer algorithm.
+
+// --- TRAVERSAL OF THE COMPLEMENT GRAPH in O(n + m), never materialising the O(n^2) edges. ---
+// Keep the not-yet-visited vertices in a linked structure; from u, walk that set and step to
+// every w that is NOT a neighbour of u. Each vertex leaves the set once, and each REAL edge is
+// inspected once, so the total is O(n + m).
+// Reach for it whenever the input describes the NON-edges: "connected components of the graph of
+// pairs that do NOT conflict", complement colouring, complement BFS distances.
+vector<int> complementComponents(int n, const vector<vector<int>>& adj) {
+    vector<char> isAdj(n, 0);
+    set<int> unvis;
+    for (int i = 0; i < n; i++) unvis.insert(i);
+    vector<int> comp(n, -1);
+    int c = 0;
+    while (!unvis.empty()) {
+        int s = *unvis.begin();
+        unvis.erase(unvis.begin());
+        vector<int> st{s};
+        comp[s] = c;
+        while (!st.empty()) {
+            int u = st.back(); st.pop_back();
+            for (int v : adj[u]) isAdj[v] = 1;
+            vector<int> take;
+            for (int w : unvis) if (!isAdj[w]) take.push_back(w);
+            for (int w : take) unvis.erase(w), comp[w] = c, st.push_back(w);
+            for (int v : adj[u]) isAdj[v] = 0;
+        }
+        c++;
+    }
+    return comp;                                               // comp[v] = component id
+}
+// The complement of a DISCONNECTED graph is connected, so a complement graph almost always has
+// very few components - that is why this is fast in practice as well as in theory.
+
+// --- CHORDAL GRAPHS: maximum cardinality search gives a PERFECT ELIMINATION ORDERING. ---
+// A graph is CHORDAL if every cycle of length >= 4 has a chord. Equivalently it has a PEO: an
+// order in which every vertex's LATER neighbours form a clique.
+// Why you care: on a chordal graph, MAXIMUM CLIQUE, CHROMATIC NUMBER, MAXIMUM INDEPENDENT SET
+// and MINIMUM CLIQUE COVER are all POLYNOMIAL - the four problems that are NP-hard in general.
+// Interval graphs and trees are chordal, so "these intervals conflict" problems land here.
+vector<int> mcsOrder(int n, const vector<vector<int>>& adj) {   // reverse of a PEO if chordal
+    vector<int> w(n, 0), ord;
+    vector<char> used(n, 0);
+    for (int it = 0; it < n; it++) {
+        int b = -1;
+        for (int v = 0; v < n; v++) if (!used[v] && (b < 0 || w[v] > w[b])) b = v;
+        used[b] = 1, ord.push_back(b);
+        for (int u : adj[b]) if (!used[u]) w[u]++;
+    }
+    reverse(all(ord));
+    return ord;                                                // this IS a PEO iff chordal
+}
+bool isChordal(int n, const vector<vector<int>>& adj) {
+    auto ord = mcsOrder(n, adj);
+    vector<int> pos(n);
+    for (int i = 0; i < n; i++) pos[ord[i]] = i;
+    vector<char> mark(n, 0);
+    for (int i = 0; i < n; i++) {                              // v's later neighbours must be
+        int v = ord[i], par = -1;                              // a clique; it is enough to check
+        for (int u : adj[v]) if (pos[u] > i && (par < 0 || pos[u] < pos[par])) par = u;
+        if (par < 0) continue;
+        for (int u : adj[par]) mark[u] = 1;
+        for (int u : adj[v]) if (pos[u] > i && u != par && !mark[u]) {
+            for (int x : adj[par]) mark[x] = 0;
+            return false;
+        }
+        for (int u : adj[par]) mark[u] = 0;
+    }
+    return true;
+}
+// GIVEN A PEO: greedy colouring in PEO order uses exactly omega colours (so chi = omega); the
+// maximum clique is the largest "v plus its later neighbours"; the maximum independent set is the
+// greedy "take v, delete its later neighbours" over the PEO.
+\end{lstlisting}
+
 \section{Number Theory}
 
 \subsection{Euclidean Algorithm}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{ExtendedEuclid}\index{extGCD}\index{modInverse}
 \nopagebreak{\footnotesize\sffamily\color{blurb} EXTENDED EUCLID - returns g = gcd(a,b) and x, y with a*x + b*y = g. This is the one routine that\par}\nopagebreak
 \begin{lstlisting}
-// EXTENDED EUCLID - returns g = gcd(a,b) and x, y with a*x + b*y = g. This is the one routine that
 // gives you modular inverses for a NON-prime modulus, solves linear Diophantine equations, and
 // underpins CRT. |x| <= b/(2g) and |y| <= a/(2g), so no overflow for 64-bit inputs.
 long long extGCD(long long a, long long b, long long &x, long long &y) {
@@ -6461,11 +6476,10 @@ long long modInverse(long long a, long long m) {
 }
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{LinearDiophantine}\index{LinearDiophantine}
 \nopagebreak{\footnotesize\sffamily\color{blurb} Linear Diophantine Equations (2 Variables \& N Variables)\par}\nopagebreak
 \begin{lstlisting}
-// Linear Diophantine Equations (2 Variables & N Variables)
 // 1. Solves a * x + b * y = c (Particular solution & GCD check)
 // 2. Solves a_1*x_1 + a_2*x_2 + ... + a_n*x_n = c for N variables
 struct LinearDiophantine {
@@ -6523,11 +6537,10 @@ struct LinearDiophantine {
 };
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{FloorSum}\index{floorSum}
-\nopagebreak{\footnotesize\sffamily\color{blurb} EUCLIDEAN-LIKE ALGORITHM (类欧几里得 / AtCoder Library `floor\_sum`).\par}\nopagebreak
+\nopagebreak{\footnotesize\sffamily\color{blurb} EUCLIDEAN-LIKE ALGORITHM (AtCoder Library `floor\_sum`).\par}\nopagebreak
 \begin{lstlisting}
-// EUCLIDEAN-LIKE ALGORITHM (类欧几里得 / AtCoder Library `floor_sum`).
 //   floorSum(n, m, a, b) = sum_{i=0}^{n-1} floor((a*i + b) / m)     in O(log m).
 // This is THE tool for "sum over a lattice line": counting lattice points under a line, sums of
 // floor/mod expressions, and anything of the shape sum floor((a i + b) / m) that a loop cannot do
@@ -6556,11 +6569,11 @@ ll floorSum(ll n, ll m, ll a, ll b) {
 //
 // THE OTHER TWO SUMS of the same family (needed together often enough to be worth knowing they
 // exist): S1 = sum i * floor((a i + b)/m) and S2 = sum floor((a i + b)/m)^2 obey the same
-// recursion with a 3-tuple state - the "universal Euclidean algorithm" (万能欧几里得) generalises
+// recursion with a 3-tuple state - the "universal Euclidean algorithm" generalises
 // this to any monoid: you supply the two operators U ("move right") and R ("move up") and it
 // composes the word for the line in O(log) monoid multiplications.
 //
-// DIVISOR BLOCKS (数论分块) - the other floor trick, O(sqrt n):
+// DIVISOR BLOCKS - the other floor trick, O(sqrt n):
 //   floor(n / i) is constant on maximal blocks; for a block starting at l the block ends at
 //   r = n / (n / l). Use it for sum_{i=1}^{n} floor(n/i), sum of tau/sigma, Du sieve, Mobius sums.
 //     for (ll l = 1, r; l <= n; l = r + 1) { r = n / (n / l); /* value n/l on [l, r] */ }
@@ -6569,11 +6582,10 @@ ll floorSum(ll n, ll m, ll a, ll b) {
 
 \subsection{Primes and Divisors}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{Sieve}\index{Sieve}
 \nopagebreak{\footnotesize\sffamily\color{blurb} Linear Sieve \& Smallest Prime Factor (SPF) - Time: O(N), Space: O(N)\par}\nopagebreak
 \begin{lstlisting}
-// Linear Sieve & Smallest Prime Factor (SPF) - Time: O(N), Space: O(N)
 // Computes primes list, SPF array, primality test, and O(log N) prime factorization
 struct Sieve {
     int n;
@@ -6609,11 +6621,10 @@ struct Sieve {
 };
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{Factorization}\index{Factorization}
 \nopagebreak{\footnotesize\sffamily\color{blurb} Trial Division Prime Factorization - Time: O(sqrt(N))\par}\nopagebreak
 \begin{lstlisting}
-// Trial Division Prime Factorization - Time: O(sqrt(N))
 template <typename T = ll>
 struct Factorization {
     static vector<T> get_prime_factors(T n) {
@@ -6630,11 +6641,10 @@ struct Factorization {
 };
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{Divisors}\index{Divisors}
 \nopagebreak{\footnotesize\sffamily\color{blurb} Trial Division Divisor Generation - Time: O(sqrt(N))\par}\nopagebreak
 \begin{lstlisting}
-// Trial Division Divisor Generation - Time: O(sqrt(N))
 template <typename T = ll>
 struct Divisors {
     static vector<T> get_divisors(T n) {
@@ -6650,11 +6660,10 @@ struct Divisors {
 };
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{Sieve1e9}\index{Sieve1e9}
 \nopagebreak{\footnotesize\sffamily\color{blurb} Fast Bitset Sieve up to N = 10\textasciicircum{}9 - Time: \textasciitilde{}0.3s for 10\textasciicircum{}9, Space: N / 16 bytes (\textasciitilde{}60MB)\par}\nopagebreak
 \begin{lstlisting}
-// Fast Bitset Sieve up to N = 10^9 - Time: ~0.3s for 10^9, Space: N / 16 bytes (~60MB)
 // Stores odd numbers only (index i represents number 2*i + 1)
 // WARNING: the bitset is ~60 MB - the instance MUST be global/static, never a local.
 template <int MAXPR = (int)1e9>
@@ -6683,11 +6692,10 @@ struct Sieve1e9 {
 };
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{SegmentedSieve}\index{SegmentedSieve}
 \nopagebreak{\footnotesize\sffamily\color{blurb} Segmented Sieve for Range [L, R] - Time: O(sqrt(R) + (R - L) log log R), Space: O(sqrt(R) + R - L)\par}\nopagebreak
 \begin{lstlisting}
-// Segmented Sieve for Range [L, R] - Time: O(sqrt(R) + (R - L) log log R), Space: O(sqrt(R) + R - L)
 // Computes all prime numbers in range [L, R] where R <= 1e12 and (R - L) <= 1e7
 struct SegmentedSieve {
     static vector<ll> get_primes_in_range(ll L, ll R) {
@@ -6721,11 +6729,10 @@ struct SegmentedSieve {
 };
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{MillerRabinPollard}\index{mulmod}\index{powmod}\index{isPrime}\index{pollard}\index{factor}\index{factorize}\index{divisors}\index{phi}\index{tau}\index{sigma}
 \nopagebreak{\footnotesize\sffamily\color{blurb} Primality + factorization for n up to 1e18.  isPrime O(log\textasciicircum{}3 n), factor O(n\textasciicircum{}(1/4)).\par}\nopagebreak
 \begin{lstlisting}
-// Primality + factorization for n up to 1e18.  isPrime O(log^3 n), factor O(n^(1/4)).
 // THE gate for any problem with a_i up to 1e18 - divisors, phi, tau, sigma all follow from factor().
 typedef unsigned long long u64;
 u64 mulmod(u64 a, u64 b, u64 m) { return (__int128)a * b % m; }
@@ -6790,11 +6797,10 @@ u64 sigma(u64 n) {                                                              
 }
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{MultiplicativeSieve}\index{MultSieve}
 \nopagebreak{\footnotesize\sffamily\color{blurb} Linear sieve computing ANY multiplicative function for all i \textless{}= n in O(N).\par}\nopagebreak
 \begin{lstlisting}
-// Linear sieve computing ANY multiplicative function for all i <= n in O(N).
 // Shipped: spf, phi, mu, tau (#divisors), sigma (sum of divisors).
 // To add your own f: you need f(p), f(p^k) and f(a*b)=f(a)f(b) for coprime a,b.
 struct MultSieve {
@@ -6840,7 +6846,7 @@ struct MultSieve {
 
 \subsection{Modular Arithmetic}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{CRT}\index{extGCD}\index{CRT}
 \begin{lstlisting}
 // NOTE: extGCD below is the same one as in 01 - Euclidean Algorithm. Paste only one copy.
@@ -6874,12 +6880,11 @@ pair<long long, long long> CRT(const vector<long long>& a, const vector<long lon
 }
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{DiscreteLogAndRoots}\index{discreteLog}\index{sqrtMod}\index{primitiveRoot}\index{multOrder}\index{discreteRoot}
 \nopagebreak{\footnotesize\sffamily\color{blurb} Discrete log, modular square root, primitive root, discrete k-th root, multiplicative order.\par}\nopagebreak
 \begin{lstlisting}
 // Needs: powmod (02 - Primes and Divisors/06 - MillerRabinPollard.cpp).
-// Discrete log, modular square root, primitive root, discrete k-th root, multiplicative order.
 // All need mulmod/powmod from MillerRabinPollard.
 
 // BSGS: smallest x >= 0 with a^x = b (mod m). Works for ANY m (handles gcd(a,m) != 1). O(sqrt m).
@@ -6954,12 +6959,11 @@ vector<ll> discreteRoot(ll k, ll a, ll p) {
 }
 \end{lstlisting}
 
-\needspace{4\baselineskip}
-\subsubsection{LucasAndBinomialMod}\index{lucas}\index{pw}\index{inv\_mod}\index{factNoP}\index{binomPrimePower}\index{binomAnyMod}
+\filbreak
+\subsubsection{LucasAndBinomialMod}\index{lucas}\index{inv\_mod}\index{factNoP}\index{binomPrimePower}\index{binomAnyMod}
 \nopagebreak{\footnotesize\sffamily\color{blurb} C(n, r) mod m for HUGE n.  Pick by what m is:\par}\nopagebreak
 \begin{lstlisting}
 // Needs: Mint (06 - Math/01), and factorize (02 - Primes and Divisors/06) for the last section.
-// C(n, r) mod m for HUGE n.  Pick by what m is:
 //   m prime and small           -> lucas
 //   m = p^e                     -> binomPrimePower (Andrew Granville / Wilson generalisation)
 //   m arbitrary (squarefree-ish)-> binomAnyMod (CRT over prime powers)
@@ -7022,12 +7026,11 @@ ll binomAnyMod(ll n, ll r, ll m) {
 // WILSON: (p-1)! = -1 (mod p) for prime p.
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{CongruencesAndTowers}\index{linCongruence}\index{capTower}\index{powTower}\index{crt2}
 \nopagebreak{\footnotesize\sffamily\color{blurb} Linear congruences and power towers. Needs powmod / phi / gcd.\par}\nopagebreak
 \begin{lstlisting}
 // Needs: powmod, phi (04 - NT/02 - Primes and Divisors/06 - MillerRabinPollard.cpp).
-// Linear congruences and power towers. Needs powmod / phi / gcd.
 
 // Solve a*x = b (mod m). Returns all solutions in [0, m) (there are gcd(a,m) of them, or none).
 vector<ll> linCongruence(ll a, ll b, ll m) {
@@ -7078,11 +7081,10 @@ pair<ll, ll> crt2(ll a1, ll m1, ll a2, ll m2) {
 }
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{Garner}\index{garner}
 \nopagebreak{\footnotesize\sffamily\color{blurb} GARNER'S ALGORITHM - reconstruct x from residues modulo PAIRWISE COPRIME m\_i, in mixed-radix\par}\nopagebreak
 \begin{lstlisting}
-// GARNER'S ALGORITHM - reconstruct x from residues modulo PAIRWISE COPRIME m_i, in mixed-radix
 // form, so you can emit x modulo a target MOD without ever building prod(m_i).
 // This is what CRT cannot do once the product overflows 64 bits.
 //   x = x1 + x2*m1 + x3*m1*m2 + ... ,   0 <= xi < mi
@@ -7120,7 +7122,7 @@ ll garner(vector<ll> a, vector<ll> m, ll MODOUT) {
 
 \subsection{Theorems}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{NumberTheoryFormulas}
 \nopagebreak{\footnotesize\sffamily\color{blurb} NUMBER THEORY - FORMULA SHEET =================\par}\nopagebreak
 \begin{lstlisting}
@@ -7192,12 +7194,11 @@ ll garner(vector<ll> a, vector<ll> m, ll MODOUT) {
 ================================================================== */
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{MobiusInversion}\index{coprimePairs}\index{gcdSum}\index{dirichletMu}\index{sumFloorDiv}\index{gcdSumWithN}\index{lcmSumWithN}
 \nopagebreak{\footnotesize\sffamily\color{blurb} Working code for the identities on the formula sheet. Needs MultSieve (mu, phi).\par}\nopagebreak
 \begin{lstlisting}
 // Needs: MultSieve (04 - NT/02 - Primes and Divisors/07 - MultiplicativeSieve.cpp) for mu/phi.
-// Working code for the identities on the formula sheet. Needs MultSieve (mu, phi).
 
 // #pairs (i,j) with 1<=i,j<=n and gcd(i,j)=1        O(n)
 ll coprimePairs(int n, const MultSieve& S) {
@@ -7248,11 +7249,10 @@ ll lcmSumWithN(ll n) {
 }
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{PrimeCounting}\index{primePi}\index{primeSum}
 \nopagebreak{\footnotesize\sffamily\color{blurb} LUCY\_HEDGEHOG: pi(n) = \#primes \textless{}= n, and the SUM of primes \textless{}= n, in O(n\textasciicircum{}(3/4)) time and\par}\nopagebreak
 \begin{lstlisting}
-// LUCY_HEDGEHOG: pi(n) = #primes <= n, and the SUM of primes <= n, in O(n^(3/4)) time and
 // O(sqrt n) memory. Handles n up to ~1e12 in well under a second; 1e13 in a few seconds.
 // Idea: S(v, p) = (count or sum) of the integers in [2, v] left after sieving by all primes < p.
 // Sieving by p only touches v >= p^2, so the whole table lives on the O(sqrt n) distinct
@@ -7298,12 +7298,11 @@ ll primeSum(ll n) {
 // APPROXIMATIONS for sanity checks: pi(n) ~ n/ln n, the k-th prime ~ k ln k.
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{Representations}\index{legendre}\index{isSumOfTwoSquares}\index{sumOfTwoSquares}\index{pythagorean}
 \nopagebreak{\footnotesize\sffamily\color{blurb} Representing integers: sums of two squares, Pythagorean triples, Legendre symbol.\par}\nopagebreak
 \begin{lstlisting}
 // Needs: powmod, factorize (02 - Primes and Divisors/06 - MillerRabinPollard.cpp).
-// Representing integers: sums of two squares, Pythagorean triples, Legendre symbol.
 // Needs factorize / sqrtMod / isPrime.
 
 int legendre(ll a, ll p) {                                // 1 QR, -1 non-residue, 0 if p | a
@@ -7354,11 +7353,10 @@ vector<array<ll, 3>> pythagorean(ll L) {
 // n is a sum of THREE squares  <=>  n != 4^a * (8b + 7).   Every n is a sum of FOUR squares.
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{DuSieve}\index{DuSieve}
 \nopagebreak{\footnotesize\sffamily\color{blurb} DU SIEVE (Dirichlet prefix sums) - prefix sums of a multiplicative f in SUBLINEAR time.\par}\nopagebreak
 \begin{lstlisting}
-// DU SIEVE (Dirichlet prefix sums) - prefix sums of a multiplicative f in SUBLINEAR time.
 // Pick g with an easy prefix sum G and an easy (f*g) prefix sum; then
 //     g(1)*S(n) = sum_{i=1..n} (f*g)(i)  -  sum_{i=2..n} g(i) * S(floor(n/i))
 // Sieve S(x) directly for x <= LIM (take LIM ~ n^(2/3)); recurse with memoisation above that.
@@ -7408,7 +7406,7 @@ struct DuSieve {
 //       any "sum over 1..n of a multiplicative function" that a linear sieve cannot reach.
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{MoreFormulaCards}\index{jacobi}
 \nopagebreak{\footnotesize\sffamily\color{blurb} NUMBER THEORY, SECOND FORMULA SHEET ============\par}\nopagebreak
 \begin{lstlisting}
@@ -7535,11 +7533,10 @@ int jacobi(ll a, ll n) {                                       // n odd, n > 0
 
 \subsection{Rational}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{ContinuedFractions}\index{cfrac}\index{convergents}\index{bestApprox}
 \nopagebreak{\footnotesize\sffamily\color{blurb} Continued fractions, convergents, best rational approximation, Stern-Brocot search.\par}\nopagebreak
 \begin{lstlisting}
-// Continued fractions, convergents, best rational approximation, Stern-Brocot search.
 
 // x = [a0; a1, a2, ...]. For a rational p/q this is just the Euclidean algorithm's quotients.
 vector<ll> cfrac(ll p, ll q) {
@@ -7596,11 +7593,10 @@ pair<ll, ll> bestApprox(ll p, ll q, ll N) {
 
 \subsection{Sequences}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{FibonacciAndPisano}\index{fibPair}\index{fib}\index{pisanoPrime}
 \nopagebreak{\footnotesize\sffamily\color{blurb} FIBONACCI, FAST. The notebook had the identities on a formula sheet and no routine; this is it.\par}\nopagebreak
 \begin{lstlisting}
-// FIBONACCI, FAST. The notebook had the identities on a formula sheet and no routine; this is it.
 // F(0)=0, F(1)=1. Fast doubling is O(log n) with two multiplications per bit and NO matrices -
 // shorter and ~2x faster than 2x2 matrix exponentiation.
 //   F(2k)   = F(k) * (2*F(k+1) - F(k))
@@ -7660,11 +7656,10 @@ ll pisanoPrime(ll p) {                                         // p prime
 
 \section{Combinatorics}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsection{StarsAndBars}\index{StarsAndBars}
 \nopagebreak{\footnotesize\sffamily\color{blurb} Stars and Bars (Number of Solutions to x\_1 + x\_2 + ... + x\_k = n) - O(1)\par}\nopagebreak
 \begin{lstlisting}
-// Stars and Bars (Number of Solutions to x_1 + x_2 + ... + x_k = n) - O(1)
 // 1. Non-negative integer solutions (x_i >= 0): C(n + k - 1, k - 1)
 // 2. Positive integer solutions (x_i >= 1): C(n - 1, k - 1)
 struct StarsAndBars {
@@ -7681,12 +7676,11 @@ struct StarsAndBars {
 };
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsection{BurnsidePolya}\index{necklaces}\index{bracelets}\index{burnside}
 \nopagebreak{\footnotesize\sffamily\color{blurb} Burnside / Polya - count colourings up to symmetry.  \#orbits = (1/\textbar{}G\textbar{}) sum\_g \textbar{}fix(g)\textbar{}\par}\nopagebreak
 \begin{lstlisting}
 // Needs: Mint (06 - Math/01); phi (02 - Primes and Divisors/06) for the necklace formulas.
-// Burnside / Polya - count colourings up to symmetry.  #orbits = (1/|G|) sum_g |fix(g)|
 // Needs Mint and phi() (single-value Euler totient).
 
 // Necklaces: n beads in a circle, k colours, ROTATIONS only.
@@ -7718,7 +7712,7 @@ Mint burnside(const vector<ll>& cyclesPerElement, ll k) {
 }
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsection{CombinatoricsFormulas}
 \nopagebreak{\footnotesize\sffamily\color{blurb} COMBINATORICS - FORMULA SHEET =================\par}\nopagebreak
 \begin{lstlisting}
@@ -7800,11 +7794,10 @@ Mint burnside(const vector<ll>& cyclesPerElement, ll k) {
 ================================================================== */
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsection{CatalanStirlingBell}\index{catalan}\index{ballot}\index{derange}\index{fixedPoints}\index{stirling2}\index{surjections}\index{stirling2Row}\index{stirling1Row}\index{bell}\index{partitions}
 \nopagebreak{\footnotesize\sffamily\color{blurb} Catalan, Stirling (both kinds), Bell, derangements, partitions. Needs Mint + buildFact().\par}\nopagebreak
 \begin{lstlisting}
-// Catalan, Stirling (both kinds), Bell, derangements, partitions. Needs Mint + buildFact().
 
 Mint catalan(int n) { return C(2 * n, n) * inv_[n + 1]; }
 // paths from 0 to k in n steps (+-1) that stay strictly positive - ballot / cycle lemma
@@ -7877,11 +7870,10 @@ vector<Mint> partitions(int n) {
 }
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsection{InclusionExclusion}\index{boundedStarsBars}\index{boundedStarsBarsEqual}\index{surj}\index{exactlyFromAtLeast}\index{binomialInvert}\index{exactGcdCounts}
 \nopagebreak{\footnotesize\sffamily\color{blurb} INCLUSION-EXCLUSION recipes. Needs Mint + buildFact().\par}\nopagebreak
 \begin{lstlisting}
-// INCLUSION-EXCLUSION recipes. Needs Mint + buildFact().
 
 // x1+..+xk = n with 0 <= xi <= ub[i].  IE over which variables overflow their bound.
 // O(2^k) - fine for k <= ~20. With equal bounds use the closed form below instead.
@@ -7950,12 +7942,11 @@ vector<ll> exactGcdCounts(const vector<ll>& cntMultiples) {
 }
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsection{TreeCounting}\index{toPrufer}\index{fromPrufer}\index{spanningTrees}\index{connectedLabelledGraphs}
 \nopagebreak{\footnotesize\sffamily\color{blurb} COUNTING TREES AND GRAPHS.\par}\nopagebreak
 \begin{lstlisting}
 // Needs: Mint (06 - Math/01) and determinant (06 - Math/04 - Linear Algebra/02).
-// COUNTING TREES AND GRAPHS.
 
 // PRUFER CODE: bijection between labelled trees on n>=2 vertices and sequences in [0,n)^(n-2).
 // Immediate corollaries: Cayley n^(n-2) labelled trees; with prescribed degrees d_i the count is
@@ -8026,12 +8017,11 @@ vector<Mint> connectedLabelledGraphs(int n) {
 }
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsection{SubsetConvolution}\index{zetaSub}\index{mobiusSub}\index{zetaSuper}\index{mobiusSuper}\index{orConv}\index{andConv}\index{subsetConv}
 \nopagebreak{\footnotesize\sffamily\color{blurb} TRANSFORMS OVER THE SUBSET LATTICE. n bits, arrays of size 2\textasciicircum{}n.\par}\nopagebreak
 \begin{lstlisting}
 // Needs: Mint (06 - Math/01 - Modular Arithmetic/01 - Mint.cpp).
-// TRANSFORMS OVER THE SUBSET LATTICE. n bits, arrays of size 2^n.
 
 // ZETA (sum over subsets) and its inverse MOBIUS. O(n 2^n). This is SOS DP.
 void zetaSub(vector<Mint>& f, int n) {                    // f[m] := sum_{s subset of m} f[s]
@@ -8084,11 +8074,10 @@ vector<Mint> subsetConv(const vector<Mint>& f, const vector<Mint>& g, int n) {
 // SUBMASK ENUMERATION over all masks is O(3^n):  for (s = m; s; s = (s-1) & m)
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsection{SpecialSequences}\index{motzkin}\index{narayana}\index{schroder}\index{eulerian}\index{qBinom}\index{youngTableaux}
 \nopagebreak{\footnotesize\sffamily\color{blurb} Named sequences that keep showing up, with what each one counts. Needs Mint + buildFact().\par}\nopagebreak
 \begin{lstlisting}
-// Named sequences that keep showing up, with what each one counts. Needs Mint + buildFact().
 
 // MOTZKIN M(n): lattice paths (0,0)->(n,0) with steps U/D/FLAT staying >= 0; also the number of
 // ways to draw non-crossing chords on n points on a circle. M: 1,1,2,4,9,21,51,127
@@ -8151,7 +8140,7 @@ Mint youngTableaux(const vector<int>& lam) {
 // permutation can be non-intersecting). Counts plane partitions, rhombus tilings, etc.
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsection{EulerTransformAndSymbolic}\index{eulerTransform}\index{muSmall}\index{eulerInverse}\index{rootedTrees}
 \nopagebreak{\footnotesize\sffamily\color{blurb} SYMBOLIC METHOD: spec -\textgreater{} generating function ============\par}\nopagebreak
 \begin{lstlisting}
@@ -8225,11 +8214,10 @@ vector<Mint> rootedTrees(int n) {
 // COMPOSITIONS (ordered) use SEQ instead: 1/(1 - sum x^s).
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsection{PermanentAndSymmetric}\index{permanent}\index{powerToElementary}\index{elementaryToPower}
 \nopagebreak{\footnotesize\sffamily\color{blurb} RYSER'S FORMULA - permanent of an n x n matrix in O(2\textasciicircum{}n * n).\par}\nopagebreak
 \begin{lstlisting}
-// RYSER'S FORMULA - permanent of an n x n matrix in O(2^n * n).
 // perm(A) counts PERFECT MATCHINGS of a bipartite graph (weighted: sum over matchings of the
 // product of weights). Use for n <= ~20: "count ways to assign n tasks to n people",
 // "count systems of distinct representatives", "count permutations avoiding forbidden cells".
@@ -8288,11 +8276,10 @@ vector<Mint> elementaryToPower(const vector<Mint>& e, int n) {   // e[0..n] -> p
 // can also get in O(n log^2 n) by divide-and-conquer multiplication of the linear factors.
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsection{BernoulliFaulhaber}\index{bernoulli}\index{powerSumClosed}\index{faulhaberPoly}
 \nopagebreak{\footnotesize\sffamily\color{blurb} BERNOULLI NUMBERS and the CLOSED-FORM FAULHABER polynomial.\par}\nopagebreak
 \begin{lstlisting}
-// BERNOULLI NUMBERS and the CLOSED-FORM FAULHABER polynomial.
 // Use this (not Lagrange interpolation) when you need the POLYNOMIAL COEFFICIENTS of
 // sum_{k=1..n} k^p, or when p is large and many n are queried.
 // Convention here: B_1 = -1/2  (the "B^-" convention that the formula below expects).
@@ -8339,11 +8326,10 @@ vector<Mint> faulhaberPoly(int p, const vector<Mint>& B) {
 //   Bernoulli also gives Euler-Maclaurin and the von Staudt-Clausen denominator facts.
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsection{CycleLemmaFussCatalan}\index{ballotStrict}\index{fussCatalan}\index{pAryTrees}\index{rationalCatalan}\index{pathsAvoidingLine}
 \nopagebreak{\footnotesize\sffamily\color{blurb} CYCLE LEMMA (Dvoretzky-Motzkin) and the FUSS-CATALAN / rational-Catalan family.\par}\nopagebreak
 \begin{lstlisting}
-// CYCLE LEMMA (Dvoretzky-Motzkin) and the FUSS-CATALAN / rational-Catalan family.
 // The general-k version of the ballot problem: it handles every "+1 / -k step" path problem.
 //
 // CYCLE LEMMA: a word with m a's and n b's, m >= k*n, has EXACTLY m - k*n cyclic shifts that
@@ -8389,12 +8375,11 @@ Mint pathsAvoidingLine(ll x, ll y, ll m) {
 }
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsection{LGVandPolya}\index{lgvGrid}\index{necklacesWithCounts}\index{lyndonCount}
 \nopagebreak{\footnotesize\sffamily\color{blurb} LGV LEMMA and the POLYA CYCLE INDEX - the two theorems that were stated but never coded.\par}\nopagebreak
 \begin{lstlisting}
 // Needs: Mint, determinant (06 - Math/04/02), phi (04 - NT/02/06), muSmall (09 - EulerTransform...).
-// LGV LEMMA and the POLYA CYCLE INDEX - the two theorems that were stated but never coded.
 
 // LINDSTROM-GESSEL-VIENNOT: with sources a_1..a_k and sinks b_1..b_k in a DAG,
 //   det(M), M[i][j] = #paths a_i -> b_j
@@ -8456,11 +8441,10 @@ Mint lyndonCount(ll n, ll k) {
 
 \subsection{Modular Arithmetic}
 
-\needspace{4\baselineskip}
-\subsubsection{Mint}\index{Mint}\index{buildFact}\index{C}\index{Perm}\index{Cbig}
+\filbreak
+\subsubsection{Mint}\index{Mint}\index{buildFact}\index{Perm}\index{Cbig}
 \nopagebreak{\footnotesize\sffamily\color{blurb} Modular integer (MOD must be PRIME for inv/division) + O(N) factorial tables.\par}\nopagebreak
 \begin{lstlisting}
-// Modular integer (MOD must be PRIME for inv/division) + O(N) factorial tables.
 struct Mint {
     int v;
     Mint(ll x = 0) { v = int(x % MOD); if (v < 0) v += MOD; }
@@ -8501,11 +8485,10 @@ Mint Cbig(ll n, ll r) {
 
 \subsection{Multiplicative Functions}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{EulerTotientPhi}\index{calculatePhi}
 \nopagebreak{\footnotesize\sffamily\color{blurb} EULER TOTIENT SIEVE - phiArr[i] = \#\{1\textless{}=k\textless{}=i : gcd(k,i)=1\} for all i \textless{} N in O(N log log N).\par}\nopagebreak
 \begin{lstlisting}
-// EULER TOTIENT SIEVE - phiArr[i] = #{1<=k<=i : gcd(k,i)=1} for all i < N in O(N log log N).
 // Needed for: a^b mod m with gcd(a,m)=1 (Euler's theorem), counting coprime pairs, Mobius identities
 // (sum_{d|n} phi(d) = n), and the order of the multiplicative group mod n.
 // NAME: phiArr, not phi - a global `phi` collides with the phi() FUNCTION in
@@ -8520,14 +8503,13 @@ void calculatePhi() {
 }
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{MobiusFunction}\index{Mobius}
-\nopagebreak{\footnotesize\sffamily\color{blurb} Mobius Function μ(n) Sieve - Time: O(N), Space: O(N)\par}\nopagebreak
+\nopagebreak{\footnotesize\sffamily\color{blurb} Mobius Function mu(n) Sieve - Time: O(N), Space: O(N)\par}\nopagebreak
 \begin{lstlisting}
-// Mobius Function μ(n) Sieve - Time: O(N), Space: O(N)
-// μ(n) = 1 if n is square-free with an even number of prime factors
-// μ(n) = -1 if n is square-free with an odd number of prime factors
-// μ(n) = 0 if n has a squared prime factor
+// mu(n) = 1 if n is square-free with an even number of prime factors
+// mu(n) = -1 if n is square-free with an odd number of prime factors
+// mu(n) = 0 if n has a squared prime factor
 struct Mobius {
     int n;
     vector<int> mu, primes;
@@ -8559,12 +8541,11 @@ struct Mobius {
 
 \subsection{Matrices}
 
-\needspace{4\baselineskip}
-\subsubsection{MatrixExponentiation}\index{eye}\index{mpow}
+\filbreak
+\subsubsection{MatrixExponentiation}\index{mpow}
 \nopagebreak{\footnotesize\sffamily\color{blurb} Matrix over Mint. mul O(n\textasciicircum{}3) (cache-friendly i-k-j order), pow O(n\textasciicircum{}3 log e).\par}\nopagebreak
 \begin{lstlisting}
 // Needs: Mint (01 - Modular Arithmetic/01 - Mint.cpp).
-// Matrix over Mint. mul O(n^3) (cache-friendly i-k-j order), pow O(n^3 log e).
 // Fix the size at compile time (array<array<Mint,K>,K>) if you need the last 2x speedup.
 typedef vector<vector<Mint>> Mat;
 
@@ -8587,16 +8568,15 @@ Mat mpow(Mat a, ll e) {
 //    companion matrix, first row = (c1..ck), subdiagonal = 1.  f(n) = (M^(n-k) * [f(k-1)..f(0)]^T)[0]
 //  Add a "+d" constant term: enlarge by one row/col with a 1 on the diagonal, put d in the first row.
 //  Count walks of length L between u and v: (A^L)[u][v] where A is the adjacency matrix.
-//  Shortest walk with exactly L edges: same, but replace (+,*) with (min,+) — "min-plus product".
+//  Shortest walk with exactly L edges: same, but replace (+,*) with (min,+) - "min-plus product".
 \end{lstlisting}
 
 \subsection{Linear Algebra}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{LinearXorBasis}\index{Basis}
 \nopagebreak{\footnotesize\sffamily\color{blurb} XOR basis (vector space over GF(2)). insert / query O(B).\par}\nopagebreak
 \begin{lstlisting}
-// XOR basis (vector space over GF(2)). insert / query O(B).
 // span size = 2^sz. Use MERGE to keep a basis in each segment-tree node -> max-xor over a RANGE.
 struct Basis {
     static const int B = 62;      // 60 silently drops bits 61-62 of an ll up to 9e18
@@ -8634,12 +8614,11 @@ struct Basis {
 };
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{GaussianElimination}\index{gaussMod}\index{solveLinear}\index{determinant}\index{inverse}
 \nopagebreak{\footnotesize\sffamily\color{blurb} Gaussian elimination mod a PRIME. Returns rank; solves A x = b; also det and inverse.\par}\nopagebreak
 \begin{lstlisting}
 // Needs: Mint (01 - Modular Arithmetic/01 - Mint.cpp) for the modular routines.
-// Gaussian elimination mod a PRIME. Returns rank; solves A x = b; also det and inverse.
 // O(n^2 m). Pass the augmented matrix (n rows, m+1 cols) to solve().
 int gaussMod(vector<vector<Mint>>& a, int m) {           // reduce first m columns to RREF
     int n = a.size(), rank = 0;
@@ -8702,11 +8681,10 @@ vector<vector<Mint>> inverse(vector<vector<Mint>> a) {   // {} if singular
 // with any one row AND the matching column deleted.
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{GaussXorAndReal}\index{gaussXor}\index{gaussReal}
 \nopagebreak{\footnotesize\sffamily\color{blurb} XOR-equation systems over GF(2) with bitset - O(n*m/64). n equations, m variables,\par}\nopagebreak
 \begin{lstlisting}
-// XOR-equation systems over GF(2) with bitset - O(n*m/64). n equations, m variables,
 // row[i][m] holds the RHS. Returns rank, or -1 if inconsistent.
 template <int M>
 int gaussXor(vector<bitset<M + 1>>& a, int m, bitset<M>* sol = nullptr) {
@@ -8753,11 +8731,10 @@ int gaussReal(vector<vector<ld>> a, int m, vector<ld>& x) {
 
 \subsection{Convolution}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{FFT}\index{fft}\index{conv}\index{convMod}
 \nopagebreak{\footnotesize\sffamily\color{blurb} FFT over complex doubles. conv() is exact while \textbar{}result coefficient\textbar{} \textless{} \textasciitilde{}1e15.\par}\nopagebreak
 \begin{lstlisting}
-// FFT over complex doubles. conv() is exact while |result coefficient| < ~1e15.
 // Prefer NTT when the answer is taken modulo an NTT prime; use convMod for arbitrary moduli.
 typedef complex<double> C;
 void fft(vector<C>& a) {
@@ -8821,11 +8798,10 @@ vector<ll> convMod(const vector<ll>& a, const vector<ll>& b, ll M) {
 }
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{NTT}\index{npow}\index{ntt}\index{multiply}
 \nopagebreak{\footnotesize\sffamily\color{blurb} NTT modulo 998244353 (= 119*2\textasciicircum{}23 + 1, primitive root 3). O(n log n).\par}\nopagebreak
 \begin{lstlisting}
-// NTT modulo 998244353 (= 119*2^23 + 1, primitive root 3). O(n log n).
 // multiply() is the entry point. MAX LENGTH 2^23 for 998244353 (see the assert in ntt()).
 // For an ARBITRARY modulus: run this under three of the primes below and Garner them together
 // (06 - Garner.cpp is written for exactly that), or split the coefficients at sqrt(M) and use
@@ -8875,11 +8851,10 @@ vector<ll> multiply(vector<ll> a, vector<ll> b) {
 // distributions; string matching with wildcards; sum of C(a_i, k) over all i for every k.
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{FWHT}\index{FWHT}
 \nopagebreak{\footnotesize\sffamily\color{blurb} Fast Walsh-Hadamard Transform (FWHT) - Time: O(N log N)\par}\nopagebreak
 \begin{lstlisting}
-// Fast Walsh-Hadamard Transform (FWHT) - Time: O(N log N)
 // Computes Bitwise Convolutions: XOR, AND, OR for array of size N = 2^k
 struct FWHT {
     enum Type { XOR, AND, OR };
@@ -8921,11 +8896,10 @@ struct FWHT {
 };
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{Polynomial}\index{cut}\index{deriv}\index{integ}\index{inv}\index{log\_}\index{exp\_}\index{sqrt\_}\index{pow\_}\index{divmod}
 \nopagebreak{\footnotesize\sffamily\color{blurb} FORMAL POWER SERIES over NMOD = 998244353, on top of multiply() from 02 - NTT.cpp.\par}\nopagebreak
 \begin{lstlisting}
-// FORMAL POWER SERIES over NMOD = 998244353, on top of multiply() from 02 - NTT.cpp.
 // Every routine works "mod x^k". inv/log/exp/sqrt/pow are all Newton iteration: each step
 // doubles the number of correct coefficients, so the cost is the cost of the last multiply.
 typedef vector<ll> Poly;
@@ -9011,12 +8985,11 @@ pair<Poly, Poly> divmod(Poly a, Poly b) {
 
 \subsection{Interpolation}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{LagrangeAndFaulhaber}\index{lagrangeConsecutive}\index{lagrange}\index{powerSum}
 \nopagebreak{\footnotesize\sffamily\color{blurb} Lagrange interpolation + power sums. Needs Mint + buildFact().\par}\nopagebreak
 \begin{lstlisting}
 // Needs: Mint (01 - Modular Arithmetic/01 - Mint.cpp).
-// Lagrange interpolation + power sums. Needs Mint + buildFact().
 
 // Given y[0..n] = f(0), f(1), ..., f(n) for a polynomial f of degree <= n, evaluate f(x). O(n).
 // The consecutive-points case is the one you actually want; it kills a whole class of problems
@@ -9055,12 +9028,11 @@ Mint powerSum(ll n, int k) {
 // and any DP whose answer is eventually polynomial.
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{BerlekampMassey}\index{berlekampMassey}\index{linearRec}
 \nopagebreak{\footnotesize\sffamily\color{blurb} Berlekamp-Massey: find the shortest linear recurrence fitting a sequence, O(n\textasciicircum{}2).\par}\nopagebreak
 \begin{lstlisting}
 // Needs: Mint (01 - Modular Arithmetic/01 - Mint.cpp).
-// Berlekamp-Massey: find the shortest linear recurrence fitting a sequence, O(n^2).
 // Then jump to the k-th term in O(len^2 log k). THE weapon for "brute force small n, find the
 // pattern, extrapolate" - works on any sequence that satisfies a constant-coefficient recurrence.
 // Feed it ~2*len terms (60-100 is usually plenty).
@@ -9111,11 +9083,10 @@ Mint linearRec(const vector<Mint>& S, const vector<Mint>& tr, ll k) {
 
 \subsection{Numerical}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{Integration}\index{simpson}\index{asr}\index{integrate}
 \nopagebreak{\footnotesize\sffamily\color{blurb} ADAPTIVE SIMPSON - numeric integral of a black-box f on [a,b] to a requested absolute error.\par}\nopagebreak
 \begin{lstlisting}
-// ADAPTIVE SIMPSON - numeric integral of a black-box f on [a,b] to a requested absolute error.
 // Simpson approximates f by a parabola through the two ends and the midpoint; "adaptive" means it
 // splits an interval only where the parabola does not yet agree with the two half-parabolas.
 // Reach for it when the answer is an integral you cannot do in closed form: area of a union of
@@ -9159,11 +9130,10 @@ template <class F> ld integrate(F f, ld a, ld b, ld eps = 1e-9) {
 //   linearly; nested ternary search is the safer contest answer (the objective is convex).
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{LinearSolvers}\index{thomas}\index{detMod}
 \nopagebreak{\footnotesize\sffamily\color{blurb} SPECIAL-SHAPE LINEAR SOLVERS. Gaussian elimination is O(n\textasciicircum{}3); these are the shapes where the\par}\nopagebreak
 \begin{lstlisting}
-// SPECIAL-SHAPE LINEAR SOLVERS. Gaussian elimination is O(n^3); these are the shapes where the
 // structure buys you a factor of n or removes a precondition.
 
 // --- THOMAS ALGORITHM: TRIDIAGONAL system in O(n). ---
@@ -9224,11 +9194,10 @@ ll detMod(vector<vector<ll>> a, ll m) {
 
 \subsection{Linear Programming}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{Simplex}\index{Simplex}
 \nopagebreak{\footnotesize\sffamily\color{blurb} TWO-PHASE SIMPLEX.  maximise c.x  subject to  A x \textless{}= b,  x \textgreater{}= 0.\par}\nopagebreak
 \begin{lstlisting}
-// TWO-PHASE SIMPLEX.  maximise c.x  subject to  A x <= b,  x >= 0.
 // Returns the optimum, or +inf if unbounded, or -inf if infeasible; x is filled with a solution.
 // Exponential in theory, O(n*m) per pivot and instant at contest sizes (n, m up to a few hundred).
 // REACH FOR IT when the problem is "optimise a linear objective under linear constraints" and no
@@ -9317,11 +9286,10 @@ struct Simplex {
 
 \subsection{String Matching}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{KMP}\index{compute\_pi}\index{find\_matches}\index{compute\_automaton}
 \nopagebreak{\footnotesize\sffamily\color{blurb} KMP. pi[i] = length of the longest proper border of s[0..i] (prefix that is also a suffix).\par}\nopagebreak
 \begin{lstlisting}
-// KMP. pi[i] = length of the longest proper border of s[0..i] (prefix that is also a suffix).
 // Gives O(n+m) substring search, the period of a prefix (i+1 - pi[i]), and the automaton for DP.
 vector<int> compute_pi(const string &s) {
     int n = s.size();
@@ -9365,11 +9333,10 @@ void compute_automaton(string s, vector<vector<int>> &aut) {
 }
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{RabinKarp}\index{rabin\_karp}
 \nopagebreak{\footnotesize\sffamily\color{blurb} RABIN-KARP - rolling-hash substring search in O(n+m) expected. Prefer 05 - Hashing for anything\par}\nopagebreak
 \begin{lstlisting}
-// RABIN-KARP - rolling-hash substring search in O(n+m) expected. Prefer 05 - Hashing for anything
 // serious (this uses a FIXED base, which is hackable); keep this for one-off matching.
 vector<int> rabin_karp(string const &s, string const &t) {
     const int p = 31;
@@ -9398,11 +9365,10 @@ vector<int> rabin_karp(string const &s, string const &t) {
 }
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{ZFunction}\index{z\_function}
 \nopagebreak{\footnotesize\sffamily\color{blurb} z[i] is the length of the longest substring starting from s[i] which is also a prefix of s\par}\nopagebreak
 \begin{lstlisting}
-// z[i] is the length of the longest substring starting from s[i] which is also a prefix of s
 vector<int> z_function(string s) {
     int n = s.length();
     vector<int> z(n);
@@ -9423,12 +9389,11 @@ vector<int> z_function(string s) {
 }
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{WildcardMatching}\index{wildcardMatch}
 \nopagebreak{\footnotesize\sffamily\color{blurb} STRING MATCHING WITH WILDCARDS in O(n log n). A wildcard matches any character, on EITHER side.\par}\nopagebreak
 \begin{lstlisting}
 // Needs: conv (06 - Math/05 - Convolution/01 - FFT.cpp).
-// STRING MATCHING WITH WILDCARDS in O(n log n). A wildcard matches any character, on EITHER side.
 // Map every real character to a positive value and every wildcard to 0. Then position i matches iff
 //        sum_j  ( p[j] - t[i+j] )^2 * p[j] * t[i+j]  ==  0,
 // because each term is >= 0 and vanishes exactly when the characters agree or one of them is 0.
@@ -9470,11 +9435,10 @@ vector<int> wildcardMatch(const string& t, const string& p, char wild = '?') {
 
 \subsection{Hashing}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{StringHashing}\index{Hash}
 \nopagebreak{\footnotesize\sffamily\color{blurb} Double-mod polynomial hashing. RANDOM bases =\textgreater{} not anti-hackable.\par}\nopagebreak
 \begin{lstlisting}
-// Double-mod polynomial hashing. RANDOM bases => not anti-hackable.
 // No modular inverses: h(l,r) is compared already scaled, so get() is 2 mults.
 ll HB1, HB2;
 struct Hash {
@@ -9503,16 +9467,15 @@ struct Hash {
     }
     // concat(A over lenA, B): h = hA * base^lenB + hB   (works per modulus)
 };
-// USES: substring equality O(1) · longest common prefix of two suffixes by binary search
-//       · dedup of substrings · 2D grid patterns (hash rows, then hash the row-hashes)
-//       · tree isomorphism (hash the sorted multiset of child hashes)
+// USES: substring equality O(1) * longest common prefix of two suffixes by binary search
+//       * dedup of substrings * 2D grid patterns (hash rows, then hash the row-hashes)
+//       * tree isomorphism (hash the sorted multiset of child hashes)
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{Hashing2D}\index{Hash2D}
 \nopagebreak{\footnotesize\sffamily\color{blurb} 2D HASHING - O(1) hash of any submatrix, for grid pattern matching.\par}\nopagebreak
 \begin{lstlisting}
-// 2D HASHING - O(1) hash of any submatrix, for grid pattern matching.
 // 2D prefix hash with random bases b1 (down) and b2 (right), single 62-bit modulus via __int128.
 ll HB2D1 = 0, HB2D2 = 0;                             // ONE base pair per RUN, at file scope.
 struct Hash2D {                                      // Per-object bases would make two grids
@@ -9547,19 +9510,18 @@ struct Hash2D {                                      // Per-object bases would m
         return (ll)((v % M + M) % M);
     }
 };
-// USES: count occurrences of a pattern grid · largest common square submatrix (binary search the
-// side, hash all windows of both grids) · count distinct k x k submatrices.
+// USES: count occurrences of a pattern grid * largest common square submatrix (binary search the
+// side, hash all windows of both grids) * count distinct k x k submatrices.
 // CHEAPER when the pattern is fixed: 1D-hash each row of the pattern, then run KMP /
 // Aho-Corasick over the rows treated as single symbols.
 \end{lstlisting}
 
 \subsection{Aho Corasick}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{AhoCorasick}\index{Mapper}\index{Aho}\index{Node}
 \nopagebreak{\footnotesize\sffamily\color{blurb} AHO-CORASICK - a trie of all patterns plus suffix (fail) links, so one pass over the text finds\par}\nopagebreak
 \begin{lstlisting}
-// AHO-CORASICK - a trie of all patterns plus suffix (fail) links, so one pass over the text finds
 // every occurrence of every pattern in O(|text| + total pattern length + #matches).
 // The goto-automaton form (nxt filled in by BFS) is also the transition table for DP over strings.
 struct Mapper {
@@ -9646,12 +9608,11 @@ struct Aho {
 };
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{AhoCorasickDP}\index{AhoDP}
 \nopagebreak{\footnotesize\sffamily\color{blurb} DP OVER THE AHO-CORASICK AUTOMATON - the high-value use of Aho, more than matching itself.\par}\nopagebreak
 \begin{lstlisting}
 // Needs: Mint (06 - Math/01) and AhoCorasick (01 - AhoCorasick.cpp).
-// DP OVER THE AHO-CORASICK AUTOMATON - the high-value use of Aho, more than matching itself.
 // After build(), nxt[] is a total transition function, so the automaton is a DFA over states
 // 0..S-1 and you can run any DP on (position, state, extra).
 // "bad" marks states that contain a forbidden pattern as a suffix; propagate it along exit links.
@@ -9723,11 +9684,10 @@ struct AhoDP {
 
 \subsection{Suffix Structures}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{SuffixArray}\index{SuffixArray}
 \nopagebreak{\footnotesize\sffamily\color{blurb} SUFFIX ARRAY + LCP + sparse table for O(1) LCE. Build is O(n log n) (prefix doubling with a radix\par}\nopagebreak
 \begin{lstlisting}
-// SUFFIX ARRAY + LCP + sparse table for O(1) LCE. Build is O(n log n) (prefix doubling with a radix
 // sort), Kasai gives the LCP array in O(n). Everything you can ask about substrings reduces to a
 // range on this array - see 03 - SuffixArrayApplications.cpp.
 struct SuffixArray {
@@ -9798,11 +9758,10 @@ struct SuffixArray {
 };
 \end{lstlisting}
 
-\needspace{4\baselineskip}
-\subsubsection{SuffixAutomaton}\index{SAM}\index{S}\index{longestCommonSubstring}
+\filbreak
+\subsubsection{SuffixAutomaton}\index{SAM}\index{longestCommonSubstring}
 \nopagebreak{\footnotesize\sffamily\color{blurb} SUFFIX AUTOMATON - O(n) states/transitions, accepts exactly the substrings of s.\par}\nopagebreak
 \begin{lstlisting}
-// SUFFIX AUTOMATON - O(n) states/transitions, accepts exactly the substrings of s.
 // st[v].len   = longest string in v's endpos class      link = suffix link (v's parent)
 // cnt[v]      = |endpos(v)| = #occurrences of every string in v
 // distinct substrings = sum over v != root of (len[v] - len[link[v]])
@@ -9916,11 +9875,10 @@ int longestCommonSubstring(SAM& A, const string& t) {
 // if a transition already exists reuse/clone it instead of creating a new state.
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{SuffixArrayApplications}\index{distinctSubstrings}\index{longestRepeated}\index{patternRange}\index{lcsViaSuffixArray}
 \nopagebreak{\footnotesize\sffamily\color{blurb} WHAT YOU ACTUALLY EXTRACT FROM A SUFFIX ARRAY.\par}\nopagebreak
 \begin{lstlisting}
-// WHAT YOU ACTUALLY EXTRACT FROM A SUFFIX ARRAY.
 // Convention of 01 - SuffixArray.cpp: sa has n+1 entries (sa[0] = the empty suffix),
 // and lcp[i] = LCP(sa[i], sa[i-1]).  Everything below assumes that.
 
@@ -9977,11 +9935,10 @@ int lcsViaSuffixArray(const string& a, const string& b) {
 //    lengths they are equal, otherwise compare s[i+l] with s[j+l].
 \end{lstlisting}
 
-\needspace{4\baselineskip}
-\subsubsection{GeneralizedSAM}\index{GenSAM}\index{S}
+\filbreak
+\subsubsection{GeneralizedSAM}\index{GenSAM}
 \nopagebreak{\footnotesize\sffamily\color{blurb} GENERALIZED SUFFIX AUTOMATON - one automaton accepting every substring of a SET of strings.\par}\nopagebreak
 \begin{lstlisting}
-// GENERALIZED SUFFIX AUTOMATON - one automaton accepting every substring of a SET of strings.
 // Same size bound O(total length). The only change vs a plain SAM: when extending, the transition
 // may ALREADY exist (a previous string walked here), so handle that case instead of blindly adding.
 // Feeding strings one after another into a plain SAM is WRONG - it creates junk states.
@@ -10051,11 +10008,10 @@ struct GenSAM {
 
 \subsection{Palindromes}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{Manacher}\index{Manacher}
 \nopagebreak{\footnotesize\sffamily\color{blurb} MANACHER - the radius of the longest palindrome centred at every position, in O(n).\par}\nopagebreak
 \begin{lstlisting}
-// MANACHER - the radius of the longest palindrome centred at every position, in O(n).
 // Answers "is s[l..r] a palindrome" in O(1) and counts all palindromic substrings in one pass.
 struct Manacher {
     vector<int> p;
@@ -10093,11 +10049,10 @@ struct Manacher {
 };
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{PalindromicTree}\index{PalindromeTree}
 \nopagebreak{\footnotesize\sffamily\color{blurb} PALINDROMIC TREE (eertree) - O(n) nodes, one per DISTINCT palindromic substring, built online in\par}\nopagebreak
 \begin{lstlisting}
-// PALINDROMIC TREE (eertree) - O(n) nodes, one per DISTINCT palindromic substring, built online in
 // O(n). Gives the count of distinct palindromes, occurrence counts, and the longest palindromic
 // suffix at every prefix - which is what palindromic-factorization DP needs.
 struct PalindromeTree {
@@ -10261,12 +10216,11 @@ struct PalindromeTree {
 };
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{PalindromicTreeRollback}\index{PalindromeTree}\index{History}
 \nopagebreak{\footnotesize\sffamily\color{blurb} PALINDROMIC TREE WITH ROLLBACK - same structure, but every extend() can be undone, so you can DFS\par}\nopagebreak
 \begin{lstlisting}
 // NOTE: 02 - PalindromicTree.cpp declares the same `struct PalindromeTree`. Paste one.
-// PALINDROMIC TREE WITH ROLLBACK - same structure, but every extend() can be undone, so you can DFS
 // a trie/tree of characters and maintain the palindromic structure of the current root-to-node string.
 struct PalindromeTree {
     int n, id, cur, tot;
@@ -10417,11 +10371,10 @@ struct PalindromeTree {
 
 \subsection{Rotations}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{LyndonAndRotations}\index{duval}\index{minRotation}
 \nopagebreak{\footnotesize\sffamily\color{blurb} LYNDON FACTORISATION (Duval) and MINIMAL CYCLIC ROTATION (Duval), both O(n), O(1) memory.\par}\nopagebreak
 \begin{lstlisting}
-// LYNDON FACTORISATION (Duval) and MINIMAL CYCLIC ROTATION (Duval), both O(n), O(1) memory.
 // A Lyndon word is strictly smaller than all of its proper suffixes. Every string factors
 // UNIQUELY as w1 >= w2 >= ... >= wk with each wi Lyndon.
 vector<string> duval(const string& s) {
@@ -10454,11 +10407,10 @@ int minRotation(string s) {
 
 \subsection{Sequences}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{DeBruijnAndBitap}\index{deBruijn}\index{bitap}
 \nopagebreak{\footnotesize\sffamily\color{blurb} DE BRUIJN SEQUENCES and BIT-PARALLEL MATCHING.\par}\nopagebreak
 \begin{lstlisting}
-// DE BRUIJN SEQUENCES and BIT-PARALLEL MATCHING.
 
 // --- DE BRUIJN SEQUENCE B(k, n): a CYCLIC string over an alphabet of size k, of length k^n, in
 // which every one of the k^n words of length n appears exactly once as a (cyclic) substring.
@@ -10526,11 +10478,10 @@ vector<int> bitap(const string& t, const string& p) {
 
 \subsection{DP Optimizations}
 
-\needspace{4\baselineskip}
-\subsubsection{DivideAndConquerDP}\index{lo}\index{hi}\index{add}\index{remove}\index{Cost}\index{f}\index{store}\index{rec}\index{solve}
+\filbreak
+\subsubsection{DivideAndConquerDP}\index{remove}\index{Cost}\index{store}
 \nopagebreak{\footnotesize\sffamily\color{blurb} Divide \& Conquer DP Optimization - Time: O(K * N log N), Space: O(N)\par}\nopagebreak
 \begin{lstlisting}
-// Divide & Conquer DP Optimization - Time: O(K * N log N), Space: O(N)
 // Applies when DP transition is dp[k][i] = min_{j < i} (dp[k-1][j] + cost(j+1, i))
 // Condition: opt(i, j) <= opt(i, j + 1) (Monotonicity of optimal split points)
 const int N = 200005;                            // ALSO in 01 - Template.cpp: keep one copy
@@ -10579,11 +10530,10 @@ void rec(int L, int R, int LO, int HI) {
 void solve(int L, int R) { rec(L, R, -inf, inf); }
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{CHT}\index{Line}\index{HullDynamic}\index{MonoCHT}
 \nopagebreak{\footnotesize\sffamily\color{blurb} DYNAMIC CONVEX HULL TRICK (UPPER hull -\textgreater{} MAXIMUM of m*x + b). Lines may be inserted in ANY order\par}\nopagebreak
 \begin{lstlisting}
-// DYNAMIC CONVEX HULL TRICK (UPPER hull -> MAXIMUM of m*x + b). Lines may be inserted in ANY order
 // and queried at any x, O(log n) each. If your slopes AND queries are both monotone, the deque
 // version at the bottom of this file is O(1) amortised and much shorter - prefer it.
 // For a MINIMUM, insert (-m, -b) and negate the answer.
@@ -10679,11 +10629,10 @@ struct MonoCHT {
 //                lines inserted and removed          -> CHT with rollback (03) or Li Chao merge.
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{CHTRollback}\index{RollbackCHT}\index{Line}\index{History}
 \nopagebreak{\footnotesize\sffamily\color{blurb} Rollback Convex Hull Trick - Space: O(N), Add: O(log N), Query: O(log N), Rollback: O(1)\par}\nopagebreak
 \begin{lstlisting}
-// Rollback Convex Hull Trick - Space: O(N), Add: O(log N), Query: O(log N), Rollback: O(1)
 // Supports inserting monotonic lines with history stack rollback for tree/dsu DP
 // Template parameters:
 // IS_MAX: Set to true for Maximum queries, false for Minimum queries.
@@ -10777,11 +10726,10 @@ struct RollbackCHT {
 };
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{LiChaoTree}\index{LiChao}\index{Line}
 \nopagebreak{\footnotesize\sffamily\color{blurb} LI CHAO TREE - MAXIMUM of a set of lines y = m*x + b at any query x, with NO order requirement\par}\nopagebreak
 \begin{lstlisting}
-// LI CHAO TREE - MAXIMUM of a set of lines y = m*x + b at any query x, with NO order requirement
 // on the slopes or on the queries (that is the whole point; CHT needs monotone slopes).
 // O(log X) per line insert and per query, O(log^2 X) to insert a line only on a SEGMENT [lx, rx].
 // Space O(n log X). Works for any family of functions where two members cross AT MOST ONCE -
@@ -10843,11 +10791,10 @@ struct LiChao {
 // segment-tree merging) - that is how you do convex-hull DP on a tree without small-to-large.
 \end{lstlisting}
 
-\needspace{4\baselineskip}
-\subsubsection{PersistentLiChaoTree}\index{Line}\index{Node}\index{sub}
+\filbreak
+\subsubsection{PersistentLiChaoTree}\index{Line}\index{Node}
 \nopagebreak{\footnotesize\sffamily\color{blurb} Persistent Li Chao Tree - Space: O(N log X), Insert Line: O(log X), Query: O(log X)\par}\nopagebreak
 \begin{lstlisting}
-// Persistent Li Chao Tree - Space: O(N log X), Insert Line: O(log X), Query: O(log X)
 // Version-persistent Li Chao Segment Tree for tree / history DP queries
 const ll maxN = 1e7 + 5;
 
@@ -10950,11 +10897,10 @@ const int N = 200005;                            // #versions; also in 01 - Temp
 Node *tree[N];
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{KnuthDP}\index{KnuthDP}
 \nopagebreak{\footnotesize\sffamily\color{blurb} KNUTH OPTIMIZATION - interval DP  dp[i][j] = min\_\{i\textless{}=k\textless{}j\}(dp[i][k] + dp[k+1][j]) + cost(i,j)\par}\nopagebreak
 \begin{lstlisting}
-// KNUTH OPTIMIZATION - interval DP  dp[i][j] = min_{i<=k<j}(dp[i][k] + dp[k+1][j]) + cost(i,j)
 // from O(n^3) to O(n^2), by restricting k to [opt[i][j-1], opt[i+1][j]].
 // THE HYPOTHESIS IS ON cost, NOT ON opt. `opt[i][j-1] <= opt[i][j] <= opt[i+1][j]` is the
 // CONCLUSION - you cannot test it before running. What you must check is BOTH of:
@@ -10999,11 +10945,10 @@ struct KnuthDP {
 };
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{AliensTrick}\index{AliensTrick}
 \nopagebreak{\footnotesize\sffamily\color{blurb} ALIENS TRICK (Lagrangian relaxation / wqs binary search) - O(n log(range)).\par}\nopagebreak
 \begin{lstlisting}
-// ALIENS TRICK (Lagrangian relaxation / wqs binary search) - O(n log(range)).
 // Drops an "exactly k pieces" constraint: charge lambda per piece, solve the UNCONSTRAINED DP,
 // and binary search lambda until the optimum uses k pieces. Answer = cost(lambda) - k*lambda.
 // PRECONDITION: f(k), the optimum with exactly k pieces, must be CONVEX in k (for a minimum;
@@ -11043,11 +10988,10 @@ struct AliensTrick {
 };
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{AliensTrickExample}\index{DPState}\index{solve\_aliens}
 \nopagebreak{\footnotesize\sffamily\color{blurb} ALIENS TRICK (Lagrangian / wqs binary search) - drops the "exactly k pieces" constraint by charging\par}\nopagebreak
 \begin{lstlisting}
-// ALIENS TRICK (Lagrangian / wqs binary search) - drops the "exactly k pieces" constraint by charging
 // a penalty lambda per piece, solving the unconstrained DP, and binary searching lambda until the
 // optimal solution uses k. REQUIRES the optimum as a function of k to be CONVEX; check that first.
 // 1. DP State Structure
@@ -11139,7 +11083,7 @@ void solve_aliens() {
 }
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{MaxAverageSubarray}\index{Query}\index{Line}\index{HullDynamic}
 \nopagebreak{\footnotesize\sffamily\color{blurb} UPPER hull (maximum) and this one is the LOWER hull (minimum) - they are NOT\par}\nopagebreak
 \begin{lstlisting}
@@ -11241,11 +11185,10 @@ struct HullDynamic : public multiset<Line, less<>> {
 // Binary search on the answer + prefix sums is the shorter O(n log n) alternative; this is O(n).
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{SlopeTrick}\index{SlopeTrick}
 \nopagebreak{\footnotesize\sffamily\color{blurb} SLOPE TRICK - maintain a CONVEX piecewise-linear f(x) as two heaps of its breakpoints.\par}\nopagebreak
 \begin{lstlisting}
-// SLOPE TRICK - maintain a CONVEX piecewise-linear f(x) as two heaps of its breakpoints.
 // L = left slopes (max-heap), R = right slopes (min-heap), minf = current minimum value.
 // Every operation below is O(log n). Classic use: "minimum total |change| to make an array
 // non-decreasing", scheduling with earliness/tardiness penalties, and any DP where
@@ -11282,11 +11225,10 @@ struct SlopeTrick {
 // For "strictly increasing", first replace a_i by a_i - i.
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{MinPlusConvolution}\index{minPlusConvexConvex}\index{maxPlusConcaveConcave}\index{dcOpt}
 \nopagebreak{\footnotesize\sffamily\color{blurb} MIN-PLUS / MAX-PLUS CONVOLUTION:  c[k] = min\_i ( a[i] + b[k-i] ).\par}\nopagebreak
 \begin{lstlisting}
-// MIN-PLUS / MAX-PLUS CONVOLUTION:  c[k] = min_i ( a[i] + b[k-i] ).
 // In general this is quadratic and CONJECTURED to stay that way (the MinConv hypothesis:
 // MinConv, MaxConv, unbounded knapsack and 0/1 knapsack are all equivalent under subquadratic
 // reductions). So the ONLY fast versions rely on convexity.
@@ -11345,11 +11287,10 @@ void dcOpt(int kl, int kr, int il, int ir, vector<ll>& c, F cost, V valid) {
 // per-part curves produced by Alien's trick.
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{OneDOneD}\index{onedOned}
 \nopagebreak{\footnotesize\sffamily\color{blurb} 1D/1D DP OPTIMISATION - the self-referential case that divide \& conquer structurally cannot do.\par}\nopagebreak
 \begin{lstlisting}
-// 1D/1D DP OPTIMISATION - the self-referential case that divide & conquer structurally cannot do.
 //     dp[i] = min over j < i of ( dp[j] + w(j, i) )
 // D&C optimisation needs the LAYERED form dp[k][i] = min(dp[k-1][j] + w) so that the whole
 // previous layer is already known. Here dp[j] is produced by the very loop that consumes it, so
@@ -11412,11 +11353,10 @@ vector<ll> onedOned(int n, F w) {                              // w(j, i) for j 
 
 \subsection{Bitmask DP}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{SOS\_DP}\index{SOS\_DP}
 \nopagebreak{\footnotesize\sffamily\color{blurb} Computes the sum of all subsets for every bitmask in O(N * 2\textasciicircum{}N)\par}\nopagebreak
 \begin{lstlisting}
-// Computes the sum of all subsets for every bitmask in O(N * 2^N)
 vector<long long> SOS_DP(int n_bits, const vector<long long>& a) {
     int max_mask = 1 << n_bits;
     vector<long long> dp = a; // dp[mask] initially holds exactly the value for mask
@@ -11432,11 +11372,10 @@ vector<long long> SOS_DP(int n_bits, const vector<long long>& a) {
 }
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{BitmaskDP}\index{tsp}\index{minPartition}\index{assignment}
 \nopagebreak{\footnotesize\sffamily\color{blurb} BITMASK DP - the n \textless{}= 20 toolkit.\par}\nopagebreak
 \begin{lstlisting}
-// BITMASK DP - the n <= 20 toolkit.
 // MEMORY: vector<vector<ll>> dp(1<<20, vector<ll>(20)) is ~193 MB (24 B of vector header per row).
 // Flatten to ONE vector<ll> of size (1<<n)*n (168 MB) or vector<int> (84 MB), or iterate masks in
 // increasing popcount and keep only two layers. At n = 20, 2^n * n^2 = 4e8 - usually not intended.
@@ -11495,11 +11434,10 @@ ll assignment(const vector<vector<ll>>& c) {
 
 \subsection{Knapsack}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{BoundedKnapsackBitset}\index{multiset\_bitset\_dp}
 \nopagebreak{\footnotesize\sffamily\color{blurb} BOUNDED KNAPSACK, FEASIBILITY ONLY, with a bitset: O(n W / 64). Binary-group the counts\par}\nopagebreak
 \begin{lstlisting}
-// BOUNDED KNAPSACK, FEASIBILITY ONLY, with a bitset: O(n W / 64). Binary-group the counts
 // (1,2,4,...) so "cnt copies of w" becomes O(log cnt) shift-ors. Use when you only need which sums
 // are reachable, not the best value.
 const int MAX_W = 100005;
@@ -11532,11 +11470,10 @@ void multiset_bitset_dp() {
 }
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{KnapsackFamily}\index{knap01}\index{knapInf}\index{knapBounded}\index{reachableSums}
 \nopagebreak{\footnotesize\sffamily\color{blurb} KNAPSACK FAMILY. W = capacity. All O(n*W) unless noted.\par}\nopagebreak
 \begin{lstlisting}
-// KNAPSACK FAMILY. W = capacity. All O(n*W) unless noted.
 // 0/1: iterate capacity DOWNWARD so each item is used once.
 ll knap01(const vector<int>& w, const vector<ll>& v, int W) {
     vector<ll> dp(W + 1, 0);
@@ -11578,11 +11515,10 @@ bitset<100001> reachableSums(const vector<int>& w) {
 
 \subsection{Classics}
 
-\needspace{4\baselineskip}
-\subsubsection{DigitDP}\index{go}\index{countUpTo}\index{countRange}
+\filbreak
+\subsubsection{DigitDP}\index{countUpTo}\index{countRange}
 \nopagebreak{\footnotesize\sffamily\color{blurb} DIGIT DP - count numbers in [L, R] with a digit property. f(R) - f(L-1).\par}\nopagebreak
 \begin{lstlisting}
-// DIGIT DP - count numbers in [L, R] with a digit property. f(R) - f(L-1).
 // State: (position, tight, started, problem state). `started` handles leading zeros.
 // THIS CODE IS BASE 10 (to_string, digit cap 9, memo[20] positions). For another base, write the
 // digits yourself, change the 9, and size memo by the digit count (base 2 needs 64 positions).
@@ -11618,11 +11554,10 @@ ll countRange(ll L, ll R) { return countUpTo(R) - countUpTo(L - 1); }
 // For "k-th number with the property", binary search on countUpTo.
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{LIS}\index{lis}
 \nopagebreak{\footnotesize\sffamily\color{blurb} LIS in O(n log n), with reconstruction. STRICT increasing by default.\par}\nopagebreak
 \begin{lstlisting}
-// LIS in O(n log n), with reconstruction. STRICT increasing by default.
 // Non-decreasing: change lower_bound -> upper_bound.
 // Longest DEcreasing: negate the array. Longest non-increasing: negate + upper_bound.
 vector<int> lis(const vector<ll>& a) {
@@ -11646,11 +11581,10 @@ vector<int> lis(const vector<ll>& a) {
 // (Dilworth). For LIS with an extra weight, replace `tail` with a max-BIT over compressed values.
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{IntervalDP}\index{intervalSplit}\index{minInsertPalindrome}\index{burst}
 \nopagebreak{\footnotesize\sffamily\color{blurb} INTERVAL DP - dp over [l, r], processed by increasing length. O(n\textasciicircum{}3) (O(n\textasciicircum{}2) with Knuth).\par}\nopagebreak
 \begin{lstlisting}
-// INTERVAL DP - dp over [l, r], processed by increasing length. O(n^3) (O(n^2) with Knuth).
 // This is the base pattern that Knuth's optimisation speeds up; write this first, optimise later.
 
 // 1) SPLIT form: dp[l][r] = min over k of dp[l][k] + dp[k+1][r] + cost(l, r)
@@ -11694,11 +11628,10 @@ ll burst(vector<ll> a) {
 // COUNTING variants (e.g. #ways to parenthesise) replace min with + and cost with 1.
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{BrokenProfileDP}\index{dominoTilings}\index{independentSets}
 \nopagebreak{\footnotesize\sffamily\color{blurb} BROKEN PROFILE DP - sweep the grid cell by cell carrying a bitmask of the "broken" frontier.\par}\nopagebreak
 \begin{lstlisting}
-// BROKEN PROFILE DP - sweep the grid cell by cell carrying a bitmask of the "broken" frontier.
 // O(n * m * 2^m); always make m the SMALLER dimension.
 // mask bit j = "cell (i, j) is already covered by something placed earlier".
 
@@ -11754,11 +11687,10 @@ ll independentSets(int n, int m) {                     // #ways to pick cells, n
 // problem clearly needs connectivity, not just coverage.
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{MaximalRectangle}\index{maximalRectangle}\index{countAllZeroSubmatrices}
 \nopagebreak{\footnotesize\sffamily\color{blurb} LARGEST ALL-ZERO (or all-one) RECTANGLE in a binary grid, O(n*m).\par}\nopagebreak
 \begin{lstlisting}
-// LARGEST ALL-ZERO (or all-one) RECTANGLE in a binary grid, O(n*m).
 // Row by row, keep the histogram of consecutive zeros ending at this row, then run the
 // largest-rectangle-in-histogram monotonic stack.
 ll maximalRectangle(const vector<vector<int>>& g, int target = 0) {
@@ -11806,12 +11738,11 @@ ll countAllZeroSubmatrices(const vector<vector<int>>& g) {
 
 \subsection{Probability}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{ExpectedValueDP}\index{hittingTimes}
 \nopagebreak{\footnotesize\sffamily\color{blurb} EXPECTED VALUE / PROBABILITY DP.\par}\nopagebreak
 \begin{lstlisting}
 // Needs: Mint (06 - Math/01) and solveLinear (06 - Math/04 - Linear Algebra/02 - GaussianElimination.cpp).
-// EXPECTED VALUE / PROBABILITY DP.
 // LINEARITY OF EXPECTATION FIRST: E[sum of indicators] = sum of P(indicator). Most "expected
 // number of X" problems collapse to summing per-element probabilities with no DP at all.
 // Only when states depend on each other CYCLICALLY do you need a linear system.
@@ -11858,11 +11789,10 @@ vector<Mint> hittingTimes(const vector<vector<Mint>>& P, const vector<char>& abs
 
 \subsection{Lowest Common Ancestor (LCA)}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{LCA}\index{LCA}
 \nopagebreak{\footnotesize\sffamily\color{blurb} LCA by Euler tour + sparse table: O(n log n) build, O(1) query. 0-based, rooted at `root`.\par}\nopagebreak
 \begin{lstlisting}
-// LCA by Euler tour + sparse table: O(n log n) build, O(1) query. 0-based, rooted at `root`.
 // For k-th ancestor / "jump while predicate" use BinaryLifting instead (02 - BinaryLifting.cpp).
 struct LCA {
     static const int B = 21;
@@ -11900,11 +11830,10 @@ struct LCA {
 };
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{BinaryLifting}\index{Lift}
 \nopagebreak{\footnotesize\sffamily\color{blurb} BINARY LIFTING - k-th ancestor, LCA, and "jump while a predicate holds", all O(log n).\par}\nopagebreak
 \begin{lstlisting}
-// BINARY LIFTING - k-th ancestor, LCA, and "jump while a predicate holds", all O(log n).
 // This is NOT only a tree tool: the same table jumps 2^k steps in ANY functional graph
 // (i -> f(i)), which is how you do "apply the operation 1e18 times", permutation powers,
 // and "min lamps to cover [L,R]" (jump by farthest-reach).
@@ -11957,11 +11886,10 @@ struct Lift {
 
 \subsection{DSU on Tree}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{DSUOnTree}\index{DSUOnTree}\index{Query}
 \nopagebreak{\footnotesize\sffamily\color{blurb} DSU ON TREE (small to large) - answers offline subtree queries in O(n log n) by keeping the heavy\par}\nopagebreak
 \begin{lstlisting}
-// DSU ON TREE (small to large) - answers offline subtree queries in O(n log n) by keeping the heavy
 // child's data and re-adding only the light subtrees. Each vertex is added O(log n) times.
 // Use it for "most frequent colour in each subtree" style problems where merging maps would be O(n^2).
 class DSUOnTree {
@@ -12096,11 +12024,10 @@ public:
 
 \subsection{Heavy Light Decomposition (HLD)}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{HLD}\index{HLD}
 \nopagebreak{\footnotesize\sffamily\color{blurb} HEAVY-LIGHT DECOMPOSITION - splits the tree into chains so any root-to-node path crosses O(log n)\par}\nopagebreak
 \begin{lstlisting}
-// HEAVY-LIGHT DECOMPOSITION - splits the tree into chains so any root-to-node path crosses O(log n)
 // of them; combined with a segment tree it gives path update/query in O(log^2 n).
 // Subtrees are contiguous in tin[], so subtree queries are a single range on the same tree.
 class HLD {
@@ -12178,11 +12105,10 @@ public:
 
 \subsection{Centroid Decomposition}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{Centroid}\index{CentroidDecomposition}
 \nopagebreak{\footnotesize\sffamily\color{blurb} CENTROID DECOMPOSITION - recursively remove the centroid (the vertex whose largest remaining\par}\nopagebreak
 \begin{lstlisting}
-// CENTROID DECOMPOSITION - recursively remove the centroid (the vertex whose largest remaining
 // component is <= n/2), giving a decomposition tree of depth O(log n). Every path in the original
 // tree passes through the centroid of some level, which turns path-counting problems into
 // "for each centroid, combine the distance lists of its components" in O(n log n).
@@ -12280,11 +12206,10 @@ public:
 
 \subsection{Tree Diameter}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{TreeDiameter}\index{TreeDiameter}
 \nopagebreak{\footnotesize\sffamily\color{blurb} Tree Diameter via 2-BFS - Time: O(V + E), Space: O(V + E)\par}\nopagebreak
 \begin{lstlisting}
-// Tree Diameter via 2-BFS - Time: O(V + E), Space: O(V + E)
 // Computes diameter length, endpoints (u, v), and the full diameter path
 struct TreeDiameter {
     int n;
@@ -12345,11 +12270,10 @@ struct TreeDiameter {
 
 \subsection{Euler Tour}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{EulerTour}\index{EulerTour}
 \nopagebreak{\footnotesize\sffamily\color{blurb} Euler Tour Technique (Tree Flattening into 1D Array Intervals) - O(V + E)\par}\nopagebreak
 \begin{lstlisting}
-// Euler Tour Technique (Tree Flattening into 1D Array Intervals) - O(V + E)
 // Subtree of node u corresponds to contiguous range [in_time[u], out_time[u]] in flat_tree
 struct EulerTour {
     int n, timer = 0;
@@ -12412,13 +12336,12 @@ struct EulerTour {
 
 \subsection{Rerooting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{Rerooting}\index{Reroot}
 \nopagebreak{\footnotesize\sffamily\color{blurb} REROOTING DP - compute f(v as root) for EVERY v in O(n).\par}\nopagebreak
 \begin{lstlisting}
-// REROOTING DP - compute f(v as root) for EVERY v in O(n).
-// Four hooks:  E() identity of merge · self(v) contribution of v itself ·
-//              merge(a,b) associative+commutative · lift(a, child) push a child's value
+// Four hooks:  E() identity of merge * self(v) contribution of v itself *
+//              merge(a,b) associative+commutative * lift(a, child) push a child's value
 //              across one edge into the parent's frame.
 // Shipped example: ans[v].first = sum of distances from v to every other node.
 struct Reroot {
@@ -12471,11 +12394,10 @@ struct Reroot {
 
 \subsection{Virtual Tree}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{VirtualTree}\index{VirtualTree}
 \nopagebreak{\footnotesize\sffamily\color{blurb} VIRTUAL (AUXILIARY) TREE - compress k marked vertices plus their pairwise LCAs into a tree\par}\nopagebreak
 \begin{lstlisting}
-// VIRTUAL (AUXILIARY) TREE - compress k marked vertices plus their pairwise LCAs into a tree
 // with at most 2k-1 nodes, in O(k log k). Run the real DP on that instead of on all n nodes.
 // THE pattern for "q queries, each with k_i marked vertices, sum of k_i bounded".
 // Needs tin/tout from a DFS and an LCA (binary lifting or Euler+sparse table).
@@ -12523,11 +12445,10 @@ struct VirtualTree {
 
 \subsection{Isomorphism}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{TreeIsomorphism}\index{TreeIso}
 \nopagebreak{\footnotesize\sffamily\color{blurb} TREE ISOMORPHISM (AHU canonical form). O(n log n) with a map, O(n) with per-level bucketing.\par}\nopagebreak
 \begin{lstlisting}
-// TREE ISOMORPHISM (AHU canonical form). O(n log n) with a map, O(n) with per-level bucketing.
 // Gives every rooted subtree a canonical ID: two subtrees are isomorphic iff their IDs match.
 // Exact - unlike random subtree hashing, which can collide.
 struct TreeIso {
@@ -12574,11 +12495,10 @@ struct TreeIso {
 
 \subsection{Tree DP}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{TreeDP}\index{misTree}\index{knapTree}
 \nopagebreak{\footnotesize\sffamily\color{blurb} TREE DP - the most common tree shape in a contest. Root the tree, compute a value per subtree\par}\nopagebreak
 \begin{lstlisting}
-// TREE DP - the most common tree shape in a contest. Root the tree, compute a value per subtree
 // bottom-up, and combine children. If the answer must be "for every root", see 07 - Rerooting.
 
 // --- MAXIMUM WEIGHT INDEPENDENT SET / MINIMUM VERTEX COVER on a tree, O(n). ---
@@ -12649,11 +12569,10 @@ vector<ll> knapTree(int v, int p, const vector<vector<int>>& adj, const vector<l
 
 \subsection{Dynamic Trees}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{LinkCutTree}\index{LCT}\index{Node}
 \nopagebreak{\footnotesize\sffamily\color{blurb} LINK-CUT TREE - a FOREST that changes shape, with path queries. O(log n) amortised per op.\par}\nopagebreak
 \begin{lstlisting}
-// LINK-CUT TREE - a FOREST that changes shape, with path queries. O(log n) amortised per op.
 // This is dynamic HLD: link, cut, re-root, and aggregate over the path u..v, all online.
 // If the tree is STATIC use HLD (09 - Trees/03) - it is faster and far shorter. Reach for an LCT
 // only when edges are added/removed, or when you need makeRoot.
@@ -12729,7 +12648,7 @@ struct LCT {
 
 \section{Game Theory}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsection{GrundyAndNim}\index{mex}\index{grundy}\index{retrograde}
 \nopagebreak{\footnotesize\sffamily\color{blurb} SPRAGUE-GRUNDY.  Every FINITE, ACYCLIC (progressively bounded) IMPARTIAL game under normal\par}\nopagebreak
 \begin{lstlisting}
@@ -12798,11 +12717,10 @@ vector<int> retrograde(int n, const vector<vector<int>>& radj, vector<int> deg, 
 }
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsection{GameAlgorithms}\index{Periodic}\index{wythoffLosing}\index{mooreLosing}\index{staircaseLosing}\index{hackenbushTree}
 \nopagebreak{\footnotesize\sffamily\color{blurb} Concrete game solvers. All impartial games under NORMAL play (last move wins) unless stated.\par}\nopagebreak
 \begin{lstlisting}
-// Concrete game solvers. All impartial games under NORMAL play (last move wins) unless stated.
 
 // SUBTRACTION GAME with allowed move set S: grundy is eventually PERIODIC. Compute a prefix,
 // detect the period, extrapolate to n up to 1e18. This is the standard route for huge n.
@@ -12892,12 +12810,11 @@ int hackenbushTree(int u, int p, const vector<vector<int>>& adj) {
 // otherwise the normal-play rule (xor != 0 => win) applies unchanged.
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsection{MinimaxAndMatching}\index{alphabeta}\index{matchingGameFirstWins}
 \nopagebreak{\footnotesize\sffamily\color{blurb} Games that Sprague-Grundy does NOT cover: partisan games, scored games, draws.\par}\nopagebreak
 \begin{lstlisting}
 // Needs: Kuhn (03 - Graph Theory/07 - Matching/02 - KuhnAndKonig.cpp) for the matching part.
-// Games that Sprague-Grundy does NOT cover: partisan games, scored games, draws.
 
 // MINIMAX with ALPHA-BETA pruning. Returns the value in PLAYER 0's units (a fixed sign), not
 // "the value for the player to move" - with maxing = false the result is still player-0 scored.
@@ -12948,7 +12865,7 @@ bool matchingGameFirstWins(int n, vector<vector<int>>& adj, int s, int leftSize)
 // GAMES WITH DRAWS / CYCLES: retrograde BFS (see 01 - GrundyAndNim.cpp), never Grundy.
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsection{NamedGames}\index{odious}\index{mockTurtles}\index{ruler}\index{lasker}\index{turningGameValue}
 \nopagebreak{\footnotesize\sffamily\color{blurb} NAMED GAMES: the values you cannot re-derive during a contest ======\par}\nopagebreak
 \begin{lstlisting}
@@ -13021,11 +12938,10 @@ ll turningGameValue(const vector<ll>& heads, ll (*g)(ll)) {
 }
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsection{NimbersAndSums}\index{nimMul}\index{octal}\index{euclidWin}\index{antiSGFirstWins}\index{everySGStep}
 \nopagebreak{\footnotesize\sffamily\color{blurb} NIMBERS, OCTAL GAMES, AND THE SUM VARIANTS. Everything on this page was brute-force verified.\par}\nopagebreak
 \begin{lstlisting}
-// NIMBERS, OCTAL GAMES, AND THE SUM VARIANTS. Everything on this page was brute-force verified.
 
 // --- NIM PRODUCT. [0, 2^(2^k)) is a FIELD under (XOR, nimMul). ---
 // Definition: a (*) b = mex{ a'(*)b ^ a(*)b' ^ a'(*)b' : a' < a, b' < b }.
@@ -13179,11 +13095,10 @@ void everySGStep(const vector<vector<int>>& succ, const vector<int>& sg, vector<
 
 \subsection{Geometry 2D}
 
-\needspace{4\baselineskip}
-\subsubsection{Core}\index{P}\index{sgn}\index{gcdll}\index{angleTo}\index{angleAt}\index{half}\index{angCmp}
+\filbreak
+\subsubsection{Core}\index{sgn}\index{gcdll}\index{angleTo}\index{angleAt}\index{half}\index{angCmp}
 \nopagebreak{\footnotesize\sffamily\color{blurb} Point / vector core. P\textless{}ll\textgreater{} = exact (use for all predicates), P\textless{}ld\textgreater{} = real answers.\par}\nopagebreak
 \begin{lstlisting}
-// Point / vector core. P<ll> = exact (use for all predicates), P<ld> = real answers.
 // cross(a,b) > 0  <=>  b is counter-clockwise from a.
 // a.cross(b,c) > 0 <=> c lies strictly LEFT of the directed line a->b.   [= orient(a,b,c)]
 int sgn(ll x) { return (x > 0) - (x < 0); }
@@ -13236,11 +13151,10 @@ template <class T> bool angCmp(P<T> a, P<T> b) {
 //           dist2 of a difference fits too. Anything squared twice needs __int128.
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{Lines}\index{lineDist}\index{proj}\index{refl}\index{onSeg}\index{segDist}\index{closestOnSeg}\index{lineInter}\index{segInter}\index{segCross}\index{segSegDist}\index{onRay}\index{rayDist}\index{perpBisector}\index{bisectorDir}\index{fromABC}
 \nopagebreak{\footnotesize\sffamily\color{blurb} Lines, segments, rays. "line ab" = infinite line through a and b.\par}\nopagebreak
 \begin{lstlisting}
-// Lines, segments, rays. "line ab" = infinite line through a and b.
 // Predicates are exact on P<ll>; anything returning a point needs P<ld>.
 
 template <class P> ld lineDist(P p, P a, P b) {          // distance point -> line
@@ -13325,11 +13239,10 @@ template <class P> pair<P, P> fromABC(ld A, ld B, ld C) {
 }
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{Polygon}\index{area2}\index{area}\index{perimeter}\index{centroid}\index{isConvex}\index{inPoly}\index{hull}\index{inConvex}\index{extreme}\index{cut}\index{minkowski}\index{diameter2}\index{width}\index{minRectArea}\index{boundaryPts}\index{interiorPts}
 \nopagebreak{\footnotesize\sffamily\color{blurb} Polygons. Vertices in order (CW or CCW); convex routines want CCW, no collinear points.\par}\nopagebreak
 \begin{lstlisting}
-// Polygons. Vertices in order (CW or CCW); convex routines want CCW, no collinear points.
 
 template <class P> auto area2(const vector<P>& v) {       // SIGNED 2*area. >0 <=> CCW.
     decltype(v[0].cross(v[0])) a = 0;                     // exact on P<ll>; safe on empty
@@ -13513,11 +13426,10 @@ template <class P> ll interiorPts(const vector<P>& v) {    // I = A - B/2 + 1
 }
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{Circles}\index{circleLine}\index{circleSeg}\index{circleCircle}\index{circleInterArea}\index{tangents}\index{circumcenter}\index{circumradius}\index{incenter}\index{inradius}\index{orthocenter}\index{mec}\index{circlePolyArea}\index{power}\index{radicalAxis}
 \nopagebreak{\footnotesize\sffamily\color{blurb} Circles. All of these want a floating P (Pd).\par}\nopagebreak
 \begin{lstlisting}
-// Circles. All of these want a floating P (Pd).
 
 // --- circle x line: 0, 1 (tangent) or 2 points on segment/line ab ---
 template <class P> vector<P> circleLine(P o, ld r, P a, P b) {
@@ -13635,11 +13547,10 @@ template <class P> pair<P, P> radicalAxis(P a, ld r1, P b, ld r2) {
 }
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{Sweep}\index{CoverTree}\index{closestPair}\index{rectUnionArea}\index{maxOnLine}\index{countSegInter}\index{onion}
 \nopagebreak{\footnotesize\sffamily\color{blurb} Global / sweep-line geometry: problems about a whole SET of objects.\par}\nopagebreak
 \begin{lstlisting}
-// Global / sweep-line geometry: problems about a whole SET of objects.
 
 // --- CLOSEST PAIR of points, O(n log n). Returns the two points. Exact on P<ll>. ---
 template <class P> pair<P, P> closestPair(vector<P> v) {
@@ -13735,11 +13646,10 @@ template <class P> vector<vector<P>> onion(vector<P> p) {
 }
 \end{lstlisting}
 
-\needspace{4\baselineskip}
-\subsubsection{HalfPlaneIntersection}\index{HP}\index{hpInter}\index{halfPlaneInter}
+\filbreak
+\subsubsection{HalfPlaneIntersection}\index{hpInter}\index{halfPlaneInter}
 \nopagebreak{\footnotesize\sffamily\color{blurb} HALF-PLANE INTERSECTION - O(n log n). A half-plane is "everything LEFT of the directed\par}\nopagebreak
 \begin{lstlisting}
-// HALF-PLANE INTERSECTION - O(n log n). A half-plane is "everything LEFT of the directed
 // line a -> b". Returns the CCW vertices of the intersection, or {} if it is empty.
 // A big bounding box is added, so the result is always bounded.
 // 2D LINEAR PROGRAMMING is exactly this: constraints -> half-planes, then optimise over the
@@ -13780,11 +13690,10 @@ vector<Pd> halfPlaneInter(vector<HP> h, ld BOX = 1e9) {
 // shorter to retype and just as correct - O(n^2) but n is small.
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{Unions}\index{edgeRatio}\index{polyUnion}\index{circleUnion}
 \nopagebreak{\footnotesize\sffamily\color{blurb} AREA OF UNIONS. The three shapes that actually show up.\par}\nopagebreak
 \begin{lstlisting}
-// AREA OF UNIONS. The three shapes that actually show up.
 
 // --- UNION OF POLYGONS (any simple polygons, may overlap), O(n^2 log n). ---
 // Works by, for every edge, measuring how much of it is "on the boundary of the union" and
@@ -13865,11 +13774,10 @@ ld circleUnion(vector<Pd> c, vector<ld> r) {
 // is |coveredLen(after) - coveredLen(before)|; sum those, then repeat with x/y swapped.
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{Transforms}\index{rot45}\index{unrot45}\index{maxManhattan}\index{manhattanEdges}\index{linTrans}
 \nopagebreak{\footnotesize\sffamily\color{blurb} COORDINATE TRANSFORMS - the tricks that turn a hard metric into an easy one.\par}\nopagebreak
 \begin{lstlisting}
-// COORDINATE TRANSFORMS - the tricks that turn a hard metric into an easy one.
 
 // CHEBYSHEV <-> MANHATTAN.  rot45(p) = (x+y, x-y).
 //   Manhattan distance in the original = Chebyshev distance after rot45  (and vice versa).
@@ -13926,11 +13834,10 @@ Pd linTrans(Pd p0, Pd p1, Pd q0, Pd q1, Pd r) {
 //   incidences are preserved, above/below is preserved.
 \end{lstlisting}
 
-\needspace{4\baselineskip}
-\subsubsection{KDTree}\index{KD}\index{Node}
+\filbreak
+\subsubsection{KDTree}\index{Node}
 \nopagebreak{\footnotesize\sffamily\color{blurb} KD-TREE over 2D points: nearest-neighbour and "count points in a rectangle".\par}\nopagebreak
 \begin{lstlisting}
-// KD-TREE over 2D points: nearest-neighbour and "count points in a rectangle".
 // Build O(n log n); NN query O(log n) expected, O(n) worst for NN; the O(sqrt n) bound is for RECTANGLE queries; rectangle count O(sqrt n + k).
 // Use when coordinates are large/sparse and a grid or sort-sweep will not do.
 struct KD {
@@ -13993,12 +13900,11 @@ struct KD {
 };
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{Triangulation}\index{triangulate}
 \nopagebreak{\footnotesize\sffamily\color{blurb} EAR CLIPPING - triangulates any SIMPLE polygon (convex or not, no self-intersections, no holes)\par}\nopagebreak
 \begin{lstlisting}
 // Needs: Core.cpp, Polygon.cpp (area2).
-// EAR CLIPPING - triangulates any SIMPLE polygon (convex or not, no self-intersections, no holes)
 // into n-2 triangles, O(n^2). Exact with P<ll>. Returns index triples into the ORIGINAL vector.
 // An "ear" is a convex vertex whose triangle contains no other vertex of the polygon.
 // USES: area/integral of anything over a polygon, rendering, splitting a region for a sweep,
@@ -14049,12 +13955,11 @@ vector<array<int, 3>> triangulate(const vector<P>& poly) {
 // rightmost vertex, shoot a ray right, split the hit edge) to get one simple polygon, then clip.
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{PolygonOps}\index{isSimple}\index{windingNumber}\index{clipByConvex}\index{convexDist}\index{pointTangents}\index{lineHull}
 \nopagebreak{\footnotesize\sffamily\color{blurb} POLYGON AGAINST POLYGON: clipping, intersection, containment, distance, and the O(log n)\par}\nopagebreak
 \begin{lstlisting}
 // Needs: Core.cpp, Lines.cpp, Polygon.cpp.
-// POLYGON AGAINST POLYGON: clipping, intersection, containment, distance, and the O(log n)
 // queries you get once one side is a convex hull.
 
 // --- IS THIS POLYGON SIMPLE? O(n^2), exact on P<ll>. ---
@@ -14101,7 +14006,7 @@ template <class P> vector<P> clipByConvex(vector<P> subject, const vector<P>& wi
         subject = cut(subject, win[i], win[(i + 1) % m]);
     return subject;
 }
-// --- CONVEX ∩ CONVEX in O(n + m) is the classic O'Rourke walk, but clipByConvex is O(nm) and
+// --- CONVEX intersect CONVEX in O(n + m) is the classic O'Rourke walk, but clipByConvex is O(nm) and
 // fits on one line - at contest sizes (n, m <= a few thousand) prefer it. Use halfPlaneInter
 // (06) when you have the polygons as half-plane constraints instead of vertex lists.
 
@@ -14176,12 +14081,11 @@ template <class P> pair<int, int> lineHull(const vector<P>& h, P a, P b) {
    the boundary). Faster than inPoly for n = 3 and it is the inner loop of triangulate. */
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsubsection{Primitives}\index{lineBisectors}\index{angleBisector}\index{bisectorFoot}\index{rotAbout}\index{scaleAbout}\index{reflPoint}\index{triArea2}\index{barycentric}\index{inTriangle}\index{segCircle}\index{circlesThrough}\index{apollonius}\index{inCircle}\index{maxCovered}\index{geoMedian}
 \nopagebreak{\footnotesize\sffamily\color{blurb} THE SMALL-FUNCTION LAYER. Individually trivial, collectively the thing you actually spend\par}\nopagebreak
 \begin{lstlisting}
 // Needs: Core.cpp, Lines.cpp, Circles.cpp.
-// THE SMALL-FUNCTION LAYER. Individually trivial, collectively the thing you actually spend
 // contest minutes re-deriving. Everything here is one to six lines.
 
 // --- ANGLE BISECTORS OF TWO LINES. Two lines have TWO bisectors, perpendicular to each other.
@@ -14351,11 +14255,10 @@ template <class P> P geoMedian(const vector<P>& p) {
 
 \subsection{Geometry 3D}
 
-\needspace{4\baselineskip}
-\subsubsection{Geometry3D}\index{P3}\index{Plane}\index{planeLine}\index{planePlane}\index{vol6}\index{tetraVolume}\index{sphereLine}\index{greatCircle}
+\filbreak
+\subsubsection{Geometry3D}\index{Plane}\index{planeLine}\index{planePlane}\index{vol6}\index{tetraVolume}\index{sphereLine}\index{greatCircle}
 \nopagebreak{\footnotesize\sffamily\color{blurb} 3D point / vector, planes, and the few 3D things that actually appear.\par}\nopagebreak
 \begin{lstlisting}
-// 3D point / vector, planes, and the few 3D things that actually appear.
 
 template <class T>
 struct P3 {
@@ -14434,7 +14337,7 @@ ld greatCircle(ld lat1, ld lon1, ld lat2, ld lon2, ld R) {
 
 \section{Problem Solving}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsection{Reframing}
 \nopagebreak{\footnotesize\sffamily\color{blurb} REFRAMING: CHANGE THE PROBLEM, NOT THE EFFORT =================\par}\nopagebreak
 \begin{lstlisting}
@@ -14579,7 +14482,7 @@ ld greatCircle(ld lat1, ld lon1, ld lat2, ld lon2, ld R) {
 ================================================================================= */
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsection{SearchAndProof}
 \nopagebreak{\footnotesize\sffamily\color{blurb} SEARCH: TURN "FIND" INTO "CHECK" ============\par}\nopagebreak
 \begin{lstlisting}
@@ -14748,7 +14651,7 @@ ld greatCircle(ld lat1, ld lon1, ld lat2, ld lon2, ld R) {
 ============================================================================== */
 \end{lstlisting}
 
-\needspace{4\baselineskip}
+\filbreak
 \subsection{ContestCraft}
 \nopagebreak{\footnotesize\sffamily\color{blurb} CONSTRUCTIVE, INTERACTIVE, RANDOMISED, EMPIRICAL ============\par}\nopagebreak
 \begin{lstlisting}

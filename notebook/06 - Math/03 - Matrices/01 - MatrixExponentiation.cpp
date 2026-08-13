@@ -22,4 +22,4 @@ Mat mpow(Mat a, ll e) {
 //    companion matrix, first row = (c1..ck), subdiagonal = 1.  f(n) = (M^(n-k) * [f(k-1)..f(0)]^T)[0]
 //  Add a "+d" constant term: enlarge by one row/col with a 1 on the diagonal, put d in the first row.
 //  Count walks of length L between u and v: (A^L)[u][v] where A is the adjacency matrix.
-//  Shortest walk with exactly L edges: same, but replace (+,*) with (min,+) — "min-plus product".
+//  Shortest walk with exactly L edges: same, but replace (+,*) with (min,+) - "min-plus product".
