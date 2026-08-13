@@ -94,3 +94,10 @@ struct HullDynamic : public multiset<Line, less<>> {
 // WHY IT WORKS: avg(j+1..i) >= 0  <=>  S[i] - S[j] >= 0, and among all valid j you want the
 // SMALLEST, which is the point of tangency from (i, S[i]) to the lower hull of the points (j, S[j]).
 // Binary search on the answer + prefix sums is the shorter O(n log n) alternative; this is O(n).
+// THE FOUR VARIATIONS, all from the same hull - only the tie-break and the sign change:
+//   MAX average, LONGEST  segment: insert(i, S[i]),  tangent(i, S[i]),  strict `<`  in the compare
+//   MAX average, SHORTEST segment: insert(i, S[i]),  tangent(i, S[i]),  non-strict `<=`
+//   MIN average, LONGEST  segment: insert(i, -S[i]), tangent(i, -S[i]), strict `<`
+//   MIN average, SHORTEST segment: insert(i, -S[i]), tangent(i, -S[i]), non-strict `<=`
+// (Minimising is just maximising the negated prefix sums; the tie-break decides which of two
+// equally-good segments you keep, which is what "longest" versus "shortest" means here.)

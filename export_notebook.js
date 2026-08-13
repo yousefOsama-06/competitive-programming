@@ -93,6 +93,10 @@ let latex = `\\UseRawInputEncoding
 \\usepackage[T1]{fontenc}
 \\usepackage[utf8]{inputenc}
 \\usepackage{lmodern}
+% Inconsolata is ~15%% narrower than Latin Modern Typewriter, so 100-column source stops wrapping.
+% Overleaf and any full TeX Live have it; a minimal install does not, so fall back gracefully.
+\\IfFileExists{zi4.sty}{\\usepackage[varqu,varl]{zi4}}{%
+  \\IfFileExists{inconsolata.sty}{\\usepackage[varqu,varl]{inconsolata}}{}}
 \\usepackage{fancyhdr}
 \\usepackage{makeidx}
 \\usepackage[hidelinks]{hyperref}

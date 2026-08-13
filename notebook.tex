@@ -7,6 +7,10 @@
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{lmodern}
+% Inconsolata is ~15%% narrower than Latin Modern Typewriter, so 100-column source stops wrapping.
+% Overleaf and any full TeX Live have it; a minimal install does not, so fall back gracefully.
+\IfFileExists{zi4.sty}{\usepackage[varqu,varl]{zi4}}{%
+  \IfFileExists{inconsolata.sty}{\usepackage[varqu,varl]{inconsolata}}{}}
 \usepackage{fancyhdr}
 \usepackage{makeidx}
 \usepackage[hidelinks]{hyperref}
@@ -4932,6 +4936,47 @@ bool differenceConstraints(int n, const vector<array<ll, 3>>& c, vector<ll>& x) 
 \end{lstlisting}
 
 \filbreak
+\subsubsection{SPFA}\index{spfa}
+\nopagebreak{\footnotesize\sffamily\color{blurb} SPFA (Bellman-Ford with a queue) - shortest paths with NEGATIVE edges, plus negative-cycle\par}\nopagebreak
+\begin{lstlisting}
+// detection. O(V*E) worst case and constructible-against, but usually far faster than plain
+// Bellman-Ford because only vertices whose distance actually improved get re-examined.
+// Returns false iff a negative cycle is reachable from s: a vertex relaxed n times must be on
+// (or reachable from) one, since a shortest walk uses at most n-1 edges.
+// WHEN: negative weights and you also want the cycle check. With NON-negative weights always use
+// Dijkstra - SPFA is asymptotically worse and hackable. For a guaranteed bound use Bellman-Ford.
+bool spfa(int n, int s, const vector<vector<pair<int, ll>>>& g, vector<ll>& d) {
+    d.assign(n, llinf);
+    vector<int> cnt(n, 0);
+    vector<char> inq(n, 0);
+    deque<int> q;
+    d[s] = 0, q.push_back(s), inq[s] = 1;
+    while (!q.empty()) {
+        int v = q.front(); q.pop_front();
+        inq[v] = 0;
+        for (auto [to, w] : g[v]) if (d[v] + w < d[to]) {
+            d[to] = d[v] + w;
+            if (!inq[to]) {
+                if (++cnt[to] >= n) return false;              // negative cycle
+                inq[to] = 1;
+                // SLF: a smaller tentative distance goes to the FRONT. Cheap, and it is what
+                // makes SPFA fast in practice; without it the queue degenerates.
+                if (!q.empty() && d[to] < d[q.front()]) q.push_front(to);
+                else q.push_back(to);
+            }
+        }
+    }
+    return true;
+}
+// RECOVERING THE CYCLE: keep par[] and, on detection, walk n parent pointers back (that lands you
+// ON the cycle - the detected vertex may only be reachable from it), then follow parents until a
+// vertex repeats. See 06 - CyclesAndConstraints.cpp, which uses exactly this for difference
+// constraints and for the minimum mean cycle.
+// KILLER TESTS EXIST: grid-like graphs make SPFA quadratic. If the problem looks adversarial,
+// use Bellman-Ford (predictable O(VE)) or reweight with Johnson potentials and run Dijkstra.
+\end{lstlisting}
+
+\filbreak
 \subsubsection{SegmentTreeGraph}\index{SegGraph}
 \nopagebreak{\footnotesize\sffamily\color{blurb} SEGMENT-TREE GRAPH - add "u -\textgreater{} every vertex in [l, r]" (or the reverse) with O(log n) edges\par}\nopagebreak
 \begin{lstlisting}
@@ -5241,6 +5286,146 @@ ll countFourCycles(int n, const vector<pair<int, int>>& es) {
 //     over subsets (2^n) or DP over bitmask start-vertex.
 //   * GIRTH (shortest cycle) of an unweighted graph: BFS from every vertex, O(nm). For the
 //     shortest cycle THROUGH a given edge, delete it and run BFS.
+\end{lstlisting}
+
+\filbreak
+\subsubsection{ThreeEdgeConnectivity}\index{threeEdgeCC}
+\nopagebreak{\footnotesize\sffamily\color{blurb} THREE-EDGE-CONNECTED COMPONENTS in ONE DFS, O(n + m). Undirected, 0-indexed, may be\par}\nopagebreak
+\begin{lstlisting}
+// disconnected; self loops and PARALLEL EDGES are handled (parallel edges matter here - two
+// vertices joined by three parallel edges are 3-edge-connected).
+// u and v land in the same component iff no set of at most TWO edges separates them, i.e. iff
+// there are 3 edge-disjoint u-v paths (Menger). This is the next step after LowLink (01), which
+// gives the 2-edge-connected components (= no single edge separates them).
+// Reach for it on "the network survives any two cable failures", "contract every pair of parallel
+// bridges", and as the preprocessing for 3-edge-connectivity augmentation problems.
+// Tsin's algorithm: a DFS that maintains, for each vertex, a PATH of still-undecided descendants;
+// whenever a back edge proves two of them 3-edge-connected the path is absorbed into one class.
+// The classes live in a circular linked list, so "merge" is a single swap.
+vector<vector<int>> threeEdgeCC(const vector<vector<int>>& g) {
+    int n = g.size(), cnt = 0;
+    vector<int> in(n), out(n), low(n, n), deg(n, 0), path(n, n), nxt(n), it(n, 0), stk;
+    vector<char> vis(n, 0);
+    iota(all(nxt), 0);                                         // circular list = the components
+    auto absorb = [&](int v, int w) { swap(nxt[v], nxt[w]), deg[v] += deg[w]; };
+    for (int s = 0; s < n; s++) {                              // iterative DFS over the forest
+        if (vis[s]) continue;
+        stk = {s}, vis[s] = 1, in[s] = cnt++;
+        vector<int> par(1, n), pe(1, -1);                      // pe = "parent edge already used"
+        while (!stk.empty()) {
+            int v = stk.back(), p = par.back();
+            if (it[v] < (int)g[v].size()) {
+                int w = g[v][it[v]++];
+                if (w == v) continue;
+                if (w == p && !pe.back()) { pe.back() = 1; continue; }   // skip ONE parent edge
+                if (vis[w]) {
+                    if (in[w] < in[v]) deg[v]++, low[v] = min(low[v], in[w]);
+                    else {                                     // back edge to a descendant
+                        deg[v]--;
+                        int u = path[v];
+                        while (u != n && in[u] <= in[w] && in[w] < out[u]) absorb(v, u), u = path[u];
+                        path[v] = u;
+                    }
+                    continue;
+                }
+                vis[w] = 1, in[w] = cnt++, stk.push_back(w), par.push_back(v), pe.push_back(0);
+            } else {                                           // leaving v: fold it into its parent
+                out[v] = cnt, stk.pop_back(), par.pop_back(), pe.pop_back();
+                if (p == n) continue;
+                int w = v;
+                if (path[w] == n && deg[w] <= 1) { deg[p] += deg[w], low[p] = min(low[p], low[w]); }
+                else {
+                    if (deg[w] == 0) w = path[w];
+                    if (low[w] < low[p]) low[p] = low[w], swap(w, path[p]);
+                    while (w != n) absorb(p, w), w = path[w];
+                }
+            }
+        }
+    }
+    vector<vector<int>> comp;                                  // walk each circular list once
+    vector<char> seen(n, 0);
+    for (int i = 0; i < n; i++) if (!seen[i]) {
+        comp.push_back({});
+        for (int j = i; !seen[j]; j = nxt[j]) seen[j] = 1, comp.back().push_back(j);
+    }
+    return comp;
+}
+// CONTRACTING each component gives a graph in which every 3-edge cut is visible; the 2-edge-cuts
+// are exactly the bridges plus the "cactus" pairs from LowLink.
+// 3-VERTEX-CONNECTIVITY (SPQR / triconnected components) is a genuinely harder, ~400-line
+// algorithm. If you only need to test 3-vertex-connectivity for small n, delete every pair of
+// vertices and check connectivity in O(n^2 (n + m)).
+\end{lstlisting}
+
+\filbreak
+\subsubsection{OnlineBridges}\index{OnlineBridges}
+\nopagebreak{\footnotesize\sffamily\color{blurb} ONLINE (INCREMENTAL) BRIDGES - maintain the number of bridges while edges are ADDED, in\par}\nopagebreak
+\begin{lstlisting}
+// O(alpha) amortised per edge. Undirected, 0-indexed, edges may repeat (a doubled edge kills the
+// bridge, which is exactly right).
+// LowLink (01) recomputes bridges from scratch in O(n + m); use this when the graph grows and you
+// must answer after every insertion: "after each new road, how many roads are still critical",
+// "the first moment u and v are 2-edge-connected".
+// STRUCTURE. Contract every 2-edge-connected component to a node; what is left is the BRIDGE
+// FOREST, kept as a rooted forest with parent pointers. Adding (u, v):
+//   * same 2ecc                 -> nothing changes;
+//   * different trees           -> a new bridge; re-root the smaller tree and hang it under v;
+//   * same tree, different 2ecc -> the tree path u..v becomes a cycle: contract it, losing
+//                                  (path length) bridges.
+// Two DSUs: dsu2ecc = the contracted components, dsuCC = which tree of the forest you are in.
+// DELETIONS are NOT supported - that needs offline divide and conquer or a link-cut tree.
+struct OnlineBridges {
+    vector<int> par, e2, cc, ccSize, stamp;                    // par is in the BRIDGE FOREST
+    int bridges = 0, iter = 0;
+    OnlineBridges(int n) : par(n, -1), e2(n), cc(n), ccSize(n, 1), stamp(n, 0) {
+        iota(all(e2), 0), iota(all(cc), 0);
+    }
+    int find2(int u) { return u < 0 || e2[u] == u ? u : e2[u] = find2(e2[u]); }
+    int findCC(int u) { u = find2(u); return cc[u] == u ? u : cc[u] = findCC(cc[u]); }
+    void makeRoot(int u) {                                     // reverse the parent chain above u
+        u = find2(u);
+        int root = u, child = -1;
+        while (u != -1) { int p = find2(par[u]); par[u] = child, cc[u] = root, child = u, u = p; }
+        ccSize[root] = ccSize[child];
+    }
+    void mergePath(int u, int v) {                             // contract the u..v tree path
+        ++iter;
+        vector<int> pu, pv;
+        int lca = -1;
+        while (lca < 0) {
+            if (u != -1) {
+                u = find2(u), pu.push_back(u);
+                if (stamp[u] == iter) { lca = u; break; }
+                stamp[u] = iter, u = par[u];
+            }
+            if (v != -1) {
+                v = find2(v), pv.push_back(v);
+                if (stamp[v] == iter) { lca = v; break; }
+                stamp[v] = iter, v = par[v];
+            }
+        }
+        for (auto& p : {pu, pv})
+            for (int x : p) { if (x == lca) break; e2[x] = lca, bridges--; }
+    }
+    void addEdge(int u, int v) {
+        u = find2(u), v = find2(v);
+        if (u == v) return;                                    // already 2-edge-connected
+        int a = findCC(u), b = findCC(v);
+        if (a != b) {
+            bridges++;
+            if (ccSize[a] > ccSize[b]) swap(u, v), swap(a, b);  // re-root the SMALLER tree
+            makeRoot(u);
+            par[u] = cc[u] = v, ccSize[b] += ccSize[u];
+        } else mergePath(u, v);
+    }
+    bool sameComponent(int u, int v) { return find2(u) == find2(v); }   // 2-edge-connected?
+};
+// WHY IT IS AMORTISED O(alpha): makeRoot walks the smaller tree, which is the union-by-size
+// argument (O(log n) total per vertex), and mergePath destroys one bridge per step.
+// ONLINE ARTICULATION POINTS / biconnected components can be maintained the same way, but the
+// bookkeeping is much heavier - use offline divide and conquer over time instead.
+// OFFLINE DELETIONS: process the queries in reverse so deletions become insertions, or run
+// divide-and-conquer on the time axis with a rollback DSU (see 02 - DS/05 - DSU).
 \end{lstlisting}
 
 \subsection{Satisfiability}
@@ -6692,6 +6877,45 @@ ll floorSum(ll n, ll m, ll a, ll b) {
 //   r = n / (n / l). Use it for sum_{i=1}^{n} floor(n/i), sum of tau/sigma, Du sieve, Mobius sums.
 //     for (ll l = 1, r; l <= n; l = r + 1) { r = n / (n / l); /* value n/l on [l, r] */ }
 //   Two-argument version (blocks constant for BOTH n/i and m/i): r = min(n/(n/l), m/(m/l)).
+\end{lstlisting}
+
+\filbreak
+\subsubsection{FloorSumExtended}\index{FGH}\index{fgh}
+\nopagebreak{\footnotesize\sffamily\color{blurb} EUCLIDEAN-LIKE ALGORITHM, THE FULL TRIPLE. With q\_i = floor((a*i + b) / c) it returns\par}\nopagebreak
+\begin{lstlisting}
+//     f = sum_{i=0..n} q_i        g = sum_{i=0..n} i * q_i        h = sum_{i=0..n} q_i^2
+// all three at once in O(log c). NOTE i runs to n INCLUSIVE, unlike floorSum in 03, which stops
+// at n-1: floorSum(n, m, a, b) = fgh(n - 1, a, b, m).f.
+// Reach for it when a lattice-line sum has an i or a square in it: sum of i*floor, sum of
+// (a i + b mod c)^2, the second moment of a modular AP, "sum over lattice points under a line of
+// (x + y)" and friends. The recursion is the same as floorSum: strip a/c and b/c, then swap axes.
+// Requires n >= -1, a >= 0, b >= 0, c >= 1. Exact (no modulus) in __int128, which is good for
+// n and m = (a n + b)/c up to ~1e11 (h is of order n*m^2). Take everything mod p if they are
+// bigger - the recursion only ever adds and multiplies, so it is modulus-friendly.
+struct FGH { __int128 f, g, h; };
+FGH fgh(ll n, ll a, ll b, ll c) {
+    if (n < 0) return {0, 0, 0};
+    __int128 M = n, s1 = M * (M + 1) / 2, s2 = M * (M + 1) * (2 * M + 1) / 6;
+    if (a >= c || b >= c) {                              // q_i = A*i + B + (reduced q_i)
+        __int128 A = a / c, B = b / c;
+        FGH t = fgh(n, a % c, b % c, c);
+        return {t.f + A * s1 + B * (M + 1), t.g + A * s2 + B * s1,
+                t.h + 2 * B * t.f + 2 * A * t.g + A * A * s2 + B * B * (M + 1) + 2 * A * B * s1};
+    }
+    __int128 m = ((__int128)a * n + b) / c;              // the largest value any q_i takes
+    if (m == 0) return {0, 0, 0};
+    FGH t = fgh((ll)m - 1, c, c - b - 1, a);             // count by rows instead of by columns
+    __int128 f = M * m - t.f;
+    return {f, (m * M * (M + 1) - t.f - t.h) / 2, M * m * (m + 1) - 2 * t.g - 2 * t.f - f};
+}
+// DERIVED SUMS (r_i = (a*i + b) mod c = a*i + b - c*q_i):
+//   sum r_i   = a*s1 + b*(n+1) - c*f
+//   sum r_i^2 = sum (a i + b)^2 - 2c * (a*g + b*f) + c^2 * h
+//   sum i*r_i = a*s2 + b*s1 - c*g
+// The same recursion with a bigger state gives sum i^k1 * q_i^k2 for any k1 + k2 <= K in
+// O(K^3 log c) - rarely needed. The clean way to state the whole family is the UNIVERSAL
+// EUCLIDEAN ALGORITHM: walk the line as a word in {U = "step up", R = "step right"} and
+// multiply the letters in ANY monoid; supply U and R and you get whatever statistic you like.
 \end{lstlisting}
 
 \subsection{Primes and Divisors}
@@ -11378,6 +11602,13 @@ struct HullDynamic : public multiset<Line, less<>> {
 // WHY IT WORKS: avg(j+1..i) >= 0  <=>  S[i] - S[j] >= 0, and among all valid j you want the
 // SMALLEST, which is the point of tangency from (i, S[i]) to the lower hull of the points (j, S[j]).
 // Binary search on the answer + prefix sums is the shorter O(n log n) alternative; this is O(n).
+// THE FOUR VARIATIONS, all from the same hull - only the tie-break and the sign change:
+//   MAX average, LONGEST  segment: insert(i, S[i]),  tangent(i, S[i]),  strict `<`  in the compare
+//   MAX average, SHORTEST segment: insert(i, S[i]),  tangent(i, S[i]),  non-strict `<=`
+//   MIN average, LONGEST  segment: insert(i, -S[i]), tangent(i, -S[i]), strict `<`
+//   MIN average, SHORTEST segment: insert(i, -S[i]), tangent(i, -S[i]), non-strict `<=`
+// (Minimising is just maximising the negated prefix sums; the tie-break decides which of two
+// equally-good segments you keep, which is what "longest" versus "shortest" means here.)
 \end{lstlisting}
 
 \filbreak
