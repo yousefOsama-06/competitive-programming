@@ -752,6 +752,9 @@ categories:
           - file: "02 - BinaryLifting.cpp"
             title: "BinaryLifting"
             path: "notebook/09 - Trees/01 - Lowest Common Ancestor (LCA)/02 - BinaryLifting.cpp"
+          - file: "03 - LCAConstantTime.cpp"
+            title: "LCAConstantTime"
+            path: "notebook/09 - Trees/01 - Lowest Common Ancestor (LCA)/03 - LCAConstantTime.cpp"
       - name: "02 - DSU on Tree"
         title: "DSU on Tree"
         files:
