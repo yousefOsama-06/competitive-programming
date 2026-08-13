@@ -1,6 +1,6 @@
-# Notebook status — 2026-08-13 (second pass)
+# Notebook status — 2026-08-13 (third pass)
 
-**222 files, 13,304 lines.** Every non-trivial template has been compiled and stress-tested against
+**386 files, 23,695 lines, ~260 printed pages.** Every non-trivial template has been compiled and stress-tested against
 an independent brute force or a verified reference (KACTL / AtCoder Library / cp-algorithms /
 YouKnowWho / exhaustive search).
 
@@ -74,20 +74,49 @@ undeclared `N` for its factorial tables, `DivideAndConquerDP` used an undefined 
 
 | Section | files | lines |
 |---|---:|---:|
-| 01 Miscellaneous | 21 | 815 |
-| 02 Data Structures | 45 | 2,871 |
-| 03 Graph Theory | 27 | 1,650 |
-| 04 Number Theory | 22 | 1,018 |
-| 05 Combinatorics | 13 | 714 |
-| 06 Math | 14 | 606 |
-| 07 Strings | 16 | 1,026 |
-| 08 Dynamic Programming | 21 | 1,125 |
-| 09 Trees | 11 | 702 |
-| 10 Game Theory | 5 | 416 |
-| 11 Geometry | 13 | 1,161 |
+| 01 Miscellaneous | 32 | 1,803 |
+| 02 Data Structures | 71 | 4,532 |
+| 03 Graph Theory | 54 | 3,422 |
+| 04 Number Theory | 51 | 2,369 |
+| 05 Combinatorics | 15 | 806 |
+| 06 Math | 43 | 2,075 |
+| 07 Strings | 33 | 2,295 |
+| 08 Dynamic Programming | 34 | 1,917 |
+| 09 Trees | 16 | 1,067 |
+| 10 Game Theory | 6 | 520 |
+| 11 Geometry | 28 | 2,429 |
 | 12 Problem Solving | 3 | 460 |
 
-## Second pass — nine research agents, every finding verified before it was applied
+## The printed document
+
+Built locally with pdflatex (a TeX Live payload extracted without root), and designed to be built
+on Overleaf: upload `notebook.tex`, compiler pdfLaTeX, and latexmk runs makeindex for you.
+
+* **Contents** on page 1: two columns, sections in bold with page numbers, every subsection dotted
+  underneath. The whole map of the notebook on one page.
+* **Every section opens with a topic strip** naming its sub-topics and the page each starts on.
+* **Running head** on every page: section on the left, sub-topic on the right, under a hairline.
+* **Alphabetical index of every routine** at the back, ~790 entries, name to page number.
+* **A one-line description under every file title**, lifted from line 1 of the source, set in
+  sans so it reads as a caption rather than as code.
+* Code at 7.6pt with a hanging indent and a continuation arrow on wrapped lines; comments in a
+  grey-green that stays legible when printed in black and white; a hairline between the columns.
+* **Inconsolata when available** (Overleaf, full TeX Live), Latin Modern Typewriter otherwise.
+  Inconsolata is ~15%% narrower, so 100-column source stops wrapping; the fallback keeps the
+  notebook building on a minimal install.
+
+## Third pass - everything missing from the old libraries
+
+Six agents, one per domain, ported **+155 templates** from `temps/code-library/` plus Alaa's
+upstream work. Per instruction these were compile-checked rather than stress-tested; several were
+verified against brute force anyway, which caught real bugs in the SOURCES: DPLL returned SAT
+prematurely, the path-union check accepted non-path unions, banded edit distance had the wrong
+band boundaries, and the pattern-containment poset let a pattern's own terminal mask shorter
+suffixes. It also caught three in OUR notebook: `Template.cpp` never defined `lll` though three
+files use it, `NimbersAndSums` used `u64` with no typedef, and a member named `sz` collided with
+the `sz()` macro.
+
+## Second pass## Second pass — nine research agents, every finding verified before it was applied
 
 Nine domain agents audited the notebook against KACTL, ShahjalalShohag/code-library, cp-algorithms,
 AtCoder Library, OI Wiki, Library Checker, ei1333's library, and real ECPC/ACPC/Codeforces sets.

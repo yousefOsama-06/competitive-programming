@@ -112,6 +112,9 @@ let latex = `\\UseRawInputEncoding
 \\renewcommand{\\headrulewidth}{0.4pt}
 \\renewcommand{\\sectionmark}[1]{\\markboth{#1}{}}
 \\renewcommand{\\subsectionmark}[1]{\\markright{#1}}
+\\renewcommand{\\headrule}{\\color{codeframe}\\hrule height 0.4pt}
+\\fancypagestyle{front}{\\fancyhf{}\\fancyfoot[C]{\\sffamily\\thepage}%
+  \\renewcommand{\\headrulewidth}{0pt}}
 
 \\definecolor{codeframe}{HTML}{B8BEC8}
 \\definecolor{keyword}{HTML}{00248F}
@@ -172,6 +175,7 @@ let latex = `\\UseRawInputEncoding
   \\begin{center}
     {\\Huge \\bfseries Competitive Programming Notebook} \\par \\vspace{0.2em}
     {\\large ICPC team reference \\textbullet\\ \\today} \\par \\vspace{0.8em}
+\\thispagestyle{front}
   \\end{center}
 ]
 
