@@ -100,6 +100,9 @@ categories:
       - file: "32 - NegativeBase.cpp"
         title: "NegativeBase"
         path: "notebook/01 - Miscellaneous/32 - NegativeBase.cpp"
+      - file: "33 - TestGenerators.cpp"
+        title: "TestGenerators"
+        path: "notebook/01 - Miscellaneous/33 - TestGenerators.cpp"
   - category: "02 - Data Structures (DS)"
     title: "Data Structures (DS)"
     subcategories:
@@ -289,6 +292,9 @@ categories:
           - file: "03 - MonotonicQueue2D.cpp"
             title: "MonotonicQueue2D"
             path: "notebook/02 - Data Structures (DS)/09 - Monotonic Data Structures/03 - MonotonicQueue2D.cpp"
+          - file: "04 - LazyDeleteAndTopK.cpp"
+            title: "LazyDeleteAndTopK"
+            path: "notebook/02 - Data Structures (DS)/09 - Monotonic Data Structures/04 - LazyDeleteAndTopK.cpp"
     files:
       - file: "10 - DynamicMedian.cpp"
         title: "DynamicMedian"

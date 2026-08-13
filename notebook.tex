@@ -41,7 +41,7 @@
     language=C++,
     basicstyle=\ttfamily\fontsize{7.6}{8.8}\selectfont,
     keywordstyle=\color{keyword}\bfseries,
-    commentstyle=\color{comment}\itshape,
+    commentstyle=\color{comment},   % Inconsolata has no true italic; colour alone separates comments
     stringstyle=\color{string},
     frame=leftline,
     framerule=0.5pt,
@@ -128,7 +128,7 @@ only when the answer is a real number.
 \vspace{0.6em}
 
 \section{Miscellaneous}
-\nopagebreak{\footnotesize\sffamily\color{blurb} Template~\pageref{sec:1:0} \textperiodcentered\ fastIO~\pageref{sec:1:1} \textperiodcentered\ grid~\pageref{sec:1:2} \textperiodcentered\ random~\pageref{sec:1:3} \textperiodcentered\ coordinateCompression~\pageref{sec:1:4} \textperiodcentered\ grayCode~\pageref{sec:1:5} \textperiodcentered\ customHashHashTable~\pageref{sec:1:6} \textperiodcentered\ pragmas~\pageref{sec:1:7} \textperiodcentered\ int128~\pageref{sec:1:8} \textperiodcentered\ SearchIdioms~\pageref{sec:1:9} \textperiodcentered\ BitTricks~\pageref{sec:1:10} \textperiodcentered\ StressTest~\pageref{sec:1:11} \textperiodcentered\ Fraction~\pageref{sec:1:12} \textperiodcentered\ Inversions~\pageref{sec:1:13} \textperiodcentered\ ExpressionParser~\pageref{sec:1:14} \textperiodcentered\ CycleFinding~\pageref{sec:1:15} \textperiodcentered\ ParallelBinarySearch~\pageref{sec:1:16} \textperiodcentered\ MeetInTheMiddle~\pageref{sec:1:17} \textperiodcentered\ Scheduling~\pageref{sec:1:18} \textperiodcentered\ Josephus~\pageref{sec:1:19} \textperiodcentered\ BigInt~\pageref{sec:1:20} \textperiodcentered\ RankingAndDates~\pageref{sec:1:21} \textperiodcentered\ MatroidIntersection~\pageref{sec:1:22} \textperiodcentered\ SchreierSims~\pageref{sec:1:23} \textperiodcentered\ RangeBitset~\pageref{sec:1:24} \textperiodcentered\ TrygubNum~\pageref{sec:1:25} \textperiodcentered\ PermutationRoots~\pageref{sec:1:26} \textperiodcentered\ SubarrayAggregator~\pageref{sec:1:27} \textperiodcentered\ MexOfAllSubarrays~\pageref{sec:1:28} \textperiodcentered\ XorEquationRange~\pageref{sec:1:29} \textperiodcentered\ SubsetUnionOfBitsets~\pageref{sec:1:30} \textperiodcentered\ NegativeBase~\pageref{sec:1:31}\par}\nopagebreak
+\nopagebreak{\footnotesize\sffamily\color{blurb} Template~\pageref{sec:1:0} \textperiodcentered\ fastIO~\pageref{sec:1:1} \textperiodcentered\ grid~\pageref{sec:1:2} \textperiodcentered\ random~\pageref{sec:1:3} \textperiodcentered\ coordinateCompression~\pageref{sec:1:4} \textperiodcentered\ grayCode~\pageref{sec:1:5} \textperiodcentered\ customHashHashTable~\pageref{sec:1:6} \textperiodcentered\ pragmas~\pageref{sec:1:7} \textperiodcentered\ int128~\pageref{sec:1:8} \textperiodcentered\ SearchIdioms~\pageref{sec:1:9} \textperiodcentered\ BitTricks~\pageref{sec:1:10} \textperiodcentered\ StressTest~\pageref{sec:1:11} \textperiodcentered\ Fraction~\pageref{sec:1:12} \textperiodcentered\ Inversions~\pageref{sec:1:13} \textperiodcentered\ ExpressionParser~\pageref{sec:1:14} \textperiodcentered\ CycleFinding~\pageref{sec:1:15} \textperiodcentered\ ParallelBinarySearch~\pageref{sec:1:16} \textperiodcentered\ MeetInTheMiddle~\pageref{sec:1:17} \textperiodcentered\ Scheduling~\pageref{sec:1:18} \textperiodcentered\ Josephus~\pageref{sec:1:19} \textperiodcentered\ BigInt~\pageref{sec:1:20} \textperiodcentered\ RankingAndDates~\pageref{sec:1:21} \textperiodcentered\ MatroidIntersection~\pageref{sec:1:22} \textperiodcentered\ SchreierSims~\pageref{sec:1:23} \textperiodcentered\ RangeBitset~\pageref{sec:1:24} \textperiodcentered\ TrygubNum~\pageref{sec:1:25} \textperiodcentered\ PermutationRoots~\pageref{sec:1:26} \textperiodcentered\ SubarrayAggregator~\pageref{sec:1:27} \textperiodcentered\ MexOfAllSubarrays~\pageref{sec:1:28} \textperiodcentered\ XorEquationRange~\pageref{sec:1:29} \textperiodcentered\ SubsetUnionOfBitsets~\pageref{sec:1:30} \textperiodcentered\ NegativeBase~\pageref{sec:1:31} \textperiodcentered\ TestGenerators~\pageref{sec:1:32}\par}\nopagebreak
 
 \filbreak
 \subsection{Template}\label{sec:1:0}\index{testCase}\index{preCompute}
@@ -2098,6 +2098,116 @@ vi negAdd(vi x, const vi& y, int b, int sgn = 1) {               // x + sgn * y,
 //    only n <= (4^32 - 1) / 3 = 6148914691236517205 upward; past that it silently truncates.
 //  - BASE -1+i represents every Gaussian integer with digits {0, 1}: take d = (re + im) & 1, then
 //    (re, im) -> ((im - re + d) / 2, -(re + im - d) / 2). Same loop, same termination argument.
+\end{lstlisting}
+
+\filbreak
+\subsection{TestGenerators}\label{sec:1:32}\index{rnd}\index{coin}\index{randArray}\index{randPermutation}\index{randString}\index{randGrid}\index{randTree}\index{pathTree}\index{starTree}\index{caterpillar}\index{randGraph}\index{connectedGraph}\index{randDAG}\index{randQueries}
+\nopagebreak{\footnotesize\sffamily\color{blurb} RANDOM TEST GENERATORS for stress testing. 12 - StressTest.cpp is the harness; this is the\par}\nopagebreak
+\begin{lstlisting}
+// library it feeds on. Writing a generator from scratch under pressure is where stress testing
+// usually dies, so keep these on the page.
+// SEED FROM argv SO A FAILING CASE IS REPRODUCIBLE:
+//   int main(int argc, char** argv) { if (argc > 1) rng.seed(stoull(argv[1])); ... }
+// then the driver loop passes the iteration number and you can replay any failure exactly.
+ll rnd(ll l, ll r) { return uniform_int_distribution<ll>(l, r)(rng); }   // inclusive
+bool coin(int pct = 50) { return rnd(1, 100) <= pct; }
+vector<ll> randArray(int n, ll lo, ll hi) {
+    vector<ll> a(n);
+    for (ll& x : a) x = rnd(lo, hi);
+    return a;
+}
+vector<int> randPermutation(int n) {                           // 0-indexed
+    vector<int> p(n);
+    iota(all(p), 0);
+    shuffle(all(p), rng);
+    return p;
+}
+string randString(int n, char lo = 'a', char hi = 'z') {
+    string s;
+    while (n--) s += (char)rnd(lo, hi);
+    return s;
+}
+vector<string> randGrid(int n, int m, const string& alpha = ".#") {
+    vector<string> g(n, string(m, '.'));
+    for (auto& row : g) for (char& c : row) c = alpha[rnd(0, alpha.size() - 1)];
+    return g;
+}
+// --- TREES. All 1-indexed, n-1 edges, always connected. ---
+vector<pair<int, int>> randTree(int n) {                       // uniform-ish, shuffled labels
+    vector<int> lab = randPermutation(n);
+    vector<pair<int, int>> e;
+    for (int i = 1; i < n; i++) e.push_back({lab[rnd(0, i - 1)] + 1, lab[i] + 1});
+    return e;
+}
+vector<pair<int, int>> pathTree(int n) {                       // the DEEP case: recursion, HLD
+    vector<pair<int, int>> e;
+    for (int i = 2; i <= n; i++) e.push_back({i - 1, i});
+    return e;
+}
+vector<pair<int, int>> starTree(int n) {                       // the WIDE case: heavy-child logic
+    vector<pair<int, int>> e;
+    int c = rnd(1, n);
+    for (int i = 1; i <= n; i++) if (i != c) e.push_back({c, i});
+    return e;
+}
+vector<pair<int, int>> caterpillar(int n) {                    // a spine with legs: breaks naive
+    vector<pair<int, int>> e;                                  // centroid and diameter code
+    int spine = max(1LL, (ll)rnd(1, n));
+    for (int i = 2; i <= spine; i++) e.push_back({i - 1, i});
+    for (int i = spine + 1; i <= n; i++) e.push_back({(int)rnd(1, spine), i});
+    return e;
+}
+// --- GRAPHS. m edges, no self loops, no duplicates unless you ask for them. ---
+vector<pair<int, int>> randGraph(int n, int m) {
+    vector<pair<int, int>> all;
+    for (int i = 1; i <= n; i++) for (int j = i + 1; j <= n; j++) all.push_back({i, j});
+    shuffle(all(all), rng);
+    all.resize(min((size_t)m, all.size()));
+    return all;
+}
+vector<pair<int, int>> connectedGraph(int n, int m) {           // a random tree plus extra edges
+    auto e = randTree(n);
+    set<pair<int, int>> used;
+    for (auto [u, v] : e) used.insert({min(u, v), max(u, v)});
+    m = min<ll>(m, (ll)n * (n - 1) / 2);
+    while ((int)e.size() < m) {
+        int u = rnd(1, n), v = rnd(1, n);
+        if (u == v) continue;
+        if (u > v) swap(u, v);
+        if (used.insert({u, v}).second) e.push_back({u, v});
+    }
+    shuffle(all(e), rng);
+    return e;
+}
+vector<pair<int, int>> randDAG(int n, int m) {                  // acyclic by a random topo order
+    vector<int> p = randPermutation(n);
+    vector<pair<int, int>> all;
+    for (int i = 0; i < n; i++) for (int j = i + 1; j < n; j++) all.push_back({p[i] + 1, p[j] + 1});
+    shuffle(all(all), rng);
+    all.resize(min((size_t)m, all.size()));
+    return all;
+}
+vector<pair<int, int>> randQueries(int q, int n) {              // random inclusive [l, r]
+    vector<pair<int, int>> v;
+    while (q--) {
+        int l = rnd(1, n), r = rnd(1, n);
+        if (l > r) swap(l, r);
+        v.push_back({l, r});
+    }
+    return v;
+}
+/* THE CASES A UNIFORM GENERATOR NEVER PRODUCES - and which is exactly where the bug is
+   n = 1, n = 2, and an EMPTY structure                     (off-by-one, .back() on empty)
+   ALL VALUES EQUAL, all zero, all negative                 (tie-breaks, strict vs non-strict)
+   values at the EXTREMES of the stated range               (overflow)
+   a SORTED or REVERSE-SORTED array                         (quicksort, two pointers, hulls)
+   a PATH tree and a STAR tree                              (recursion depth, heavy-child logic)
+   a DISCONNECTED graph, an isolated vertex, a self loop, a DOUBLED edge   (bridges, DSU, flows)
+   COLLINEAR / DUPLICATE points, a degenerate polygon       (all of geometry)
+   Generate with a SMALL value range (say [1,3]) most of the time: collisions and ties are what
+   break code, and a uniform draw from [1, 1e9] never creates one.
+   SHRINK a failure before reading it: re-run the generator with progressively smaller bounds
+   until the counterexample fits on one line, then stare at that. */
 \end{lstlisting}
 
 \section{Data Structures (DS)}
@@ -5928,6 +6038,69 @@ struct MonotonicQueue2D {
         return res;
     }
 };
+\end{lstlisting}
+
+\filbreak
+\subsubsection{LazyDeleteAndTopK}\index{LazyHeap}\index{TopK}
+\nopagebreak{\footnotesize\sffamily\color{blurb} TWO SMALL STRUCTURES THAT KEEP SHOWING UP, and are always retyped badly under pressure.\par}\nopagebreak
+\begin{lstlisting}
+
+// --- LAZY-DELETION HEAP: a priority_queue that supports erase(x), O(log n) amortised. ---
+// Keep a second heap of "things already deleted"; before reading the top, pop matching pairs.
+// This is why you almost never need decrease-key: push the new value and lazily drop the old one.
+template <class T, class Cmp = less<T>>
+struct LazyHeap {
+    priority_queue<T, vector<T>, Cmp> in, del;
+    void push(T x) { in.push(x); }
+    void erase(T x) { del.push(x); }                           // x must actually be present
+    void clean() { while (!del.empty() && in.top() == del.top()) in.pop(), del.pop(); }
+    bool empty() { clean(); return in.empty(); }
+    int size() { return (int)in.size() - (int)del.size(); }
+    T top() { clean(); return in.top(); }
+    void pop() { clean(); in.pop(); }
+};
+// A multiset does the same thing with erase(find(x)) and is shorter - reach for THIS when you
+// need heap performance (no red-black overhead) or when the values are not comparable-unique.
+// TRAP: erase(x) must be matched by an earlier push(x), or `size()` and `clean()` drift.
+
+// --- TOP-K SUM: maintain the sum of the k largest elements under insert and erase. ---
+// Two multisets with a fixed frontier: `hi` holds the k largest (and its sum), `lo` the rest.
+// After every operation, move elements across the frontier until |hi| == min(k, total).
+// USES: "sum of the k best so far" while sweeping, sliding-window k-th order statistics, and
+// scheduling/greedy problems where you keep the k cheapest and pay for the rest.
+struct TopK {
+    int k;
+    ll sum = 0;                                                // sum of the k largest
+    multiset<ll> hi, lo;                                       // hi = the chosen k, lo = the rest
+    TopK(int k) : k(k) {}
+    void fix() {
+        while ((int)hi.size() < k && !lo.empty()) {
+            auto it = prev(lo.end());
+            sum += *it, hi.insert(*it), lo.erase(it);
+        }
+        while ((int)hi.size() > k) {
+            auto it = hi.begin();
+            sum -= *it, lo.insert(*it), hi.erase(it);
+        }
+        while (!hi.empty() && !lo.empty() && *hi.begin() < *prev(lo.end())) {
+            auto a = hi.begin(), b = prev(lo.end());
+            sum += *b - *a;
+            hi.insert(*b), lo.insert(*a), hi.erase(a), lo.erase(b);
+        }
+    }
+    void insert(ll x) { lo.insert(x), fix(); }
+    void erase(ll x) {
+        auto it = hi.find(x);
+        if (it != hi.end()) sum -= x, hi.erase(it);
+        else lo.erase(lo.find(x));
+        fix();
+    }
+    int size() const { return hi.size() + lo.size(); }
+};
+// SMALLEST k instead: negate on the way in and out, or mirror the two sets.
+// If k CHANGES too, just set k and call fix() - the frontier moves in O(|dk| log n).
+// If you only ever ADD (no erase), a single size-k min-heap is shorter: push, and pop while the
+// size exceeds k, keeping a running sum.
 \end{lstlisting}
 
 \filbreak
