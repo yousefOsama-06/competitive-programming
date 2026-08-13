@@ -1,6 +1,6 @@
-# Baskot Temp
+# Baskotian Template
 
-*Husam Zaid (Baskot)* — ICPC team reference.
+*Husam Zaid · Ahmed Alaa · Yousef Osama* — ICPC team reference.
 
 Team reference for ICPC-style contests (ECPC / ACPC). Every template is written to be **short
 enough to retype from paper**, and the non-trivial ones have been **stress-tested against a

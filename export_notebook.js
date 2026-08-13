@@ -107,9 +107,9 @@ const STATS = countTree(notebookDir);
 const NSEC = getSortedEntries(notebookDir).filter(e => e.isDir).length;
 const groupDigits = n => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '{,}');
 
-const TITLE = 'Baskot Temp';
-const AUTHOR = 'Husam Zaid';
-const HANDLE = 'Baskot';
+const TITLE = 'Baskotian Template';
+const AUTHORS = ['Husam Zaid', 'Ahmed Alaa', 'Yousef Osama'];
+const BYLINE = AUTHORS.join('\\ \\textcolor{accent}{\\textperiodcentered}\\ ');
 
 let latex = `\\UseRawInputEncoding
 \\documentclass[9pt,a4paper,twocolumn]{extarticle}
@@ -267,7 +267,7 @@ let latex = `\\UseRawInputEncoding
     {\\sffamily\\footnotesize\\bfseries\\color{accent}%
       I\\,C\\,P\\,C\\ \\ T\\,E\\,A\\,M\\ \\ R\\,E\\,F\\,E\\,R\\,E\\,N\\,C\\,E}\\par\\vspace{0.55em}
     {\\sffamily\\fontsize{40}{44}\\selectfont\\bfseries\\color{ink}${TITLE}}\\par\\vspace{0.5em}
-    {\\sffamily\\large\\color{ink}${AUTHOR}\\ \\textcolor{accent}{(${HANDLE})}}\\par\\vspace{0.6em}
+    {\\sffamily\\large\\color{ink}${BYLINE}}\\par\\vspace{0.6em}
     {\\color{accent}\\rule{\\linewidth}{2pt}}\\par\\vspace{0.5em}
     {\\sffamily\\footnotesize\\color{blurb}%
       ${STATS.files} templates \\textperiodcentered\\ ${NSEC} sections \\textperiodcentered\\ ${groupDigits(STATS.lines)} lines \\textperiodcentered\\ \\today}
@@ -416,8 +416,8 @@ console.log('Generated: ' + outputFile);
 function generateTocYaml() {
     const yamlOutputFile = path.join(__dirname, 'toc.yaml');
     let yamlLines = [];
-    yamlLines.push("# Baskot Temp - Table of Contents");
-    yamlLines.push("title: Baskot Temp");
+    yamlLines.push("# Baskotian Template - Table of Contents");
+    yamlLines.push("title: Baskotian Template");
     yamlLines.push("categories:");
 
     for (const section of sections) {
