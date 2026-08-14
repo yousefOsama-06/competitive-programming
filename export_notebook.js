@@ -85,7 +85,7 @@ function blurbLine(code) {
     const b = blurbOf(code);
     if (!b || b.length < 12) return '';
     const t = escapeLatex(b.length > 150 ? b.slice(0, 147) + '...' : b);
-    return `\\nopagebreak{\\footnotesize\\sffamily\\raggedright\\color{blurb} ${t}\\par}\\nopagebreak\n`;
+    return `\\nopagebreak{\\normalsize\\sffamily\\raggedright\\color{blurb} ${t}\\par}\\nopagebreak\n`;
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -195,7 +195,7 @@ let latex = `\\UseRawInputEncoding
 
 \\lstset{
     language=C++,
-    basicstyle=\\ttfamily\\fontsize{7.6}{8.8}\\selectfont,
+    basicstyle=\\ttfamily\\fontsize{9}{10.2}\\selectfont,
     keywordstyle=\\color{keyword}\\bfseries,
     commentstyle=\\color{comment},   % Inconsolata has no true italic; colour alone separates comments
     stringstyle=\\color{string},
@@ -250,7 +250,7 @@ let latex = `\\UseRawInputEncoding
 \\newcommand{\\topicmap}[1]{%
   \\nopagebreak{\\setlength{\\fboxsep}{3.5pt}%
    \\noindent\\colorbox{tint}{\\parbox{\\dimexpr\\linewidth-7pt\\relax}{%
-     \\footnotesize\\sffamily\\raggedright\\color{blurb}#1}}\\par}\\nopagebreak}
+     \\normalsize\\sffamily\\raggedright\\color{blurb}#1}}\\par}\\nopagebreak}
 
 \\setlength{\\columnseprule}{0.3pt}
 \\setlength{\\columnsep}{0.55cm}
