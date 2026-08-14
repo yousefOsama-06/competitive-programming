@@ -85,7 +85,7 @@ function blurbLine(code) {
     const b = blurbOf(code);
     if (!b || b.length < 12) return '';
     const t = escapeLatex(b.length > 150 ? b.slice(0, 147) + '...' : b);
-    return `\\nopagebreak{\\normalsize\\sffamily\\raggedright\\color{blurb} ${t}\\par}\\nopagebreak\n`;
+    return `\\nopagebreak{\\fontsize{${CAPSIZE}}{${CAPLEAD}}\\selectfont\\sffamily\\raggedright\\color{blurb} ${t}\\par}\\nopagebreak\n`;
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -106,6 +106,11 @@ function countTree(dir) {
 const STATS = countTree(notebookDir);
 const NSEC = getSortedEntries(notebookDir).filter(e => e.isDir).length;
 const groupDigits = n => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '{,}');
+
+// The two type sizes on every body page. CODESIZE drives the listings (and so the //
+// comments inside them); CAPSIZE drives the caption under each title and the topic bands.
+const CODESIZE = 10, CODELEAD = 11.3;
+const CAPSIZE = 10, CAPLEAD = 11.5;
 
 const TITLE = 'Baskotian Template';
 const AUTHORS = ['Husam Zaid', 'Ahmed Alaa', 'Yousef Osama'];
@@ -195,7 +200,7 @@ let latex = `\\UseRawInputEncoding
 
 \\lstset{
     language=C++,
-    basicstyle=\\ttfamily\\fontsize{9}{10.2}\\selectfont,
+    basicstyle=\\ttfamily\\fontsize{${CODESIZE}}{${CODELEAD}}\\selectfont,
     keywordstyle=\\color{keyword}\\bfseries,
     commentstyle=\\color{comment},   % Inconsolata has no true italic; colour alone separates comments
     stringstyle=\\color{string},
@@ -250,7 +255,7 @@ let latex = `\\UseRawInputEncoding
 \\newcommand{\\topicmap}[1]{%
   \\nopagebreak{\\setlength{\\fboxsep}{3.5pt}%
    \\noindent\\colorbox{tint}{\\parbox{\\dimexpr\\linewidth-7pt\\relax}{%
-     \\normalsize\\sffamily\\raggedright\\color{blurb}#1}}\\par}\\nopagebreak}
+     \\fontsize{${CAPSIZE}}{${CAPLEAD}}\\selectfont\\sffamily\\raggedright\\color{blurb}#1}}\\par}\\nopagebreak}
 
 \\setlength{\\columnseprule}{0.3pt}
 \\setlength{\\columnsep}{0.55cm}
@@ -486,16 +491,17 @@ function findPdflatex() {
     throw new Error('pdflatex not found');
 }
 
-const pdflatex = findPdflatex();
-
 // THREE passes with makeindex in the middle, and that count is not padding:
 //   1. writes .aux / .toc / .idx      2. after makeindex, sets the contents and the index
 //   3. settles the \pageref cross-references in every per-section topic map
 // Skip the whole step with:  node export_notebook.js --no-pdf
+// (findPdflatex THROWS when there is no TeX, so it must not run until we know we want a PDF -
+// otherwise --no-pdf is useless on exactly the machines it exists for.)
 const baseName = path.basename(outputFile, '.tex');
 if (process.argv.includes('--no-pdf')) {
     console.log('Skipped PDF (--no-pdf).');
 } else try {
+    const pdflatex = findPdflatex();
     for (const ext of ['.aux', '.toc', '.idx', '.ind', '.out']) {
         const f = path.join(texDir, baseName + ext);
         if (fs.existsSync(f)) fs.unlinkSync(f);
